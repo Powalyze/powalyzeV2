@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-gold: #D4AF37;
+  --brand-blue: #0F2847;
+  --brand-blue-dark: #0A1A2F;
+  --brand-blue-light: #1A3A5C;
+  --brand-accent: #4A9EFF;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+.status-badge-green {
+  @apply bg-status-green/10 text-status-green px-2 py-1 rounded-full text-xs font-medium;
+}
+
+.status-badge-yellow {
+  @apply bg-status-yellow/10 text-status-yellow px-2 py-1 rounded-full text-xs font-medium;
+}
+
+.status-badge-red {
+  @apply bg-status-red/10 text-status-red px-2 py-1 rounded-full text-xs font-medium;
+}
+
+.status-badge-gray {
+  @apply bg-status-gray/10 text-status-gray px-2 py-1 rounded-full text-xs font-medium;
+}
