@@ -10,22 +10,22 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const [activeProjects] = await query<{ count: number }>(
+    const activeProjects = await query<{ count: number }>(
       `SELECT COUNT(*) as count FROM projects WHERE tenant_id = $1 AND status = 'ACTIVE'`,
       [tenantId]
     );
 
-    const [delayedProjects] = await query<{ count: number }>(
+    const delayedProjects = await query<{ count: number }>(
       `SELECT COUNT(*) as count FROM projects WHERE tenant_id = $1 AND delay_probability > 50`,
       [tenantId]
     );
 
-    const [totalProjects] = await query<{ count: number }>(
+    const totalProjects = await query<{ count: number }>(
       `SELECT COUNT(*) as count FROM projects WHERE tenant_id = $1`,
       [tenantId]
     );
 
-    const [budgetData] = await query<{ total: number; consumed: number }>(
+    const budgetData = await query<{ total: number; consumed: number }>(
       `SELECT 
         SUM(budget) as total,
         SUM(actual_cost) as consumed
@@ -34,13 +34,13 @@ export async function GET(request: NextRequest) {
       [tenantId]
     );
 
-    const [criticalRisks] = await query<{ count: number }>(
+    const criticalRisks = await query<{ count: number }>(
       `SELECT COUNT(*) as count FROM risks WHERE tenant_id = $1 AND score >= 15`,
       [tenantId]
     );
 
-    const delayPercentage = totalProjects[0].count > 0
-      ? Math.round((delayedProjects[0].count / totalProjects[0].count) * 100)
+    const delayPercentage = totalProjects[0]?.count && totalProjects[0].count > 0
+      ? Math.round((delayedProjects[0]?.count || 0) / totalProjects[0].count * 100)
       : 0;
 
     return NextResponse.json({

@@ -46,9 +46,9 @@ interface GalaxyNode {
 }
 
 const MOCK_NARRATION: AiNarration = {
-  headline: "Votre portefeuille tient, mais la capacité IT va casser dans 6 semaines.",
+  headline: "🎯 Démo Client : Portefeuille optimisé à 94%, 3 opportunités stratégiques détectées",
   subline:
-    "Trois décisions critiques sont en suspens. L'IA recommande de réallouer 18 % de la capacité vers les programmes régulation & cyber.",
+    "L'IA a identifié une économie potentielle de 2.4M€ via consolidation de deux programmes. Capacité IT critique dans 6 semaines. Action recommandée : réallocation +18% vers cyber.",
   mode: "comex",
 };
 
@@ -93,23 +93,30 @@ const MOCK_CAPACITIES: CapacityDomain[] = [
 const MOCK_ANOMALIES: Anomaly[] = [
   {
     id: "an-1",
-    title: "Projet zombie détecté",
+    title: "🎯 Opportunité : Économie 2.4M€",
     description:
-      "Un projet consomme 7 % de capacité IT sans contribution claire aux axes stratégiques.",
-    severity: "warning",
+      "Deux programmes régulation partagent 42% de ressources. Consolidation proposée avec ROI +185% et délai -3 mois.",
+    severity: "info",
   },
   {
     id: "an-2",
-    title: "Risque cyber sous-estimé",
+    title: "⚠️ Alerte capacité : IT 92%",
     description:
-      "Les programmes de mitigation sont sous-financés par rapport au niveau d'exposition actuel.",
+      "Saturation IT prévue dans 6 semaines. Impact : 3 projets critiques à risque. Auto-healing suggère réallocation immédiate.",
     severity: "critical",
   },
   {
     id: "an-3",
-    title: "Opportunité de synergies détectée",
+    title: "📊 Dérive budget Programme Cloud",
     description:
-      "Deux programmes régulation partagent 42 % de leurs ressources. L'IA suggère une consolidation.",
+      "+340K€ de dépassement détecté (vs prévision). Analyse quantique identifie 3 quick-wins pour correction.",
+    severity: "warning",
+  },
+  {
+    id: "an-4",
+    title: "🚀 Accélération possible IA Décisionnelle",
+    description:
+      "Digital Twin détecte vélocité +40% vs plan. Opportunité d'avancer la phase 2 de 8 semaines avec risque faible.",
     severity: "info",
   },
 ];
@@ -223,13 +230,14 @@ export default function CockpitPowalyze() {
             <div className="flex items-center gap-3">
               <div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_12px_rgba(16,185,129,0.9)]" />
               <p className="text-sm text-slate-300">
-                Ligne de vie stratégique :{" "}
+                <span className="text-sky-300 font-medium">🎬 Mode Démo Client</span>
+                {" "}•{" "}
                 <span className="text-emerald-300 font-medium">
-                  Portefeuille globalement aligné
+                  Portefeuille 42 projets • Alignement stratégique 94%
                 </span>{" "}
                 •{" "}
                 <span className="text-amber-300 font-medium">
-                  3 décisions critiques en attente
+                  3 décisions IA-assistées en attente
                 </span>
               </p>
             </div>
