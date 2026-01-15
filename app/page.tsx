@@ -29,7 +29,7 @@ export default function Home() {
             Plateforme de gouvernance augmentée par l'IA
           </div>
 
-          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 text-slate-50 leading-tight">
+          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-6 text-slate-50 leading-tight">
             Pilotage portefeuille et gouvernance exécutive — IA, PMO, Power BI
           </h1>
 
