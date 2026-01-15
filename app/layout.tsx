@@ -1,12 +1,13 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
+import '../styles/theme.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Powalyze - Vue 360° Pilotage Stratégique',
-  description: 'Plateforme SaaS premium pour le pilotage stratégique des projets, gestion des risques, et prise de décision COMEX',
+  title: 'Powalyze - Cockpit Exécutif & Gouvernance IA',
+  description: 'Plateforme de gouvernance augmentée par l\'IA - Pilotage portefeuille, risques, et décisions COMEX',
 };
 
 export default function RootLayout({
@@ -17,9 +18,7 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className={inter.className}>
-        <div className="min-h-screen bg-gradient-to-br from-brand-blue-dark via-brand-blue to-brand-blue-light">
-          {children}
-        </div>
+        {children}
       </body>
     </html>
   );
