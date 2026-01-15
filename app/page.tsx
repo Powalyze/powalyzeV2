@@ -32,19 +32,12 @@ export default function Home() {
           </div>
 
           {/* Main Headline */}
-          <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold mb-6 bg-gradient-to-r from-slate-50 via-amber-200 to-slate-50 bg-clip-text text-transparent leading-tight">
-            Powalyze
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-slate-50 leading-tight">
+            Pilotage portefeuille et gouvernance exécutive — IA, PMO, Power BI
           </h1>
 
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-slate-200 mb-6">
-            Le système de gouvernance stratégique
-            <br />
-            <span className="text-amber-400">nouvelle génération</span>
-          </h2>
-
           <p className="text-lg md:text-xl text-slate-300 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Pilotez votre portefeuille de projets avec une intelligence artificielle révolutionnaire.
-            Digital Twin, analyse quantique, auto-healing, optimisation de portfolio en temps réel.
+            Vue 360° unifiée pour le pilotage stratégique des projets, la gestion des risques et la prise de décision COMEX. Automatisation IA, rapports Power BI natifs, multi-tenant et conforme.
           </p>
 
           {/* CTA Buttons */}
