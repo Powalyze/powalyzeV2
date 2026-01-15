@@ -5,8 +5,15 @@ export async function GET(request: NextRequest) {
   const tenantId = request.headers.get('x-tenant-id');
   const userId = request.headers.get('x-user-id');
 
+  // Mode démo : retourner des données mockées si pas de tenant
   if (!tenantId || !userId) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({
+      activeProjects: 42,
+      delayPercentage: 12,
+      budgetConsumed: 7800000,
+      criticalRisks: 3,
+      totalBudget: 12000000,
+    });
   }
 
   try {
