@@ -32,7 +32,7 @@ export default function Home() {
           </div>
 
           {/* Main Headline */}
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-slate-50 leading-tight">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 text-slate-50 leading-tight">
             Pilotage portefeuille et gouvernance exécutive — IA, PMO, Power BI
           </h1>
 
