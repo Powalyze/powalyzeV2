@@ -28,7 +28,7 @@ export default function Home() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-sm font-medium mb-8">
             <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
-            Plateforme de gouvernance augmentée par IA
+            Plateforme de gouvernance augmentée par l'IA
           </div>
 
           {/* Main Headline */}
@@ -37,13 +37,13 @@ export default function Home() {
           </h1>
 
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-slate-200 mb-6">
-            L&apos;OS de gouvernance stratégique
+            Le système de gouvernance stratégique
             <br />
-            <span className="text-amber-400">jamais vu au monde</span>
+            <span className="text-amber-400">nouvelle génération</span>
           </h2>
 
           <p className="text-lg md:text-xl text-slate-300 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Pilotez votre portefeuille projets avec une intelligence artificielle révolutionnaire.
+            Pilotez votre portefeuille de projets avec une intelligence artificielle révolutionnaire.
             Digital Twin, analyse quantique, auto-healing, optimisation de portfolio en temps réel.
           </p>
 
@@ -77,7 +77,7 @@ export default function Home() {
             </div>
             <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6">
               <div className="text-3xl font-bold text-sky-400 mb-2">-40%</div>
-              <div className="text-sm text-slate-400">Risques non détectés</div>
+              <div className="text-sm text-slate-400">Risques détectés en avance</div>
             </div>
             <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6">
               <div className="text-3xl font-bold text-violet-400 mb-2">24/7</div>
@@ -108,7 +108,7 @@ export default function Home() {
               {
                 icon: "🔮",
                 title: "Digital Twin",
-                description: "Clone numérique temps réel de vos projets avec prédictions ML et recommandations autonomes"
+                description: "Jumeau numérique en temps réel de vos projets avec prédictions ML et recommandations autonomes"
               },
               {
                 icon: "⚛️",
@@ -128,12 +128,12 @@ export default function Home() {
               {
                 icon: "📊",
                 title: "Portfolio Optimization",
-                description: "Recommandations IA pour optimiser l'allocation de ressources et maximiser la valeur"
+                description: "Recommandations IA pour optimiser l'allocation des ressources et maximiser la valeur"
               },
               {
                 icon: "🔗",
                 title: "Blockchain Audit",
-                description: "Trail d'audit immuable avec hashage cryptographique pour conformité totale"
+                description: "Piste d'audit immuable avec hachage cryptographique pour une conformité totale"
               },
               {
                 icon: "🎤",
@@ -175,7 +175,7 @@ export default function Home() {
             Prêt à transformer votre gouvernance ?
           </h2>
           <p className="text-xl text-slate-300 mb-8">
-            Explorez le cockpit démo et découvrez la puissance de l&apos;IA appliquée à la gestion de portefeuille
+            Explorez le cockpit de démonstration et découvrez la puissance de l&apos;IA appliquée à la gestion de portefeuille
           </p>
           <Link
             href="/cockpit"
