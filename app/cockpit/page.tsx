@@ -219,60 +219,64 @@ export default function CockpitPowalyze() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50 flex flex-col">
+    <div className="min-h-screen w-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50">
       {/* Ligne de vie stratégique */}
-      <header className="border-b border-slate-800/70 bg-slate-950/70 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between gap-6">
-          <div className="flex flex-col gap-1">
-            <div className="text-xs uppercase tracking-[0.2em] text-slate-400">
-              Powalyze • OS de gouvernance augmenté
+      <header className="border-b border-slate-800/70 bg-slate-950/70 backdrop-blur-xl sticky top-0 z-50">
+        <div className="max-w-[1600px] mx-auto px-4 lg:px-6 py-4">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+            <div className="flex flex-col gap-1 flex-1 min-w-0">
+              <div className="text-xs uppercase tracking-[0.2em] text-slate-400">
+                Powalyze • OS de gouvernance augmenté
+              </div>
+              <div className="flex items-center gap-3 flex-wrap">
+                <div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_12px_rgba(16,185,129,0.9)]" />
+                <p className="text-sm text-slate-300 flex-wrap">
+                  <span className="text-sky-300 font-medium">🎬 Mode Démo Client</span>
+                  {" "}•{" "}
+                  <span className="text-emerald-300 font-medium">
+                    Portefeuille 42 projets • Alignement stratégique 94%
+                  </span>{" "}
+                  •{" "}
+                  <span className="text-amber-300 font-medium">
+                    3 décisions IA-assistées en attente
+                  </span>
+                </p>
+              </div>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_12px_rgba(16,185,129,0.9)]" />
-              <p className="text-sm text-slate-300">
-                <span className="text-sky-300 font-medium">🎬 Mode Démo Client</span>
-                {" "}•{" "}
-                <span className="text-emerald-300 font-medium">
-                  Portefeuille 42 projets • Alignement stratégique 94%
-                </span>{" "}
-                •{" "}
-                <span className="text-amber-300 font-medium">
-                  3 décisions IA-assistées en attente
-                </span>
-              </p>
-            </div>
-          </div>
 
-          <div className="flex items-center gap-3">
-            <ModeToggle mode={mode} setMode={setMode} />
-            <ScenarioSelector scenario={scenario} setScenario={setScenario} />
+            <div className="flex items-center gap-3 flex-wrap">
+              <ModeToggle mode={mode} setMode={setMode} />
+              <ScenarioSelector scenario={scenario} setScenario={setScenario} />
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Layout 3 colonnes */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-6 py-6 flex gap-6">
-        {/* Radar exécutif / anomalies */}
-        <section className="w-[26%] flex flex-col gap-4">
-          <ExecutiveNarrator narration={narration} />
-          <AnomalyFeed anomalies={MOCK_ANOMALIES} />
-        </section>
+      {/* Layout 3 colonnes responsive */}
+      <main className="max-w-[1600px] mx-auto w-full px-4 lg:px-6 py-4 lg:py-6">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 lg:gap-6">
+          {/* Radar exécutif / anomalies */}
+          <section className="xl:col-span-3 flex flex-col gap-4">
+            <ExecutiveNarrator narration={narration} />
+            <AnomalyFeed anomalies={MOCK_ANOMALIES} />
+          </section>
 
-        {/* Scène centrale immersive */}
-        <section className="flex-1 flex flex-col gap-4">
-          <StrategicGalaxyView nodes={MOCK_GALAXY} scenario={scenario} />
-          <DecisionPortal
-            options={MOCK_DECISION_OPTIONS}
-            selected={selectedDecision}
-            onDecide={handleDecide}
-          />
-        </section>
+          {/* Scène centrale immersive */}
+          <section className="xl:col-span-6 flex flex-col gap-4">
+            <StrategicGalaxyView nodes={MOCK_GALAXY} scenario={scenario} />
+            <DecisionPortal
+              options={MOCK_DECISION_OPTIONS}
+              selected={selectedDecision}
+              onDecide={handleDecide}
+            />
+          </section>
 
-        {/* Capacités & contraintes */}
-        <section className="w-[26%] flex flex-col gap-4">
-          <CapacityHeatmap capacities={MOCK_CAPACITIES} />
-          <TimelineCinematic />
-        </section>
+          {/* Capacités & contraintes */}
+          <section className="xl:col-span-3 flex flex-col gap-4">
+            <CapacityHeatmap capacities={MOCK_CAPACITIES} />
+            <TimelineCinematic />
+          </section>
+        </div>
       </main>
     </div>
   );
@@ -380,8 +384,8 @@ function AnomalyFeed({ anomalies }: { anomalies: Anomaly[] }) {
   };
 
   return (
-    <div className="rounded-3xl bg-gradient-to-br from-slate-900/90 via-slate-900/80 to-slate-950/90 border border-slate-700/70 p-4 shadow-[0_0_40px_rgba(15,23,42,0.9)] flex flex-col gap-3">
-      <div className="text-[10px] uppercase tracking-[0.25em] text-slate-400">
+    <div className="rounded-3xl bg-gradient-to-br from-slate-900/90 via-slate-900/80 to-slate-950/90 border border-slate-700/70 p-4 shadow-[0_0_40px_rgba(15,23,42,0.9)] flex flex-col gap-3 max-h-[600px] overflow-y-auto">
+      <div className="text-[10px] uppercase tracking-[0.25em] text-slate-400 sticky top-0 bg-slate-900/90 pb-2 backdrop-blur-sm">
         Radar des anomalies • IA Détection
       </div>
       <div className="flex flex-col gap-2">
@@ -427,7 +431,7 @@ function StrategicGalaxyView({
   };
 
   return (
-    <div className="rounded-3xl bg-gradient-to-br from-slate-900/90 via-slate-900/80 to-slate-950/90 border border-slate-700/70 p-6 shadow-[0_0_40px_rgba(15,23,42,0.9)] flex flex-col gap-4 h-[450px]">
+    <div className="rounded-3xl bg-gradient-to-br from-slate-900/90 via-slate-900/80 to-slate-950/90 border border-slate-700/70 p-6 shadow-[0_0_40px_rgba(15,23,42,0.9)] flex flex-col gap-4 min-h-[400px] lg:min-h-[450px]">
       <div className="flex items-center justify-between">
         <div className="text-[10px] uppercase tracking-[0.25em] text-slate-400">
           Vue galactique stratégique • {MOCK_SCENARIO_LABELS[scenario]}
@@ -438,7 +442,7 @@ function StrategicGalaxyView({
       </div>
 
       {/* Galaxy Canvas */}
-      <div className="flex-1 relative bg-slate-950/70 rounded-2xl border border-slate-800/50 overflow-hidden">
+      <div className="flex-1 relative bg-slate-950/70 rounded-2xl border border-slate-800/50 overflow-hidden min-h-[300px]">
         {/* Grid background */}
         <div className="absolute inset-0 opacity-20">
           <svg width="100%" height="100%">
@@ -454,24 +458,22 @@ function StrategicGalaxyView({
         {/* Galaxy Nodes */}
         {nodes.map((node) => {
           const config = statusConfig[node.status];
+          const sizeClass = `w-[${node.size}px] h-[${node.size}px]`;
+          const posStyle = `left-[${node.x}%] top-[${node.y}%]`;
           return (
             <div
               key={node.id}
-              className="absolute group cursor-pointer transition-transform hover:scale-110"
+              className={`absolute group cursor-pointer transition-transform hover:scale-110 ${sizeClass}`}
               style={{
                 left: `${node.x}%`,
                 top: `${node.y}%`,
-                transform: "translate(-50%, -50%)",
+                transform: 'translate(-50%, -50%)'
               }}
             >
               <div
-                className={`${config.color} ${config.glow} rounded-full`}
-                style={{
-                  width: `${node.size}px`,
-                  height: `${node.size}px`,
-                }}
+                className={`${config.color} ${config.glow} rounded-full w-full h-full`}
               />
-              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
                 <div className="bg-slate-900/95 border border-slate-700/70 rounded-lg px-3 py-2 shadow-xl whitespace-nowrap">
                   <div className="text-[10px] uppercase tracking-wider text-slate-400">
                     {typeLabel[node.type]}
@@ -613,6 +615,9 @@ function CapacityHeatmap({ capacities }: { capacities: CapacityDomain[] }) {
       <div className="flex flex-col gap-3">
         {capacities.map((capacity) => {
           const config = statusConfig[capacity.status];
+          const widthClass = capacity.usage <= 25 ? 'w-1/4' : 
+                            capacity.usage <= 50 ? 'w-1/2' :
+                            capacity.usage <= 75 ? 'w-3/4' : 'w-full';
           return (
             <div key={capacity.id} className="flex flex-col gap-2">
               <div className="flex items-center justify-between text-xs">
@@ -621,8 +626,10 @@ function CapacityHeatmap({ capacities }: { capacities: CapacityDomain[] }) {
               </div>
               <div className="relative h-3 bg-slate-800/70 rounded-full overflow-hidden">
                 <div
-                  className={`absolute inset-y-0 left-0 ${config.color} transition-all duration-500 rounded-full shadow-[0_0_12px_currentColor]`}
-                  style={{ width: `${capacity.usage}%` }}
+                  className={`h-full ${config.color} transition-all duration-500 rounded-full shadow-[0_0_12px_currentColor]`}
+                  style={{
+                    width: `${capacity.usage}%`
+                  }}
                 />
               </div>
               <div className="text-[10px] text-slate-400">

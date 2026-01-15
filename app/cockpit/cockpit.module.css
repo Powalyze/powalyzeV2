@@ -1,0 +1,67 @@
+/* Styles pour la vue galactique - éviter les styles inline */
+.galaxyNode {
+  position: absolute;
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
+
+.galaxyNode:hover {
+  transform: scale(1.1);
+}
+
+/* Classes utilitaires pour les tailles de nœuds */
+.nodeSize-24 {
+  width: 24px;
+  height: 24px;
+  margin-left: -12px;
+  margin-top: -12px;
+}
+
+.nodeSize-28 {
+  width: 28px;
+  height: 28px;
+  margin-left: -14px;
+  margin-top: -14px;
+}
+
+.nodeSize-36 {
+  width: 36px;
+  height: 36px;
+  margin-left: -18px;
+  margin-top: -18px;
+}
+
+.nodeSize-42 {
+  width: 42px;
+  height: 42px;
+  margin-left: -21px;
+  margin-top: -21px;
+}
+
+.nodeSize-50 {
+  width: 50px;
+  height: 50px;
+  margin-left: -25px;
+  margin-top: -25px;
+}
+
+/* Barres de capacité */
+.capacityBar-25 {
+  width: 25%;
+}
+
+.capacityBar-54 {
+  width: 54%;
+}
+
+.capacityBar-68 {
+  width: 68%;
+}
+
+.capacityBar-81 {
+  width: 81%;
+}
+
+.capacityBar-92 {
+  width: 92%;
+}
