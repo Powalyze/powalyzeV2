@@ -1,0 +1,18 @@
+-- ============================================================
+-- DÉSACTIVER RLS TEMPORAIREMENT POUR DEBUG
+-- ============================================================
+
+ALTER TABLE organizations DISABLE ROW LEVEL SECURITY;
+ALTER TABLE users DISABLE ROW LEVEL SECURITY;
+ALTER TABLE organization_memberships DISABLE ROW LEVEL SECURITY;
+ALTER TABLE cockpit_kpis DISABLE ROW LEVEL SECURITY;
+ALTER TABLE governance_signals DISABLE ROW LEVEL SECURITY;
+ALTER TABLE scenarios DISABLE ROW LEVEL SECURITY;
+ALTER TABLE executive_stories DISABLE ROW LEVEL SECURITY;
+ALTER TABLE projects DISABLE ROW LEVEL SECURITY;
+ALTER TABLE risks DISABLE ROW LEVEL SECURITY;
+ALTER TABLE decisions DISABLE ROW LEVEL SECURITY;
+ALTER TABLE integrations DISABLE ROW LEVEL SECURITY;
+
+-- Vous pourrez réactiver RLS plus tard avec :
+-- ALTER TABLE nom_table ENABLE ROW LEVEL SECURITY;

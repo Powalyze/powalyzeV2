@@ -1,0 +1,38 @@
+.cockpit-star {
+  position: absolute;
+}
+.cockpit-star[data-star-width] {
+  width: attr(data-star-width px, 2px);
+}
+.cockpit-star[data-star-height] {
+  height: attr(data-star-height px, 2px);
+}
+.cockpit-star[data-star-top] {
+  top: attr(data-star-top %);
+}
+.cockpit-star[data-star-left] {
+  left: attr(data-star-left %);
+}
+.cockpit-star[data-star-delay] {
+  animation-delay: attr(data-star-delay s);
+}
+.cockpit-star[data-star-opacity] {
+  opacity: attr(data-star-opacity);
+}
+
+.orbit-pos {
+  /* Will be set by --orbit-x and --orbit-y */
+  transform: translate(var(--orbit-x, 0px), var(--orbit-y, 0px));
+}
+
+.orbit-connection {
+  /* Will be set by --orbit-conn-width and --orbit-conn-rotate */
+  width: var(--orbit-conn-width, 200px) !important;
+  transform: rotate(var(--orbit-conn-rotate, 0deg));
+  height: 2px !important;
+  opacity: 0.3 !important;
+}
+.grid-bg {
+  background-image: linear-gradient(rgba(59,130,246,0.5) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,0.5) 1px,transparent 1px);
+  background-size: 30px 30px;
+}

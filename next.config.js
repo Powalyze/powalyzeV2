@@ -1,9 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   images: {
-    domains: ['app.powerbi.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'app.powerbi.com',
+      },
+    ],
   },
   env: {
     DATABASE_URL: process.env.DATABASE_URL,

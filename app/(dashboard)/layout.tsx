@@ -13,30 +13,22 @@ import {
   Zap,
   FileText,
   Settings,
-  Menu,
-  X,
   Bell,
   Search,
   User,
+  Gauge,
+  LogOut,
+  Sparkles
 } from "lucide-react";
 
-interface NavItem {
-  name: string;
-  href: string;
-  icon: React.ReactNode;
-}
-
-const navigation: NavItem[] = [
-  { name: "Dashboard", href: "/dashboard", icon: <LayoutDashboard size={20} /> },
-  { name: "Projets", href: "/projets", icon: <FolderKanban size={20} /> },
-  { name: "Portfolio", href: "/portfolio", icon: <TrendingUp size={20} /> },
-  { name: "Kanban", href: "/kanban", icon: <FolderKanban size={20} /> },
-  { name: "Intelligence", href: "/intelligence", icon: <Brain size={20} /> },
-  { name: "Rapports", href: "/rapports", icon: <BarChart3 size={20} /> },
-  { name: "Équipe", href: "/equipe", icon: <Users size={20} /> },
-  { name: "Intégrations", href: "/integrations", icon: <Zap size={20} /> },
-  { name: "Documents", href: "/documents", icon: <FileText size={20} /> },
-  { name: "Paramètres", href: "/parametres", icon: <Settings size={20} /> },
+const navigation = [
+  { name: "Cockpit", href: "/cockpit", icon: Gauge },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Projets", href: "/projets", icon: FolderKanban },
+  { name: "Portfolio", href: "/portfolio", icon: TrendingUp },
+  { name: "Intelligence", href: "/intelligence", icon: Brain },
+  { name: "Équipe", href: "/equipe", icon: Users },
+  { name: "Rapports", href: "/rapports", icon: FileText },
 ];
 
 export default function DashboardLayout({
@@ -44,119 +36,136 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const pathname = usePathname();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-      {/* Sidebar Mobile Overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
+    <div className="min-h-screen bg-black">
+      {/* Navigation Bar */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-xl border-b border-white/10">
+        <div className="max-w-[1600px] mx-auto px-6">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <Link href="/cockpit" className="flex items-center gap-2 group">
+              <div className="w-9 h-9 bg-gradient-to-br from-amber-500 to-yellow-600 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform shadow-lg shadow-amber-500/20">
+                <Sparkles className="w-5 h-5 text-black" />
+              </div>
+              <span className="text-lg font-bold bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent">
+                Powalyze
+              </span>
+            </Link>
 
-      {/* Sidebar */}
-      <aside
-        className={`fixed top-0 left-0 h-full w-64 bg-slate-900/95 backdrop-blur-xl border-r border-slate-800/50 z-50 transition-transform duration-300 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0`}
-      >
-        {/* Logo */}
-        <div className="h-16 flex items-center justify-between px-6 border-b border-slate-800/50">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-amber-600 rounded-lg flex items-center justify-center">
-              <span className="text-slate-950 font-bold text-sm">P</span>
+            {/* Navigation Items */}
+            <div className="hidden md:flex items-center gap-1">
+              {navigation.map((item) => {
+                const isActive = pathname === item.href;
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                      isActive
+                        ? "bg-gradient-to-r from-amber-500/20 to-yellow-500/20 text-amber-400"
+                        : "text-white/60 hover:text-white hover:bg-white/5"
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    {item.name}
+                  </Link>
+                );
+              })}
             </div>
-            <span className="text-white font-bold text-lg">Powalyze</span>
-          </div>
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="lg:hidden text-slate-400 hover:text-white"
-          >
-            <X size={20} />
-          </button>
-        </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-          {navigation.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                onClick={() => setSidebarOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
-                  isActive
-                    ? "bg-amber-400/10 text-amber-400 font-semibold shadow-lg shadow-amber-500/10"
-                    : "text-slate-400 hover:text-white hover:bg-slate-800/50"
-                }`}
-              >
-                {item.icon}
-                <span className="text-sm">{item.name}</span>
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* User Profile */}
-        <div className="p-4 border-t border-slate-800/50">
-          <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-slate-800/30 hover:bg-slate-800/50 transition-colors cursor-pointer">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-              <User size={16} className="text-white" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-white truncate">Admin</p>
-              <p className="text-xs text-slate-400 truncate">admin@powalyze.com</p>
-            </div>
-          </div>
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <div className="lg:pl-64">
-        {/* Header */}
-        <header className="sticky top-0 z-30 h-16 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/50">
-          <div className="h-full px-4 lg:px-6 flex items-center justify-between">
-            {/* Left */}
-            <div className="flex items-center gap-4">
+            {/* Right Actions */}
+            <div className="flex items-center gap-2">
               <button
-                onClick={() => setSidebarOpen(true)}
-                className="lg:hidden text-slate-400 hover:text-white"
+                onClick={() => setSearchOpen(true)}
+                className="p-2 text-white/60 hover:text-white hover:bg-white/5 rounded-xl transition-all"
+                aria-label="Search"
+                title="Search"
               >
-                <Menu size={24} />
+                <Search className="w-5 h-5" />
               </button>
+              
+              <button
+                className="p-2 text-white/60 hover:text-white hover:bg-white/5 rounded-xl transition-all relative"
+                aria-label="Notifications"
+                title="Notifications"
+              >
+                <Bell className="w-5 h-5" />
+                <span className="absolute top-1 right-1 w-2 h-2 bg-white rounded-full"></span>
+              </button>
+              
+              <div className="relative">
+                <button
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  className="flex items-center gap-2 p-2 text-white/60 hover:text-white hover:bg-white/5 rounded-xl transition-all"
+                  aria-label="User menu"
+                  title="User menu"
+                >
+                  <User className="w-5 h-5" />
+                </button>
 
-              {/* Search */}
-              <div className="hidden md:flex items-center gap-2 bg-slate-800/50 rounded-lg px-3 py-2 min-w-[300px]">
-                <Search size={16} className="text-slate-400" />
-                <input
-                  type="text"
-                  placeholder="Rechercher..."
-                  className="bg-transparent border-none outline-none text-sm text-white placeholder-slate-400 w-full"
-                />
+                {userMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-56 bg-black border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
+                    <div className="p-4 border-b border-white/10">
+                      <div className="font-semibold text-white">John Doe</div>
+                      <div className="text-sm text-white/60">john@example.com</div>
+                    </div>
+                    <div className="p-2">
+                      <Link
+                        href="/parametres"
+                        className="flex items-center gap-3 p-3 text-white/80 hover:text-white hover:bg-white/5 rounded-xl transition-all"
+                      >
+                        <Settings className="w-4 h-4" />
+                        Paramètres
+                      </Link>
+                      <button
+                        className="w-full flex items-center gap-3 p-3 text-white/60 hover:text-white hover:bg-white/5 rounded-xl transition-all"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Déconnexion
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
+          </div>
+        </div>
+      </nav>
 
-            {/* Right */}
-            <div className="flex items-center gap-3">
-              <button className="relative p-2 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition-colors">
-                <Bell size={20} />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-amber-400 rounded-full"></span>
-              </button>
-              <button className="px-4 py-2 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 rounded-lg transition-all font-semibold text-sm shadow-lg shadow-amber-500/20">
-                Nouveau projet
-              </button>
+      {/* Search Modal */}
+      {searchOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-start justify-center pt-32"
+          onClick={() => setSearchOpen(false)}
+        >
+          <div
+            className="w-full max-w-2xl bg-black border border-white/10 rounded-2xl shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3 p-4 border-b border-white/10">
+              <Search className="w-5 h-5 text-white/60" />
+              <input
+                type="text"
+                placeholder="Rechercher projets, équipes, documents..."
+                className="flex-1 bg-transparent text-white placeholder-white/40 outline-none"
+                autoFocus
+              />
+            </div>
+            <div className="p-4 text-sm text-white/60">
+              Appuyez sur <kbd className="px-2 py-1 bg-slate-800 rounded text-slate-300">ESC</kbd> pour fermer
             </div>
           </div>
-        </header>
+        </div>
+      )}
 
-        {/* Page Content */}
-        <main className="p-4 lg:p-6">
-          {children}
-        </main>
+      {/* Main Content */}
+      <div className="pt-16">
+        {children}
       </div>
     </div>
   );

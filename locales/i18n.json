@@ -1,0 +1,408 @@
+{
+  "fr": {
+    "common": {
+      "appName": "Powalyze",
+      "tagline": "Cockpit Exécutif & Gouvernance IA",
+      "actions": {
+        "create": "Créer",
+        "edit": "Modifier",
+        "delete": "Supprimer",
+        "save": "Enregistrer",
+        "cancel": "Annuler",
+        "filter": "Filtrer",
+        "export": "Exporter",
+        "view": "Vue",
+        "close": "Fermer"
+      }
+    },
+    "cockpit": {
+      "mode": {
+        "demo": "Mode Démo - Données d'exemple",
+        "pro": "Mode Production"
+      },
+      "emptyState": {
+        "noProjects": {
+          "title": "Aucun projet",
+          "subtitle": "Créez votre premier projet avec l'IA prédictive"
+        },
+        "noRisks": {
+          "title": "Aucun risque",
+          "subtitle": "Identifiez les risques de votre portefeuille"
+        },
+        "noDecisions": {
+          "title": "Aucune décision",
+          "subtitle": "Tracez vos décisions stratégiques"
+        }
+      },
+      "modules": {
+        "projects": {
+          "title": "Projets",
+          "subtitle": "Ce module vous aide à piloter votre portefeuille de projets en temps réel",
+          "newProject": "Nouveau Projet",
+          "aiSummary": "Synthèse IA"
+        },
+        "risks": {
+          "title": "Risques",
+          "subtitle": "Ce module vous aide à anticiper et maîtriser les risques de votre portefeuille",
+          "newRisk": "Nouveau Risque",
+          "aiSummary": "Synthèse IA"
+        },
+        "decisions": {
+          "title": "Décisions",
+          "subtitle": "Ce module vous aide à tracer et arbitrer vos décisions stratégiques",
+          "newDecision": "Nouvelle Décision",
+          "aiSummary": "Synthèse IA"
+        },
+        "committees": {
+          "title": "Comités",
+          "subtitle": "Ce module vous aide à préparer et suivre vos comités de pilotage",
+          "newCommittee": "Nouveau Comité",
+          "aiSummary": "Synthèse IA"
+        },
+        "journal": {
+          "title": "Journal Exécutif",
+          "subtitle": "Ce module vous aide à suivre l'activité de votre portefeuille",
+          "aiSummary": "Synthèse IA"
+        }
+      },
+      "kpi": {
+        "totalProjects": "Projets Total",
+        "activeProjects": "Projets Actifs",
+        "criticalRisks": "Risques Critiques",
+        "pendingDecisions": "Décisions en Attente"
+      },
+      "detailSheet": {
+        "keyInfo": "Informations Clés",
+        "context": "Contexte",
+        "objectives": "Objectifs",
+        "links": "Liens",
+        "history": "Historique",
+        "aiNarrative": {
+          "summary": "Résumé Exécutif",
+          "analysis": "Analyse",
+          "recommendations": "Recommandations",
+          "scenarios": "Scénarios",
+          "alerts": "Alertes"
+        }
+      }
+    },
+    "vitrine": {
+      "hero": {
+        "title": "Powalyze — Cockpit Exécutif & Gouvernance IA",
+        "subtitle": "La plateforme narrative pour piloter votre portefeuille",
+        "cta": "Entrer dans le cockpit"
+      },
+      "featuredModules": {
+        "title": "Modules Phares",
+        "risks": "Anticipez les risques avant qu'ils ne se matérialisent",
+        "decisions": "Tracez vos décisions stratégiques en temps réel",
+        "projects": "Pilotez votre portefeuille avec une vue 360°"
+      },
+      "cockpitInAction": {
+        "title": "Cockpit en Action",
+        "subtitle": "Découvrez comment Powalyze transforme votre gouvernance"
+      },
+      "whyDifferent": {
+        "title": "Pourquoi Powalyze est Différent",
+        "narrative": "Narratif : L'IA raconte votre portefeuille",
+        "proactive": "Proactif : Anticipez plutôt que réagir",
+        "executive": "Exécutif : Conçu pour les décideurs"
+      },
+      "finalCta": {
+        "title": "Prêt à transformer votre gouvernance ?",
+        "button": "Accéder au cockpit"
+      }
+    }
+  },
+  "en": {
+    "common": {
+      "appName": "Powalyze",
+      "tagline": "Executive Cockpit & AI Governance",
+      "actions": {
+        "create": "Create",
+        "edit": "Edit",
+        "delete": "Delete",
+        "save": "Save",
+        "cancel": "Cancel",
+        "filter": "Filter",
+        "export": "Export",
+        "view": "View",
+        "close": "Close"
+      }
+    },
+    "cockpit": {
+      "modules": {
+        "projects": {
+          "title": "Projects",
+          "subtitle": "This module helps you manage your project portfolio in real-time",
+          "newProject": "New Project",
+          "aiSummary": "AI Summary"
+        },
+        "risks": {
+          "title": "Risks",
+          "subtitle": "This module helps you anticipate and control portfolio risks",
+          "newRisk": "New Risk",
+          "aiSummary": "AI Summary"
+        },
+        "decisions": {
+          "title": "Decisions",
+          "subtitle": "This module helps you track and arbitrate strategic decisions",
+          "newDecision": "New Decision",
+          "aiSummary": "AI Summary"
+        },
+        "committees": {
+          "title": "Committees",
+          "subtitle": "This module helps you prepare and track steering committees",
+          "newCommittee": "New Committee",
+          "aiSummary": "AI Summary"
+        },
+        "journal": {
+          "title": "Executive Journal",
+          "subtitle": "This module helps you track portfolio activity",
+          "aiSummary": "AI Summary"
+        }
+      },
+      "kpi": {
+        "totalProjects": "Total Projects",
+        "activeProjects": "Active Projects",
+        "criticalRisks": "Critical Risks",
+        "pendingDecisions": "Pending Decisions"
+      },
+      "detailSheet": {
+        "keyInfo": "Key Information",
+        "context": "Context",
+        "objectives": "Objectives",
+        "links": "Links",
+        "history": "History",
+        "aiNarrative": {
+          "summary": "Executive Summary",
+          "analysis": "Analysis",
+          "recommendations": "Recommendations",
+          "scenarios": "Scenarios",
+          "alerts": "Alerts"
+        }
+      }
+    },
+    "vitrine": {
+      "hero": {
+        "title": "Powalyze — Executive Cockpit & AI Governance",
+        "subtitle": "The narrative platform to manage your portfolio",
+        "cta": "Enter the cockpit"
+      },
+      "featuredModules": {
+        "title": "Featured Modules",
+        "risks": "Anticipate risks before they materialize",
+        "decisions": "Track your strategic decisions in real-time",
+        "projects": "Manage your portfolio with a 360° view"
+      },
+      "cockpitInAction": {
+        "title": "Cockpit in Action",
+        "subtitle": "Discover how Powalyze transforms your governance"
+      },
+      "whyDifferent": {
+        "title": "Why Powalyze is Different",
+        "narrative": "Narrative: AI tells your portfolio story",
+        "proactive": "Proactive: Anticipate rather than react",
+        "executive": "Executive: Built for decision-makers"
+      },
+      "finalCta": {
+        "title": "Ready to transform your governance?",
+        "button": "Access the cockpit"
+      }
+    }
+  },
+  "de": {
+    "common": {
+      "appName": "Powalyze",
+      "tagline": "Executive Cockpit & KI-Governance",
+      "actions": {
+        "create": "Erstellen",
+        "edit": "Bearbeiten",
+        "delete": "Löschen",
+        "save": "Speichern",
+        "cancel": "Abbrechen",
+        "filter": "Filtern",
+        "export": "Exportieren",
+        "view": "Ansicht",
+        "close": "Schließen"
+      }
+    },
+    "cockpit": {
+      "modules": {
+        "projects": {
+          "title": "Projekte",
+          "subtitle": "Dieses Modul hilft Ihnen, Ihr Projektportfolio in Echtzeit zu verwalten",
+          "newProject": "Neues Projekt",
+          "aiSummary": "KI-Zusammenfassung"
+        },
+        "risks": {
+          "title": "Risiken",
+          "subtitle": "Dieses Modul hilft Ihnen, Portfolio-Risiken vorherzusehen und zu kontrollieren",
+          "newRisk": "Neues Risiko",
+          "aiSummary": "KI-Zusammenfassung"
+        },
+        "decisions": {
+          "title": "Entscheidungen",
+          "subtitle": "Dieses Modul hilft Ihnen, strategische Entscheidungen zu verfolgen",
+          "newDecision": "Neue Entscheidung",
+          "aiSummary": "KI-Zusammenfassung"
+        },
+        "committees": {
+          "title": "Ausschüsse",
+          "subtitle": "Dieses Modul hilft Ihnen, Lenkungsausschüsse vorzubereiten",
+          "newCommittee": "Neuer Ausschuss",
+          "aiSummary": "KI-Zusammenfassung"
+        },
+        "journal": {
+          "title": "Executive Journal",
+          "subtitle": "Dieses Modul hilft Ihnen, Portfolio-Aktivitäten zu verfolgen",
+          "aiSummary": "KI-Zusammenfassung"
+        }
+      },
+      "kpi": {
+        "totalProjects": "Projekte Gesamt",
+        "activeProjects": "Aktive Projekte",
+        "criticalRisks": "Kritische Risiken",
+        "pendingDecisions": "Offene Entscheidungen"
+      },
+      "detailSheet": {
+        "keyInfo": "Wichtige Informationen",
+        "context": "Kontext",
+        "objectives": "Ziele",
+        "links": "Links",
+        "history": "Verlauf",
+        "aiNarrative": {
+          "summary": "Executive Summary",
+          "analysis": "Analyse",
+          "recommendations": "Empfehlungen",
+          "scenarios": "Szenarien",
+          "alerts": "Warnungen"
+        }
+      }
+    },
+    "vitrine": {
+      "hero": {
+        "title": "Powalyze — Executive Cockpit & KI-Governance",
+        "subtitle": "Die narrative Plattform für Ihr Portfolio",
+        "cta": "Zum Cockpit"
+      },
+      "featuredModules": {
+        "title": "Hauptmodule",
+        "risks": "Risiken antizipieren, bevor sie entstehen",
+        "decisions": "Strategische Entscheidungen in Echtzeit verfolgen",
+        "projects": "Portfolio mit 360°-Ansicht verwalten"
+      },
+      "cockpitInAction": {
+        "title": "Cockpit in Aktion",
+        "subtitle": "Entdecken Sie, wie Powalyze Ihre Governance transformiert"
+      },
+      "whyDifferent": {
+        "title": "Warum Powalyze anders ist",
+        "narrative": "Narrativ: KI erzählt Ihre Portfolio-Geschichte",
+        "proactive": "Proaktiv: Antizipieren statt reagieren",
+        "executive": "Executive: Für Entscheidungsträger gebaut"
+      },
+      "finalCta": {
+        "title": "Bereit, Ihre Governance zu transformieren?",
+        "button": "Zum Cockpit"
+      }
+    }
+  },
+  "no": {
+    "common": {
+      "appName": "Powalyze",
+      "tagline": "Executive Cockpit & AI-styring",
+      "actions": {
+        "create": "Opprett",
+        "edit": "Rediger",
+        "delete": "Slett",
+        "save": "Lagre",
+        "cancel": "Avbryt",
+        "filter": "Filtrer",
+        "export": "Eksporter",
+        "view": "Visning",
+        "close": "Lukk"
+      }
+    },
+    "cockpit": {
+      "modules": {
+        "projects": {
+          "title": "Prosjekter",
+          "subtitle": "Denne modulen hjelper deg med å administrere prosjektporteføljen i sanntid",
+          "newProject": "Nytt prosjekt",
+          "aiSummary": "AI-sammendrag"
+        },
+        "risks": {
+          "title": "Risikoer",
+          "subtitle": "Denne modulen hjelper deg med å forutse og kontrollere porteføljerisiko",
+          "newRisk": "Ny risiko",
+          "aiSummary": "AI-sammendrag"
+        },
+        "decisions": {
+          "title": "Beslutninger",
+          "subtitle": "Denne modulen hjelper deg med å spore strategiske beslutninger",
+          "newDecision": "Ny beslutning",
+          "aiSummary": "AI-sammendrag"
+        },
+        "committees": {
+          "title": "Komiteer",
+          "subtitle": "Denne modulen hjelper deg med å forberede styringskomiteer",
+          "newCommittee": "Ny komité",
+          "aiSummary": "AI-sammendrag"
+        },
+        "journal": {
+          "title": "Executive Journal",
+          "subtitle": "Denne modulen hjelper deg med å spore porteføljeaktivitet",
+          "aiSummary": "AI-sammendrag"
+        }
+      },
+      "kpi": {
+        "totalProjects": "Totalt prosjekter",
+        "activeProjects": "Aktive prosjekter",
+        "criticalRisks": "Kritiske risikoer",
+        "pendingDecisions": "Ventende beslutninger"
+      },
+      "detailSheet": {
+        "keyInfo": "Nøkkelinformasjon",
+        "context": "Kontekst",
+        "objectives": "Mål",
+        "links": "Lenker",
+        "history": "Historikk",
+        "aiNarrative": {
+          "summary": "Executive Summary",
+          "analysis": "Analyse",
+          "recommendations": "Anbefalinger",
+          "scenarios": "Scenarier",
+          "alerts": "Varsler"
+        }
+      }
+    },
+    "vitrine": {
+      "hero": {
+        "title": "Powalyze — Executive Cockpit & AI-styring",
+        "subtitle": "Den narrative plattformen for din portefølje",
+        "cta": "Gå til cockpit"
+      },
+      "featuredModules": {
+        "title": "Hovedmoduler",
+        "risks": "Forutse risikoer før de oppstår",
+        "decisions": "Spor strategiske beslutninger i sanntid",
+        "projects": "Administrer porteføljen med 360°-oversikt"
+      },
+      "cockpitInAction": {
+        "title": "Cockpit i aksjon",
+        "subtitle": "Oppdag hvordan Powalyze transformerer din styring"
+      },
+      "whyDifferent": {
+        "title": "Hvorfor Powalyze er annerledes",
+        "narrative": "Narrativ: AI forteller porteføljehistorien din",
+        "proactive": "Proaktiv: Forutse i stedet for å reagere",
+        "executive": "Executive: Bygget for beslutningstakere"
+      },
+      "finalCta": {
+        "title": "Klar til å transformere din styring?",
+        "button": "Tilgang til cockpit"
+      }
+    }
+  }
+}

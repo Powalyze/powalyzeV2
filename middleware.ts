@@ -9,7 +9,30 @@ export async function middleware(request: NextRequest) {
   const authHeader = request.headers.get('authorization');
   
   if (request.nextUrl.pathname.startsWith('/api/')) {
-    if (request.nextUrl.pathname === '/api/auth/login' || request.nextUrl.pathname === '/api/auth/register') {
+    // Routes publiques (pas d'authentification requise)
+    const publicRoutes = [
+      '/api/auth/login',
+      '/api/auth/register',
+      '/api/auth/validate-client',
+      '/api/test-supabase',
+      '/api/cockpit',
+      '/api/projects',
+      '/api/risks',
+      '/api/decisions',
+      '/api/team/invite',
+      '/api/team/member',
+      '/api/team/add',
+      '/api/team/remove',
+      '/api/team/list',
+      '/api/integrations',
+      '/api/export/pdf',
+      '/api/export/ppt',
+      '/api/export/csv',
+      '/api/export/json',
+      '/api/admin/reset-pro',
+    ];
+    
+    if (publicRoutes.includes(request.nextUrl.pathname)) {
       return NextResponse.next();
     }
 

@@ -1,0 +1,212 @@
+{
+  "chief": {
+    "title": {
+      "fr": "Chief of Staff IA",
+      "en": "Chief of Staff AI",
+      "de": "Chief of Staff KI",
+      "it": "Chief of Staff IA",
+      "es": "Chief of Staff IA",
+      "no": "Chief of Staff AI"
+    },
+    "subtitle": {
+      "fr": "Analyse continue • Prédiction active",
+      "en": "Continuous analysis • Active prediction",
+      "de": "Kontinuierliche Analyse • Aktive Vorhersage",
+      "it": "Analisi continua • Previsione attiva",
+      "es": "Análisis continuo • Predicción activa",
+      "no": "Kontinuerlig analyse • Aktiv prediksjon"
+    },
+    "analyzing": {
+      "fr": "Analyse en cours...",
+      "en": "Analysis in progress...",
+      "de": "Analyse läuft...",
+      "it": "Analisi in corso...",
+      "es": "Análisis en curso...",
+      "no": "Analyse pågår..."
+    },
+    "metrics": {
+      "projects_analyzed": {
+        "fr": "Projets analysés",
+        "en": "Projects analyzed",
+        "de": "Analysierte Projekte",
+        "it": "Progetti analizzati",
+        "es": "Proyectos analizados",
+        "no": "Analyserte prosjekter"
+      },
+      "risks_detected": {
+        "fr": "Risques détectés",
+        "en": "Risks detected",
+        "de": "Erkannte Risiken",
+        "it": "Rischi rilevati",
+        "es": "Riesgos detectados",
+        "no": "Oppdagede risikoer"
+      },
+      "opportunities_identified": {
+        "fr": "Opportunités identifiées",
+        "en": "Opportunities identified",
+        "de": "Identifizierte Chancen",
+        "it": "Opportunità identificate",
+        "es": "Oportunidades identificadas",
+        "no": "Identifiserte muligheter"
+      }
+    },
+    "portfolio_status": {
+      "fr": "✨ Portfolio sain",
+      "en": "✨ Healthy portfolio",
+      "de": "✨ Gesundes Portfolio",
+      "it": "✨ Portfolio sano",
+      "es": "✨ Cartera saludable",
+      "no": "✨ Sunn portefølje"
+    },
+    "actions_title": {
+      "fr": "Actions recommandées",
+      "en": "Recommended actions",
+      "de": "Empfohlene Maßnahmen",
+      "it": "Azioni raccomandate",
+      "es": "Acciones recomendadas",
+      "no": "Anbefalte tiltak"
+    },
+    "no_actions": {
+      "fr": "Aucune action recommandée pour le moment",
+      "en": "No recommended actions at this time",
+      "de": "Derzeit keine empfohlenen Maßnahmen",
+      "it": "Nessuna azione raccomandata al momento",
+      "es": "No hay acciones recomendadas en este momento",
+      "no": "Ingen anbefalte tiltak for øyeblikket"
+    },
+    "add_project_hint": {
+      "fr": "Ajoutez un projet pour activer l'IA",
+      "en": "Add a project to activate AI",
+      "de": "Fügen Sie ein Projekt hinzu, um die KI zu aktivieren",
+      "it": "Aggiungi un progetto per attivare l'IA",
+      "es": "Añade un proyecto para activar la IA",
+      "no": "Legg til et prosjekt for å aktivere AI"
+    },
+    "question_placeholder": {
+      "fr": "Ex. : Comment sécuriser notre roadmap Q3 sans dépasser le budget ?",
+      "en": "E.g.: How to secure our Q3 roadmap without exceeding the budget?",
+      "de": "Z.B.: Wie können wir unsere Q3-Roadmap sichern, ohne das Budget zu überschreiten?",
+      "it": "Es.: Come proteggere la nostra roadmap Q3 senza superare il budget?",
+      "es": "Ej.: ¿Cómo asegurar nuestra hoja de ruta del Q3 sin exceder el presupuesto?",
+      "no": "F.eks.: Hvordan sikre vår Q3-veikart uten å overskride budsjettet?"
+    },
+    "send_button": {
+      "fr": "Envoyer",
+      "en": "Send",
+      "de": "Senden",
+      "it": "Invia",
+      "es": "Enviar",
+      "no": "Send"
+    },
+    "demo_actions": {
+      "optimize_q2": {
+        "title": {
+          "fr": "Optimiser portefeuille Q2",
+          "en": "Optimize Q2 portfolio",
+          "de": "Q2-Portfolio optimieren",
+          "it": "Ottimizzare il portafoglio Q2",
+          "es": "Optimizar cartera del Q2",
+          "no": "Optimalisere Q2-porteføljen"
+        },
+        "impact": {
+          "fr": "+12% vélocité",
+          "en": "+12% velocity",
+          "de": "+12% Geschwindigkeit",
+          "it": "+12% velocità",
+          "es": "+12% velocidad",
+          "no": "+12% hastighet"
+        }
+      },
+      "identify_risks": {
+        "title": {
+          "fr": "Identifier 3 projets à risque",
+          "en": "Identify 3 at-risk projects",
+          "de": "Drei risikoreiche Projekte identifizieren",
+          "it": "Identificare 3 progetti a rischio",
+          "es": "Identificar 3 proyectos en riesgo",
+          "no": "Identifisere 3 risikoprosjekter"
+        },
+        "impact": {
+          "fr": "Prévention -450K€",
+          "en": "Prevention -450K€",
+          "de": "Prävention -450K€",
+          "it": "Prevenzione -450K€",
+          "es": "Prevención -450K€",
+          "no": "Forebygging -450K€"
+        }
+      },
+      "prepare_committee": {
+        "title": {
+          "fr": "Préparer comité de pilotage",
+          "en": "Prepare steering committee",
+          "de": "Lenkungsausschuss vorbereiten",
+          "it": "Preparare comitato direttivo",
+          "es": "Preparar comité directivo",
+          "no": "Forberede styringskomité"
+        },
+        "impact": {
+          "fr": "Dashboard + synthèse",
+          "en": "Dashboard + summary",
+          "de": "Dashboard + Zusammenfassung",
+          "it": "Dashboard + sintesi",
+          "es": "Panel + resumen",
+          "no": "Dashbord + sammendrag"
+        }
+      },
+      "simulate_resources": {
+        "title": {
+          "fr": "Simuler +2 dev sur ERP",
+          "en": "Simulate +2 dev on ERP",
+          "de": "+2 Entwickler auf ERP simulieren",
+          "it": "Simulare +2 dev su ERP",
+          "es": "Simular +2 dev en ERP",
+          "no": "Simulere +2 utviklere på ERP"
+        },
+        "impact": {
+          "fr": "Livraison 3 sem. avant",
+          "en": "Delivery 3 weeks early",
+          "de": "Lieferung 3 Wochen früher",
+          "it": "Consegna 3 sett. prima",
+          "es": "Entrega 3 sem. antes",
+          "no": "Levering 3 uker før"
+        }
+      },
+      "reduce_costs": {
+        "title": {
+          "fr": "Réduire coûts de 15%",
+          "en": "Reduce costs by 15%",
+          "de": "Kosten um 15% senken",
+          "it": "Ridurre i costi del 15%",
+          "es": "Reducir costos en 15%",
+          "no": "Redusere kostnader med 15%"
+        },
+        "impact": {
+          "fr": "1.2M€ économisés",
+          "en": "1.2M€ saved",
+          "de": "1,2 Mio. € gespart",
+          "it": "1,2M€ risparmiati",
+          "es": "1,2M€ ahorrados",
+          "no": "1,2M€ spart"
+        }
+      },
+      "accelerate_cloud": {
+        "title": {
+          "fr": "Accélérer Cloud de 3 sem.",
+          "en": "Accelerate Cloud by 3 weeks",
+          "de": "Cloud um 3 Wochen beschleunigen",
+          "it": "Accelerare Cloud di 3 sett.",
+          "es": "Acelerar Cloud 3 sem.",
+          "no": "Akselerere Cloud med 3 uker"
+        },
+        "impact": {
+          "fr": "Fast-track activé",
+          "en": "Fast-track enabled",
+          "de": "Fast-Track aktiviert",
+          "it": "Fast-track attivato",
+          "es": "Vía rápida activada",
+          "no": "Hurtigspor aktivert"
+        }
+      }
+    }
+  }
+}

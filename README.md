@@ -1,33 +1,47 @@
-# Powalyze - Ultimate AI-Powered Strategic Command Center
+# 🚀 Powalyze — Cockpit Exécutif & Gouvernance IA
 
-## Description
+[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/powalyze/powalyze)
+[![Build](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/powalyze/powalyze)
+[![Demo](https://img.shields.io/badge/demo-ready-brightgreen.svg)](http://localhost:3000/cockpit-real)
 
-**Powalyze** est la plateforme SaaS la plus avancée au monde (2026) pour le pilotage stratégique des projets, combinant **Intelligence Artificielle prédictive**, **Digital Twin en temps réel**, **Quantum Risk Analysis**, **Auto-Healing autonome**, **Blockchain Audit**, **NLP Sentiment Analysis**, et **Commandes vocales**. Architecture multi-tenant ultra-sécurisée avec intégration Power BI native.
+**Powalyze** est un cockpit exécutif moderne pour le pilotage de portefeuille de projets, avec IA narrative intégrée.
+
+## ✨ Fonctionnalités
+
+- 🎯 **Mode DEMO**: Fonctionne immédiatement sans configuration (données de démonstration incluses)
+- 🚀 **Mode PROD**: Connexion à Supabase pour données réelles + OpenAI pour IA narrative
+- 📊 **Vue 360°**: Dashboard complet du portfolio (projets, risques, décisions, actions)
+- 🤖 **IA Narrative**: Génération automatique de synthèses exécutives et briefs de comité
+- 📝 **Préparation de Comité**: Génération de documents de comité prêts à l'emploi
+- 🧪 **Tests IA**: Interface de test pour valider les fonctions IA
+
+## 🎯 Démarrage Rapide (Mode DEMO)
+
+```bash
+# 1. Installer les dépendances
+npm install
+
+# 2. Démarrer en mode développement
+npm run dev
+
+# 3. Ouvrir le navigateur
+# http://localhost:3000/cockpit-real  → Dashboard principal
+# http://localhost:3000/committee-prep → Préparation de comité
+# http://localhost:3000/ai-test → Tests IA narrative
+```
+
+**C'est tout !** Le mode DEMO fonctionne sans aucune configuration additionnelle.
+
+Vous verrez un badge bleu "Mode Démo" en haut à droite confirmant que vous utilisez les données de démonstration.
 
 ## Stack Technique
 
-- **Frontend**: React 18, Next.js 14 (App Router), TypeScript, TailwindCSS
-- **Backend**: Next.js API Routes, Node.js, TypeScript
-- **Database**: PostgreSQL (multi-tenant avec RLS)
-- **Auth**: JWT + RBAC (COMEX, PMO, ANALYSTE)
-- **BI**: Power BI Embedded
-- **AI**: Endpoints prédictifs (retards, risques, budgets)
-
-## Installation
-
-```bash
-# Installer les dépendances
-npm install
-
-# Configurer la base de données
-# 1. Créer la database PostgreSQL
-createdb powalyze
-
-# 2. Exécuter le schéma
-psql -d powalyze -f database/schema.sql
-
-# 3. (Optionnel) Charger les données de démo
-psql -d powalyze -f database/seed.sql
+- **Framework**: Next.js 14.2 (App Router)
+- **UI**: Tailwind CSS + composants custom
+- **Database**: PostgreSQL via Supabase (mode PROD)
+- **IA**: OpenAI GPT-4 ou Azure OpenAI
+- **TypeScript**: Strict mode, types exhaustifs
+- **Déploiement**: Vercel-ready
 
 # Configurer les variables d'environnement
 cp .env.local.example .env.local

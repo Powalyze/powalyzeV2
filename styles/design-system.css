@@ -1,0 +1,591 @@
+/**
+ * POWALYZE DESIGN SYSTEM
+ * Identité visuelle unifiée Vitrine ↔ Cockpit Pro
+ * Version: 2.0
+ */
+
+/* ============================================================
+   TYPOGRAPHIES - Inter Tight / Inter
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;700&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  /* Titres */
+  --font-heading: 'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  
+  /* ============================================================
+     PALETTE PREMIUM - Or / Bleu nuit / Neutres
+     ============================================================ */
+  
+  /* Or premium */
+  --color-gold: #D4AF37;
+  --color-gold-light: #E8C96A;
+  --color-gold-dark: #B89730;
+  
+  /* Bleu nuit */
+  --color-navy: #0A1A2F;
+  --color-navy-light: #1A2A3F;
+  --color-navy-dark: #050D17;
+  
+  /* Neutres */
+  --color-neutral-100: #F5F5F5;
+  --color-neutral-200: #E8E8E8;
+  --color-neutral-800: #2A2A2A;
+  --color-neutral-900: #1A1A1A;
+  --color-white: #FFFFFF;
+  
+  /* Sémantiques */
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  --color-info: #3B82F6;
+  
+  /* ============================================================
+     ESPACEMENTS - Respiration suisse
+     ============================================================ */
+  
+  --spacing-xs: 0.5rem;   /* 8px */
+  --spacing-sm: 1rem;     /* 16px */
+  --spacing-md: 1.5rem;   /* 24px */
+  --spacing-lg: 2rem;     /* 32px */
+  --spacing-xl: 3rem;     /* 48px */
+  --spacing-2xl: 4rem;    /* 64px */
+  --spacing-3xl: 6rem;    /* 96px */
+  
+  /* ============================================================
+     ANIMATIONS - Douces (180-450ms)
+     ============================================================ */
+  
+  --transition-fast: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 450ms cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* ============================================================
+     OMBRES - Légères et élégantes
+     ============================================================ */
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* ============================================================
+     BORDURES
+     ============================================================ */
+  
+  --radius-sm: 0.375rem;  /* 6px */
+  --radius-base: 0.5rem;  /* 8px */
+  --radius-md: 0.75rem;   /* 12px */
+  --radius-lg: 1rem;      /* 16px */
+  --radius-xl: 1.5rem;    /* 24px */
+  --radius-full: 9999px;
+  
+  --border-width: 1px;
+  --border-color: var(--color-neutral-200);
+}
+
+/* ============================================================
+   CLASSES UTILITAIRES - Design System
+   ============================================================ */
+
+/* Titres OR */
+.ds-title-gold {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--color-gold);
+  letter-spacing: -0.02em;
+}
+
+.ds-title-xl {
+  font-size: 2.5rem;
+  line-height: 1.2;
+}
+
+.ds-title-lg {
+  font-size: 2rem;
+  line-height: 1.25;
+}
+
+.ds-title-md {
+  font-size: 1.5rem;
+  line-height: 1.3;
+}
+
+/* Sous-titres BLEU NUIT */
+.ds-subtitle-navy {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--color-navy);
+  letter-spacing: -0.01em;
+}
+
+.ds-subtitle-lg {
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+
+.ds-subtitle-md {
+  font-size: 1.125rem;
+  line-height: 1.5;
+}
+
+/* Corps de texte */
+.ds-body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  color: var(--color-neutral-800);
+}
+
+.ds-body-lg {
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+.ds-body-base {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.ds-body-sm {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* ============================================================
+   CARTES - Blanches, ombres légères
+   ============================================================ */
+
+.ds-card {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-base);
+  padding: var(--spacing-lg);
+  transition: box-shadow var(--transition-base);
+}
+
+.ds-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.ds-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-md);
+  border-bottom: var(--border-width) solid var(--color-neutral-200);
+}
+
+.ds-card-title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: var(--color-gold);
+  margin: 0;
+}
+
+.ds-card-subtitle {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--color-navy);
+  margin-top: 0.25rem;
+}
+
+.ds-card-body {
+  padding: var(--spacing-md) 0;
+}
+
+.ds-card-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  justify-content: flex-end;
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: var(--border-width) solid var(--color-neutral-200);
+}
+
+/* ============================================================
+   BOUTONS - Premium
+   ============================================================ */
+
+.ds-btn {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.875rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-base);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.ds-btn-primary {
+  background: var(--color-gold);
+  color: var(--color-navy);
+}
+
+.ds-btn-primary:hover {
+  background: var(--color-gold-light);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.ds-btn-secondary {
+  background: var(--color-navy);
+  color: var(--color-white);
+}
+
+.ds-btn-secondary:hover {
+  background: var(--color-navy-light);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.ds-btn-ghost {
+  background: transparent;
+  color: var(--color-navy);
+  border: var(--border-width) solid var(--color-neutral-200);
+}
+
+.ds-btn-ghost:hover {
+  background: var(--color-neutral-100);
+  border-color: var(--color-gold);
+}
+
+.ds-btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+}
+
+.ds-btn-lg {
+  padding: 1rem 2rem;
+  font-size: 1rem;
+}
+
+/* ============================================================
+   NAVIGATION TOP - Fixe, minimaliste
+   ============================================================ */
+
+.ds-nav-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4rem;
+  background: var(--color-white);
+  border-bottom: var(--border-width) solid var(--color-neutral-200);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--spacing-xl);
+  z-index: 1000;
+  box-shadow: var(--shadow-sm);
+}
+
+.ds-nav-logo {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--color-gold);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ds-nav-menu {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.ds-nav-link {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--color-navy);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.ds-nav-link:hover {
+  color: var(--color-gold);
+}
+
+.ds-nav-link-active {
+  color: var(--color-gold);
+  position: relative;
+}
+
+.ds-nav-link-active::after {
+  content: '';
+  position: absolute;
+  bottom: -0.5rem;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-gold);
+}
+
+/* ============================================================
+   NARRATION - Phrase d'ouverture
+   ============================================================ */
+
+.ds-narration {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-neutral-800);
+  background: var(--color-neutral-100);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-base);
+  border-left: 3px solid var(--color-gold);
+  margin-bottom: var(--spacing-lg);
+}
+
+.ds-narration-highlight {
+  color: var(--color-gold);
+  font-weight: 500;
+}
+
+/* ============================================================
+   ICÔNES - Minimalistes monochromes
+   ============================================================ */
+
+.ds-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: currentColor;
+}
+
+.ds-icon-lg {
+  width: 2rem;
+  height: 2rem;
+}
+
+.ds-icon-gold {
+  color: var(--color-gold);
+}
+
+.ds-icon-navy {
+  color: var(--color-navy);
+}
+
+/* ============================================================
+   CONTENEUR - Max 3 couleurs visibles
+   ============================================================ */
+
+.ds-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-xl);
+}
+
+.ds-section {
+  padding: var(--spacing-3xl) 0;
+}
+
+.ds-section-compact {
+  padding: var(--spacing-2xl) 0;
+}
+
+/* ============================================================
+   GRILLE - Espacements généreux
+   ============================================================ */
+
+.ds-grid {
+  display: grid;
+  gap: var(--spacing-lg);
+}
+
+.ds-grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.ds-grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.ds-grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+@media (max-width: 1024px) {
+  .ds-grid-3,
+  .ds-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .ds-grid-2,
+  .ds-grid-3,
+  .ds-grid-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   ANIMATIONS - Micro-animations douces
+   ============================================================ */
+
+@keyframes ds-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ds-animate-fade-in {
+  animation: ds-fade-in var(--transition-base) ease-out;
+}
+
+@keyframes ds-slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.ds-animate-slide-in-right {
+  animation: ds-slide-in-right var(--transition-slow) ease-out;
+}
+
+/* ============================================================
+   LANGUES - Switcher
+   ============================================================ */
+
+.ds-lang-switcher {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.25rem;
+  background: var(--color-neutral-100);
+  border-radius: var(--radius-base);
+}
+
+.ds-lang-btn {
+  padding: 0.375rem 0.75rem;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.8125rem;
+  color: var(--color-navy);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.ds-lang-btn:hover {
+  background: var(--color-white);
+}
+
+.ds-lang-btn-active {
+  background: var(--color-gold);
+  color: var(--color-navy);
+}
+
+/* ============================================================
+   HERO VIDÉO - Premium
+   ============================================================ */
+
+.ds-hero-video {
+  position: relative;
+  width: 100%;
+  height: 80vh;
+  min-height: 600px;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+}
+
+.ds-hero-video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ds-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 26, 47, 0.3) 0%,
+    rgba(10, 26, 47, 0.7) 100%
+  );
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-2xl);
+  text-align: center;
+}
+
+.ds-hero-title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 3.5rem;
+  line-height: 1.1;
+  color: var(--color-gold);
+  margin-bottom: var(--spacing-md);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.ds-hero-subtitle {
+  font-family: var(--font-body);
+  font-size: 1.5rem;
+  line-height: 1.4;
+  color: var(--color-white);
+  margin-bottom: var(--spacing-xl);
+  max-width: 800px;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================================
+   RESPONSIVE - Mobile first
+   ============================================================ */
+
+@media (max-width: 768px) {
+  :root {
+    --spacing-xl: 2rem;
+    --spacing-2xl: 3rem;
+    --spacing-3xl: 4rem;
+  }
+  
+  .ds-nav-top {
+    padding: 0 var(--spacing-md);
+  }
+  
+  .ds-hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .ds-hero-subtitle {
+    font-size: 1.125rem;
+  }
+  
+  .ds-title-xl {
+    font-size: 2rem;
+  }
+  
+  .ds-title-lg {
+    font-size: 1.75rem;
+  }
+}

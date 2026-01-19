@@ -1,18 +1,24 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Mail, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
 
-export default function LoginPage() {
+function LoginForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Redirect to dashboard for demo
-    window.location.href = "/dashboard";
+    // Set authentication
+    localStorage.setItem('powalyze_auth', 'true');
+    // Redirect to cockpit or to the page they were trying to access
+    const redirect = searchParams.get('redirect') || '/cockpit';
+    router.push(redirect);
   };
 
   return (
@@ -149,10 +155,22 @@ export default function LoginPage() {
         {/* Demo Notice */}
         <div className="mt-6 text-center">
           <p className="text-sm text-slate-500">
-            Mode démo actif - Connexion automatique au dashboard
+            Mode démo actif - Connexion automatique au cockpit
           </p>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500"></div>
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 }

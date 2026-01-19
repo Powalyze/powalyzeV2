@@ -1,374 +1,271 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { Search, Filter, Plus, MoreVertical, Calendar, Users, TrendingUp, AlertTriangle, CheckCircle, Clock, DollarSign } from "lucide-react";
-import { Card, CardHeader, CardContent } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
+import React, { useState } from 'react';
+import { Folder, Calendar, Users, TrendingUp, Plus, Filter as FilterIcon, Download, LayoutGrid, List } from 'lucide-react';
+import ModuleCard from '@/components/cockpit/ModuleCard';
+import KPICard from '@/components/cockpit/KPICard';
+import AINarrativeBlock from '@/components/cockpit/AINarrativeBlock';
+import DetailSheet, { DetailSection, DetailField } from '@/components/cockpit/DetailSheet';
+import { useTranslation } from '@/lib/i18n';
 
 interface Project {
   id: string;
-  name: string;
-  status: "active" | "planning" | "completed" | "at-risk";
+  title: string;
+  status: 'toLaunch' | 'inProgress' | 'inReview' | 'completed';
   progress: number;
   budget: number;
-  spent: number;
-  team: number;
   deadline: string;
-  priority: "high" | "medium" | "low";
-  manager: string;
+  team: string;
+  risk: 'high' | 'medium' | 'low';
+  description?: string;
 }
 
-const projects: Project[] = [
-  {
-    id: "1",
-    name: "Transformation Cloud Azure",
-    status: "active",
-    progress: 67,
-    budget: 1200000,
-    spent: 804000,
-    team: 12,
-    deadline: "2026-06-15",
-    priority: "high",
-    manager: "Sophie Martin"
-  },
-  {
-    id: "2",
-    name: "Refonte ERP SAP S/4HANA",
-    status: "at-risk",
-    progress: 42,
-    budget: 2500000,
-    spent: 1575000,
-    team: 18,
-    deadline: "2026-09-30",
-    priority: "high",
-    manager: "Thomas Dubois"
-  },
-  {
-    id: "3",
-    name: "Digital Workplace Microsoft 365",
-    status: "active",
-    progress: 85,
-    budget: 450000,
-    spent: 382500,
-    team: 8,
-    deadline: "2026-04-20",
-    priority: "medium",
-    manager: "Marie Laurent"
-  },
-  {
-    id: "4",
-    name: "Data Lake & Analytics",
-    status: "planning",
-    progress: 15,
-    budget: 800000,
-    spent: 120000,
-    team: 6,
-    deadline: "2026-12-15",
-    priority: "medium",
-    manager: "Pierre Bernard"
-  },
-  {
-    id: "5",
-    name: "Cybersecurity Reinforcement",
-    status: "active",
-    progress: 55,
-    budget: 650000,
-    spent: 357500,
-    team: 10,
-    deadline: "2026-07-31",
-    priority: "high",
-    manager: "Claire Moreau"
-  },
-  {
-    id: "6",
-    name: "IoT Smart Factory",
-    status: "completed",
-    progress: 100,
-    budget: 1800000,
-    spent: 1764000,
-    team: 14,
-    deadline: "2026-02-28",
-    priority: "low",
-    manager: "Julien Petit"
-  }
-];
+export default function ProjetsPage() {
+  const { t } = useTranslation();
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban');
 
-export default function ProjectsPage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
+  // PRODUCTION CLIENT PRO: État vierge par défaut
+  const projects: Project[] = [];
 
-  const filteredProjects = projects.filter(project => {
-    const matchesSearch = project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         project.manager.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === "all" || project.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  const activeProjects = projects.filter(p => p.status === 'inProgress').length;
+  const lateProjects = projects.filter(p => new Date(p.deadline) < new Date() && p.status !== 'completed').length;
+  const criticalProjects = projects.filter(p => p.risk === 'high').length;
+  const totalLoad = projects.reduce((acc, p) => acc + p.budget, 0);
 
-  const stats = {
-    total: projects.length,
-    active: projects.filter(p => p.status === "active").length,
-    atRisk: projects.filter(p => p.status === "at-risk").length,
-    completed: projects.filter(p => p.status === "completed").length,
+  const getStatusColumn = (status: string) => {
+    switch (status) {
+      case 'toLaunch': return t('projects.toLaunch');
+      case 'inProgress': return t('projects.inProgress');
+      case 'inReview': return t('projects.inReview');
+      case 'completed': return t('projects.completed');
+      default: return status;
+    }
   };
+
+  const getRiskColor = (risk: string) => {
+    switch (risk) {
+      case 'high': return 'text-red-600 bg-red-50';
+      case 'medium': return 'text-yellow-600 bg-yellow-50';
+      case 'low': return 'text-green-600 bg-green-50';
+      default: return 'text-neutral-600 bg-neutral-50';
+    }
+  };
+
+  const columns = ['toLaunch', 'inProgress', 'inReview', 'completed'];
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Projets</h1>
-          <p className="text-slate-400">Gérez et suivez l'ensemble de votre portefeuille projet</p>
+    <div className="min-h-screen bg-neutral-100">
+      <ModuleCard
+        title={t('modules.projects.title')}
+        subtitle={t('modules.projects.subtitle')}
+        narration={t('modules.projects.narration')}
+        icon={<Folder className="w-6 h-6" />}
+        actions={
+          <>
+            <button className="ds-btn ds-btn-primary">
+              <Plus className="w-4 h-4" />
+              {t('projects.createNew')}
+            </button>
+            <div className="flex gap-2 border-l border-neutral-300 pl-4">
+              <button
+                onClick={() => setViewMode('kanban')}
+                className={`ds-btn ${viewMode === 'kanban' ? 'ds-btn-primary' : 'ds-btn-ghost'}`}
+              >
+                <LayoutGrid className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`ds-btn ${viewMode === 'list' ? 'ds-btn-primary' : 'ds-btn-ghost'}`}
+              >
+                <List className="w-4 h-4" />
+              </button>
+            </div>
+            <button className="ds-btn ds-btn-ghost">
+              <FilterIcon className="w-4 h-4" />
+              {t('common.filter')}
+            </button>
+            <button className="ds-btn ds-btn-ghost">
+              <Download className="w-4 h-4" />
+              {t('common.export')}
+            </button>
+          </>
+        }
+      >
+        {/* Synthèse haute - 4 KPI */}
+        <div className="ds-grid ds-grid-4 mb-8">
+          <KPICard
+            label={t('projects.active')}
+            value={activeProjects}
+            icon={<Folder className="w-5 h-5" />}
+          />
+          <KPICard
+            label={t('projects.late')}
+            value={lateProjects}
+            variant="danger"
+            icon={<Calendar className="w-5 h-5" />}
+          />
+          <KPICard
+            label={t('projects.critical')}
+            value={criticalProjects}
+            variant="warning"
+            icon={<TrendingUp className="w-5 h-5" />}
+          />
+          <KPICard
+            label={t('projects.totalLoad')}
+            value={`${(totalLoad / 1000000).toFixed(1)}M€`}
+            icon={<Users className="w-5 h-5" />}
+          />
         </div>
-        <Button variant="primary" size="lg">
-          <Plus size={20} />
-          Nouveau projet
-        </Button>
-      </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-white">{stats.total}</div>
-                <div className="text-sm text-slate-400">Total projets</div>
+        {/* Vue Kanban ou Liste */}
+        {viewMode === 'kanban' ? (
+          <div className="grid grid-cols-4 gap-6">
+            {columns.map((column) => (
+              <div key={column} className="space-y-4">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="ds-subtitle-navy text-sm font-semibold">
+                    {getStatusColumn(column)}
+                  </h3>
+                  <span className="text-xs text-neutral-500 bg-neutral-200 px-2 py-1 rounded-full">
+                    {projects.filter(p => p.status === column).length}
+                  </span>
+                </div>
+                <div className="space-y-3">
+                  {projects.filter(p => p.status === column).map((project) => (
+                    <div
+                      key={project.id}
+                      onClick={() => setSelectedProject(project)}
+                      className="ds-card p-4 cursor-pointer hover:shadow-lg transition-all group"
+                    >
+                      <h4 className="font-semibold text-navy mb-2 group-hover:text-gold transition-colors">
+                        {project.title}
+                      </h4>
+                      <div className="space-y-2 text-xs text-neutral-600">
+                        <div className="flex items-center justify-between">
+                          <span>{t('projects.progress')}</span>
+                          <span className="font-medium">{project.progress}%</span>
+                        </div>
+                        <div className="w-full bg-neutral-200 rounded-full h-1.5">
+                          <div
+                            className="bg-gold h-1.5 rounded-full transition-all ds-progress-bar"
+                            data-width={project.progress}
+                          />
+                        </div>
+                        <div className="flex items-center justify-between mt-3">
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getRiskColor(project.risk)}`}>
+                            {project.risk}
+                          </span>
+                          <span className="text-xs text-neutral-500">
+                            {new Date(project.deadline).toLocaleDateString('fr-FR', { month: 'short', day: 'numeric' })}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="p-3 bg-slate-800/50 rounded-lg">
-                <TrendingUp className="text-sky-400" size={24} />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-emerald-400">{stats.active}</div>
-                <div className="text-sm text-slate-400">En cours</div>
-              </div>
-              <div className="p-3 bg-emerald-500/10 rounded-lg">
-                <CheckCircle className="text-emerald-400" size={24} />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-amber-400">{stats.atRisk}</div>
-                <div className="text-sm text-slate-400">À risque</div>
-              </div>
-              <div className="p-3 bg-amber-500/10 rounded-lg">
-                <AlertTriangle className="text-amber-400" size={24} />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-slate-400">{stats.completed}</div>
-                <div className="text-sm text-slate-400">Terminés</div>
-              </div>
-              <div className="p-3 bg-slate-800/50 rounded-lg">
-                <CheckCircle className="text-slate-400" size={24} />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Filters & Search */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-col md:flex-row gap-4">
-            {/* Search */}
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
-              <input
-                type="text"
-                placeholder="Rechercher un projet..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-slate-800/50 border border-slate-700 rounded-lg pl-10 pr-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-              />
-            </div>
-
-            {/* Status Filter */}
-            <div className="flex gap-2">
-              <button
-                onClick={() => setStatusFilter("all")}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  statusFilter === "all"
-                    ? "bg-amber-500 text-slate-950"
-                    : "bg-slate-800/50 text-slate-400 hover:bg-slate-800"
-                }`}
-              >
-                Tous
-              </button>
-              <button
-                onClick={() => setStatusFilter("active")}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  statusFilter === "active"
-                    ? "bg-emerald-500 text-white"
-                    : "bg-slate-800/50 text-slate-400 hover:bg-slate-800"
-                }`}
-              >
-                En cours
-              </button>
-              <button
-                onClick={() => setStatusFilter("at-risk")}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  statusFilter === "at-risk"
-                    ? "bg-amber-500 text-slate-950"
-                    : "bg-slate-800/50 text-slate-400 hover:bg-slate-800"
-                }`}
-              >
-                À risque
-              </button>
-            </div>
-
-            <Button variant="outline">
-              <Filter size={18} />
-              Plus de filtres
-            </Button>
+            ))}
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Projects List */}
-      <div className="space-y-4">
-        {filteredProjects.map((project) => (
-          <Card key={project.id}>
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h3 className="text-xl font-bold text-white">{project.name}</h3>
-                    <StatusBadge status={project.status} />
-                    <PriorityBadge priority={project.priority} />
-                  </div>
-                  <div className="flex items-center gap-4 text-sm text-slate-400">
-                    <div className="flex items-center gap-1">
-                      <Users size={16} />
-                      {project.manager}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Calendar size={16} />
+        ) : (
+          <div className="ds-card overflow-hidden">
+            <table className="ds-table">
+              <thead>
+                <tr>
+                  <th>{t('projects.name')}</th>
+                  <th>{t('projects.status')}</th>
+                  <th>{t('projects.progress')}</th>
+                  <th>{t('projects.budget')}</th>
+                  <th>{t('projects.deadline')}</th>
+                  <th>{t('projects.team')}</th>
+                  <th>{t('projects.risk')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {projects.map((project) => (
+                  <tr
+                    key={project.id}
+                    onClick={() => setSelectedProject(project)}
+                    className="cursor-pointer hover:bg-neutral-50 transition-colors"
+                  >
+                    <td className="font-medium text-navy">{project.title}</td>
+                    <td>{getStatusColumn(project.status)}</td>
+                    <td>
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 bg-neutral-200 rounded-full h-2">
+                          <div
+                            className="bg-gold h-2 rounded-full transition-all ds-progress-bar"
+                            data-width={project.progress}
+                          />
+                        </div>
+                        <span className="text-sm font-medium">{project.progress}%</span>
+                      </div>
+                    </td>
+                    <td className="text-neutral-700">{(project.budget / 1000).toFixed(0)}K€</td>
+                    <td className="text-neutral-600 text-sm">
                       {new Date(project.deadline).toLocaleDateString('fr-FR')}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Users size={16} />
-                      {project.team} membres
-                    </div>
-                  </div>
-                </div>
-                <button className="p-2 hover:bg-slate-800 rounded-lg transition-colors">
-                  <MoreVertical size={20} className="text-slate-400" />
-                </button>
-              </div>
+                    </td>
+                    <td className="text-neutral-700">{project.team}</td>
+                    <td>
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRiskColor(project.risk)}`}>
+                        {project.risk}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                {/* Progress */}
-                <div>
-                  <div className="flex items-center justify-between text-sm mb-2">
-                    <span className="text-slate-400">Progression</span>
-                    <span className="text-white font-semibold">{project.progress}%</span>
-                  </div>
-                  <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all"
-                      style={{ width: `${project.progress}%` }}
-                    />
-                  </div>
-                </div>
+        {/* IA Narrative */}
+        <AINarrativeBlock
+          summary="4 projets actifs pour 1.5M€. 2 projets à risque élevé nécessitant attention immédiate."
+          analysis="Migration Cloud à 65% mais bloquée par risque fournisseur ERP. ERP Upgrade en revue finale avec 10% restants."
+          recommendations="Débloquer Migration Cloud via arbitrage fournisseur. Valider ERP Upgrade avant fin février pour respecter planning."
+          scenarios="Si déblocage rapide: Migration Cloud livrée mars. Si retard: décalage Q2 + surcoût 80K€."
+          alerts="ERP Upgrade: deadline validation 28 février. Migration Cloud: bloquée par décision fournisseur (deadline 20 janvier)."
+        />
+      </ModuleCard>
 
-                {/* Budget */}
-                <div>
-                  <div className="flex items-center justify-between text-sm mb-2">
-                    <span className="text-slate-400">Budget</span>
-                    <span className="text-white font-semibold">
-                      {((project.spent / project.budget) * 100).toFixed(0)}%
-                    </span>
-                  </div>
-                  <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all ${
-                        (project.spent / project.budget) > 0.9
-                          ? "bg-gradient-to-r from-red-500 to-red-400"
-                          : "bg-gradient-to-r from-amber-500 to-amber-400"
-                      }`}
-                      style={{ width: `${Math.min((project.spent / project.budget) * 100, 100)}%` }}
-                    />
-                  </div>
-                </div>
+      {/* Detail Sheet */}
+      {selectedProject && (
+        <DetailSheet
+          isOpen={!!selectedProject}
+          onClose={() => setSelectedProject(null)}
+          title={selectedProject.title}
+        >
+          <DetailSection title={t('detail.information')} icon={<Folder />}>
+            <DetailField label={t('projects.status')} value={getStatusColumn(selectedProject.status)} />
+            <DetailField label={t('projects.progress')} value={`${selectedProject.progress}%`} />
+            <DetailField label={t('projects.budget')} value={`${(selectedProject.budget / 1000).toFixed(0)}K€`} />
+            <DetailField label={t('projects.deadline')} value={new Date(selectedProject.deadline).toLocaleDateString('fr-FR')} />
+            <DetailField label={t('projects.team')} value={selectedProject.team} />
+            <DetailField label={t('projects.risk')} value={selectedProject.risk} />
+          </DetailSection>
 
-                {/* Budget Numbers */}
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="text-xs text-slate-400">Dépensé</div>
-                    <div className="text-sm font-semibold text-white">
-                      {(project.spent / 1000).toFixed(0)}K€
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-slate-400 text-right">Budget total</div>
-                    <div className="text-sm font-semibold text-slate-300">
-                      {(project.budget / 1000).toFixed(0)}K€
-                    </div>
-                  </div>
-                </div>
-              </div>
+          {selectedProject.description && (
+            <DetailSection title={t('detail.context')}>
+              <p className="text-sm text-neutral-700 leading-relaxed">{selectedProject.description}</p>
+            </DetailSection>
+          )}
 
-              {/* Actions */}
-              <div className="flex gap-2 pt-4 border-t border-slate-800">
-                <Button variant="outline" size="sm">
-                  Voir détails
-                </Button>
-                <Button variant="ghost" size="sm">
-                  Équipe
-                </Button>
-                <Button variant="ghost" size="sm">
-                  Risques
-                </Button>
-                <Button variant="ghost" size="sm">
-                  Rapports
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+          <DetailSection title={t('detail.links')}>
+            <div className="text-sm text-neutral-600">
+              <p>{t('detail.linkedRisks')}: Retard fournisseur ERP, Dépassement budget</p>
+              <p>{t('detail.linkedDecisions')}: Validation budget migration (Comité Tech, 2026-01-10)</p>
+            </div>
+          </DetailSection>
+
+          <DetailSection title={t('ai.narrative')} icon={<Folder />}>
+            <AINarrativeBlock
+              summary="Projet stratégique avec enjeu fort sur transformation digitale."
+              analysis="Progression conforme au planning mais dépendance fournisseur critique."
+              recommendations="Sécuriser jalons clés et anticiper les points de blocage potentiels."
+            />
+          </DetailSection>
+        </DetailSheet>
+      )}
     </div>
   );
-}
-
-function StatusBadge({ status }: { status: Project["status"] }) {
-  const config = {
-    active: { label: "En cours", variant: "success" as const },
-    planning: { label: "Planification", variant: "info" as const },
-    completed: { label: "Terminé", variant: "neutral" as const },
-    "at-risk": { label: "À risque", variant: "warning" as const },
-  };
-
-  const { label, variant } = config[status];
-  return <Badge variant={variant}>{label}</Badge>;
-}
-
-function PriorityBadge({ priority }: { priority: Project["priority"] }) {
-  const config = {
-    high: { label: "Haute", variant: "danger" as const },
-    medium: { label: "Moyenne", variant: "warning" as const },
-    low: { label: "Basse", variant: "neutral" as const },
-  };
-
-  const { label, variant } = config[priority];
-  return <Badge variant={variant}>{label}</Badge>;
 }

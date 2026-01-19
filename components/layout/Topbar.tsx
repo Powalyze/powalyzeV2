@@ -1,9 +1,17 @@
 "use client";
 
 import React from 'react';
-import { Search, Sparkles, ChevronDown } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Search, Sparkles, ChevronDown, LogOut } from 'lucide-react';
 
 export const Topbar: React.FC = () => {
+  const router = useRouter();
+
+  const handleLogout = () => {
+    localStorage.removeItem('powalyze_auth');
+    router.push('/login');
+  };
+
   return (
     <header className="fixed top-0 left-64 right-0 h-14 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800 flex items-center justify-between px-6 z-40">
       {/* Search */}
@@ -33,6 +41,16 @@ export const Topbar: React.FC = () => {
         {/* Avatar */}
         <button className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-slate-950 font-semibold text-sm">
           JD
+        </button>
+
+        {/* Logout Button */}
+        <button 
+          onClick={handleLogout}
+          className="flex items-center gap-2 px-3 py-1.5 bg-red-500/10 border border-red-500/20 rounded-lg text-sm text-red-400 hover:bg-red-500/20 transition-colors"
+          title="Déconnexion"
+        >
+          <LogOut className="w-4 h-4" />
+          <span>Déconnexion</span>
         </button>
       </div>
     </header>

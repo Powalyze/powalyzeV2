@@ -1,0 +1,48 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "intelligence": "Intelligence",
+    "projects": "Projects",
+    "documents": "Documents",
+    "settings": "Settings",
+    "login": "Login",
+    "register": "Free Trial"
+  },
+  "cockpit": {
+    "title": "Executive Cockpit",
+    "subtitle": "Real-time overview",
+    "activeProjects": "Active projects",
+    "budget": "Committed budget",
+    "globalRisk": "Global risk",
+    "velocity": "Average velocity",
+    "lateProjects": "Late projects",
+    "remainingBudget": "Remaining budget",
+    "portfolioSphere": "Portfolio sphere",
+    "hoverToExplore": "Hover to explore",
+    "quickActions": "Quick actions",
+    "documents": "Documents",
+    "messages": "Messages",
+    "notifications": "Notifications",
+    "newProject": "New project",
+    "myAI": "My AI",
+    "askAI": "Ask your AI...",
+    "risks": "Risks & Alerts",
+    "opportunities": "Opportunities",
+    "projectsRoadmap": "Projects & Roadmap",
+    "critical": "Critical",
+    "underControl": "Under control",
+    "monitored": "Monitored",
+    "aiRecommendation": "AI Recommendation",
+    "impact": "Impact",
+    "probability": "Probability",
+    "sponsor": "Sponsor",
+    "deadline": "Deadline",
+    "status": "Status"
+  },
+  "features": {
+    "title": "Features",
+    "pricing": "Pricing",
+    "about": "About",
+    "contact": "Contact"
+  }
+}

@@ -1,34 +1,50 @@
+/* ============================================
+   POWALYZE — IDENTITÉ GLOBALE 2026
+   ============================================ */
+
+/* 🖋 IMPORT GOOGLE FONTS (doit être en premier) */
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;700&family=Inter:wght@400;500;600&display=swap');
+
 :root {
-  /* Bleu nuit premium */
-  --color-slate-950: #020617;
-  --color-slate-900: #0f172a;
-  --color-slate-800: #1e293b;
-  --color-slate-700: #334155;
-  --color-slate-600: #475569;
-  --color-slate-500: #64748b;
-  --color-slate-400: #94a3b8;
-  --color-slate-300: #cbd5e1;
-  --color-slate-200: #e2e8f0;
-  --color-slate-100: #f1f5f9;
+  /* 🎨 PALETTE PRINCIPALE (MAX 3 COULEURS VISIBLES) */
+  --gold: #D4AF37;          /* Or → Titres, accents premium */
+  --navy: #0A1A2F;          /* Bleu nuit → Sous-titres, textes forts */
+  --navy-light: #1A3A5C;    /* Bleu nuit clair → Hover states */
   
-  /* Or premium (accent) */
-  --color-amber-400: #fbbf24;
-  --color-amber-500: #f59e0b;
-  --color-amber-600: #d97706;
+  /* 🎨 NEUTRES (Fonds, séparateurs, textes) */
+  --neutral-white: #F5F5F5;
+  --neutral-light: #E8E8E8;
+  --neutral-dark: #1A1A1A;
+  --neutral-black: #000000;
   
-  /* Statuts */
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
-  --color-danger: #ef4444;
-  --color-info: #3b82f6;
+  /* 📏 ESPACEMENTS GÉNÉREUX */
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 24px;
+  --spacing-lg: 32px;
+  --spacing-xl: 48px;
+  --spacing-2xl: 64px;
   
-  /* Transitions Linear */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  /* 🖋 TYPOGRAPHIES */
+  --font-title: 'Inter Tight', -apple-system, sans-serif;
+  --font-body: 'Inter', -apple-system, sans-serif;
+  --weight-title: 600;     /* SemiBold pour titres */
+  --weight-body: 400;      /* Regular pour corps */
   
-  /* Shadows premium */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-  --shadow-glow: 0 0 40px rgba(251, 191, 36, 0.3);
+  /* ✨ ANIMATIONS DOUCES */
+  --anim-duration: 280ms;
+  --anim-easing: cubic-bezier(0.4, 0, 0.2, 1);
+  --anim-translate: 10px;
+  
+  /* 🎭 SHADOWS PREMIUM */
+  --shadow-sm: 0 2px 4px rgba(10, 26, 47, 0.06);
+  --shadow-md: 0 4px 12px rgba(10, 26, 47, 0.08);
+  --shadow-lg: 0 8px 24px rgba(10, 26, 47, 0.12);
+  --shadow-gold: 0 4px 16px rgba(212, 175, 55, 0.25);
+  
+  /* 🎯 STATUTS (Green/Yellow/Red) */
+  --status-green: #10b981;
+  --status-yellow: #f59e0b;
+  --status-red: #ef4444;
 }
+

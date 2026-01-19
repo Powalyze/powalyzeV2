@@ -303,6 +303,38 @@ function SecuritySettings() {
 }
 
 function APISettings() {
+  const [apiKeys, setApiKeys] = React.useState([
+    {
+      id: 1,
+      name: "Production API Key",
+      key_preview: "pk_live_**********************abc123",
+      created: "2026-01-15",
+      lastUsed: "2026-02-14"
+    },
+    {
+      id: 2,
+      name: "Development API Key",
+      key_preview: "pk_test_**********************def456",
+      created: "2026-01-10",
+      lastUsed: "2026-02-13"
+    }
+  ]);
+
+  const generateNewKey = () => {
+    const newKey = {
+      id: apiKeys.length + 1,
+      name: `API Key ${apiKeys.length + 1}`,
+      key_preview: `pk_${Date.now()}_**********************${Math.random().toString(36).substring(7)}`,
+      created: new Date().toISOString().split('T')[0],
+      lastUsed: "Jamais utilisée"
+    };
+    setApiKeys([...apiKeys, newKey]);
+  };
+
+  const revokeKey = (id: number) => {
+    setApiKeys(apiKeys.filter(key => key.id !== id));
+  };
+
   return (
     <>
       <Card>
@@ -314,20 +346,21 @@ function APISettings() {
             Générez des clés API pour intégrer Powalyze avec vos applications
           </p>
           <div className="space-y-3 mb-6">
-            <APIKeyItem
-              name="Production API Key"
-              key_preview="pk_live_**********************abc123"
-              created="2026-01-15"
-              lastUsed="2026-02-14"
-            />
-            <APIKeyItem
-              name="Development API Key"
-              key_preview="pk_test_**********************def456"
-              created="2026-01-10"
-              lastUsed="2026-02-13"
-            />
+            {apiKeys.map((key) => (
+              <div key={key.id} className="flex items-center justify-between p-4 bg-slate-800/30 rounded-lg">
+                <div>
+                  <div className="font-semibold text-white mb-1">{key.name}</div>
+                  <div className="text-sm text-slate-400 font-mono">{key.key_preview}</div>
+                  <div className="text-xs text-slate-500 mt-1">
+                    Créée le {new Date(key.created).toLocaleDateString('fr-FR')} • 
+                    {key.lastUsed === "Jamais utilisée" ? " Jamais utilisée" : ` Utilisée le ${new Date(key.lastUsed).toLocaleDateString('fr-FR')}`}
+                  </div>
+                </div>
+                <Button variant="outline" size="sm" onClick={() => revokeKey(key.id)}>Révoquer</Button>
+              </div>
+            ))}
           </div>
-          <Button variant="primary">
+          <Button variant="primary" onClick={generateNewKey}>
             <Key size={18} />
             Générer une nouvelle clé
           </Button>

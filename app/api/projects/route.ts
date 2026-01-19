@@ -1,125 +1,79 @@
+// ============================================================
+// API ROUTE — PROJECTS
+// /app/api/projects/route.ts
+// ============================================================
+
 import { NextRequest, NextResponse } from 'next/server';
-import { query } from '@/lib/db';
-import { Project } from '@/types';
+import { getSupabaseClient, mapProjectRow } from '@/lib/supabase-cockpit';
 
-export async function GET(request: NextRequest) {
-  const tenantId = request.headers.get('x-tenant-id');
-  
-  if (!tenantId) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  const { searchParams } = new URL(request.url);
-  const view = searchParams.get('view');
-  const status = searchParams.get('status');
-  const limit = searchParams.get('limit');
-
+export async function POST(req: NextRequest) {
   try {
-    let sql = `SELECT * FROM projects WHERE tenant_id = $1`;
-    const params: any[] = [tenantId];
-    
-    if (status) {
-      sql += ` AND status = $${params.length + 1}`;
-      params.push(status);
-    }
+    const body = (await req.json()) as {
+      organizationId: string;
+      name: string;
+      description?: string;
+    };
 
-    if (view === 'timeline') {
-      sql += ` ORDER BY start_date ASC`;
-    } else {
-      sql += ` ORDER BY created_at DESC`;
-    }
+    const supabase = getSupabaseClient(true);
+    const { data, error } = await supabase
+      .from('projects')
+      .insert({
+        organization_id: body.organizationId,
+        name: body.name,
+        description: body.description ?? null,
+      })
+      .select('*')
+      .single();
 
-    if (limit) {
-      sql += ` LIMIT $${params.length + 1}`;
-      params.push(parseInt(limit));
-    }
+    if (error) throw error;
 
-    const projects = await query<Project>(sql, params);
-    return NextResponse.json(projects);
-  } catch (error) {
-    console.error('Projects GET error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(mapProjectRow(data), { status: 201 });
+  } catch (error: any) {
+    console.error('Project create error', error);
+    return NextResponse.json(
+      { error: 'PROJECT_CREATE_FAILED', message: error.message ?? 'Unknown error' },
+      { status: 500 },
+    );
   }
 }
-
-export async function POST(request: NextRequest) {
-  const tenantId = request.headers.get('x-tenant-id');
-  const userId = request.headers.get('x-user-id');
-  
-  if (!tenantId || !userId) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
+export async function DELETE(req: NextRequest) {
   try {
-    const body = await request.json();
-    const { name, description, sponsor, business_unit, budget, start_date, end_date } = body;
+    const { searchParams } = new URL(req.url);
+    const organizationId = searchParams.get('organizationId');
 
-    const [project] = await query<Project>(
-      `INSERT INTO projects (
-        tenant_id, name, description, sponsor, business_unit,
-        budget, actual_cost, status, rag_status, start_date, end_date,
-        completion_percentage, delay_probability, created_at, updated_at
-      ) VALUES ($1, $2, $3, $4, $5, $6, 0, 'DRAFT', 'GRAY', $7, $8, 0, 0, NOW(), NOW())
-      RETURNING *`,
-      [tenantId, name, description, sponsor, business_unit, budget, start_date, end_date]
-    );
-
-    return NextResponse.json(project, { status: 201 });
-  } catch (error) {
-    console.error('Projects POST error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-  }
-}
-
-export async function PUT(request: NextRequest) {
-  const tenantId = request.headers.get('x-tenant-id');
-  
-  if (!tenantId) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  try {
-    const body = await request.json();
-    const { id, ...updates } = body;
-
-    const fields = Object.keys(updates).map((key, i) => `${key} = $${i + 2}`).join(', ');
-    const values = Object.values(updates);
-
-    const [project] = await query<Project>(
-      `UPDATE projects SET ${fields}, updated_at = NOW() WHERE id = $1 AND tenant_id = $${values.length + 2} RETURNING *`,
-      [id, ...values, tenantId]
-    );
-
-    if (!project) {
-      return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+    if (!organizationId) {
+      return NextResponse.json(
+        { error: 'MISSING_ORG_ID', message: 'organizationId requis' },
+        { status: 400 }
+      );
     }
 
-    return NextResponse.json(project);
-  } catch (error) {
-    console.error('Projects PUT error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-  }
-}
+    console.log('[Projects DELETE] Suppression pour organizationId:', organizationId);
 
-export async function DELETE(request: NextRequest) {
-  const tenantId = request.headers.get('x-tenant-id');
-  
-  if (!tenantId) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+    const supabase = getSupabaseClient(true);
+    const { error, data } = await supabase
+      .from('projects')
+      .delete()
+      .eq('organization_id', organizationId)
+      .select();
 
-  try {
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
+    if (error) {
+      console.error('[Projects DELETE] Supabase error:', error);
+      throw error;
+    }
 
-    await query(
-      `DELETE FROM projects WHERE id = $1 AND tenant_id = $2`,
-      [id, tenantId]
+    console.log(`[Projects DELETE] ${data.length} projets supprimés`);
+
+    return NextResponse.json({
+      success: true,
+      message: `${data.length} projet(s) supprimé(s)`,
+      deleted: data.length,
+    }, { status: 200 });
+  } catch (error: any) {
+    console.error('[Projects DELETE] ERROR:', error);
+    return NextResponse.json(
+      { error: 'DELETE_FAILED', message: error.message },
+      { status: 500 }
     );
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Projects DELETE error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -5,18 +5,21 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { navigationItems, bottomNavigationItems } from '@/lib/navigation';
 import { cn } from '@/lib/utils';
+import PowalyzeLogo from '@/components/Logo';
+import { useMode } from '@/lib/ModeContext';
+import { useTranslation } from '@/lib/i18n';
 
 export const Sidebar: React.FC = () => {
   const pathname = usePathname();
+  const { mode, isDemoMode } = useMode();
+  const { t } = useTranslation();
   
   return (
     <aside className="fixed left-0 top-0 h-screen w-64 bg-slate-950 border-r border-slate-800 flex flex-col z-50">
       {/* Logo */}
       <div className="h-14 flex items-center px-4 border-b border-slate-800">
-        <Link href="/cockpit" className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-amber-600 rounded-lg flex items-center justify-center">
-            <span className="text-slate-950 font-bold text-sm">P</span>
-          </div>
+        <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+          <PowalyzeLogo size={32} />
           <span className="font-semibold text-slate-100">Powalyze</span>
         </Link>
       </div>
@@ -77,6 +80,22 @@ export const Sidebar: React.FC = () => {
               </Link>
             );
           })}
+        </div>
+        
+        {/* Mode Badge */}
+        <div className="mt-3 px-3 py-2">
+          <div className={cn(
+            "inline-flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs font-medium",
+            isDemoMode 
+              ? "bg-blue-500/10 text-blue-400 border border-blue-500/20" 
+              : "bg-green-500/10 text-green-400 border border-green-500/20"
+          )}>
+            <div className={cn(
+              "w-1.5 h-1.5 rounded-full",
+              isDemoMode ? "bg-blue-400 animate-pulse" : "bg-green-400"
+            )} />
+            <span>{isDemoMode ? t('cockpit.mode.demo') : t('cockpit.mode.pro')}</span>
+          </div>
         </div>
       </div>
     </aside>

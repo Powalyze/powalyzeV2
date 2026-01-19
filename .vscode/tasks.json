@@ -1,0 +1,91 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build and deploy Next.js app (Vercel)",
+			"type": "shell",
+			"command": "npx vercel --prod",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Build and deploy Next.js app (Vercel)",
+			"type": "shell",
+			"command": "npx vercel --prod",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Build and deploy Next.js app (Vercel)",
+			"type": "shell",
+			"command": "npx vercel --prod",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Build and deploy Next.js app (Vercel, full workspace)",
+			"type": "shell",
+			"command": "npx vercel --prod --yes",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Build and deploy Next.js app (Vercel, final clean)",
+			"type": "shell",
+			"command": "npx vercel --prod --yes",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Build and deploy Next.js app (Vercel, final clean pass 2)",
+			"type": "shell",
+			"command": "npx vercel --prod --yes",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Deploy to Vercel Production",
+			"type": "shell",
+			"command": "npx vercel --prod --yes",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Déploiement Vercel production final",
+			"type": "shell",
+			"command": "npx vercel --prod --yes",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Déploiement Vercel production final",
+			"type": "shell",
+			"command": "npx vercel --prod --yes",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Deploy to Vercel (final clean)",
+			"type": "shell",
+			"command": "npx vercel --prod --yes"
+		}
+	]
+}

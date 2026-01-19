@@ -1,0 +1,57 @@
+{
+  "nav": {
+    "dashboard": "Dashbord",
+    "intelligence": "Intelligens",
+    "projects": "Prosjekter",
+    "documents": "Dokumenter",
+    "settings": "Innstillinger",
+    "login": "Logg inn",
+    "register": "Gratis prøveversjon"
+  },
+  "cockpit": {
+    "mode": {
+      "demo": "Demo-modus",
+      "pro": "Pro-modus"
+    },
+    "emptyState": {
+      "title": "Ingen data tilgjengelig",
+      "description": "Begynn med å opprette ditt første element",
+      "cta": "Opprett nå"
+    },
+    "title": "Executive Cockpit",
+    "subtitle": "Sanntidsoversikt",
+    "activeProjects": "Aktive prosjekter",
+    "budget": "Forpliktet budsjett",
+    "globalRisk": "Global risiko",
+    "velocity": "Gjennomsnittlig hastighet",
+    "lateProjects": "Forsinkede prosjekter",
+    "remainingBudget": "Gjenværende budsjett",
+    "portfolioSphere": "Porteføljesfære",
+    "hoverToExplore": "Hold musepekeren over for å utforske",
+    "quickActions": "Raske handlinger",
+    "documents": "Dokumenter",
+    "messages": "Meldinger",
+    "notifications": "Varsler",
+    "newProject": "Nytt prosjekt",
+    "myAI": "Min AI",
+    "askAI": "Still AI-en din et spørsmål...",
+    "risks": "Risikoer & Varsler",
+    "opportunities": "Muligheter",
+    "projectsRoadmap": "Prosjekter & Veikart",
+    "critical": "Kritisk",
+    "underControl": "Under kontroll",
+    "monitored": "Overvåket",
+    "aiRecommendation": "AI-anbefaling",
+    "impact": "Innvirkning",
+    "probability": "Sannsynlighet",
+    "sponsor": "Sponsor",
+    "deadline": "Frist",
+    "status": "Status"
+  },
+  "features": {
+    "title": "Funksjoner",
+    "pricing": "Priser",
+    "about": "Om oss",
+    "contact": "Kontakt"
+  }
+}

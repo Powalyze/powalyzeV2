@@ -1,4 +1,4 @@
-import { LayoutDashboard, Layers, AlertTriangle, CheckCircle, Bell, FileText, Settings, Users } from 'lucide-react';
+import { LayoutDashboard, Layers, AlertTriangle, CheckCircle, Bell, FileText, Settings, Users, Plug } from 'lucide-react';
 
 export const navigationItems = [
   {
@@ -43,6 +43,13 @@ export const navigationItems = [
     icon: FileText,
     badge: null,
   },
+  {
+    id: 'connecteurs',
+    label: 'Connecteurs',
+    href: '/connecteurs',
+    icon: Plug,
+    badge: null,
+  },
 ];
 
 export const bottomNavigationItems = [
@@ -55,7 +62,7 @@ export const bottomNavigationItems = [
   {
     id: 'settings',
     label: 'Paramètres',
-    href: '/settings',
+    href: '/parametres',
     icon: Settings,
   },
 ];

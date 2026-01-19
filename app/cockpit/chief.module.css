@@ -1,0 +1,124 @@
+/* Disabled/empty state for action card */
+.chief-action-card-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.section-chief {
+  padding: 4.5rem 6vw;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+.chief-layout {
+  max-width: 72rem;
+  margin: 0 auto;
+}
+.chief-header {
+  margin-bottom: 1.8rem;
+}
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+}
+.chief-subtitle {
+  color: rgba(245, 245, 245, 0.7);
+  font-size: 0.95rem;
+}
+.chief-panel {
+  background: radial-gradient(circle at top left, #0b1018, #05070b);
+  border-radius: 24px;
+  padding: 1.8rem 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.7);
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
+  gap: 2rem;
+}
+.chief-status-label {
+  font-size: 0.9rem;
+  color: rgba(245, 245, 245, 0.7);
+  margin-bottom: 1rem;
+}
+.chief-status-metrics {
+  display: flex;
+  gap: 1.4rem;
+  margin-bottom: 1.2rem;
+}
+.metric-label {
+  font-size: 0.8rem;
+  color: rgba(245, 245, 245, 0.6);
+}
+.metric-value {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #f5f5f5;
+}
+.chief-portfolio-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(212, 175, 55, 0.12);
+  color: #d4af37;
+  font-size: 0.85rem;
+}
+.chief-actions-title {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  color: rgba(245, 245, 245, 0.9);
+}
+.chief-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+.chief-action-card {
+  background: linear-gradient(145deg, #0b1018, #05070b);
+  border-radius: 16px;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.chief-action-main {
+  font-size: 0.9rem;
+  color: #f5f5f5;
+  margin-bottom: 0.2rem;
+}
+.chief-action-impact {
+  font-size: 0.8rem;
+  color: rgba(212, 175, 55, 0.9);
+}
+.chief-input {
+  grid-column: 1 / -1;
+  margin-top: 1.4rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 1.4rem;
+}
+.chief-input-label {
+  font-size: 0.85rem;
+  color: rgba(245, 245, 245, 0.7);
+  display: block;
+  margin-bottom: 0.6rem;
+}
+.chief-input-row {
+  display: flex;
+  gap: 0.8rem;
+}
+.chief-input-field {
+  flex: 1;
+  background: #05070b;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  padding: 0.7rem 1rem;
+  color: #f5f5f5;
+  font-size: 0.9rem;
+}
+.chief-input-button {
+  white-space: nowrap;
+}
+@media (max-width: 900px) {
+  .chief-panel {
+    grid-template-columns: 1fr;
+  }
+  .chief-actions-grid {
+    grid-template-columns: 1fr;
+  }
+}

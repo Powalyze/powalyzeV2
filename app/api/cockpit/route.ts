@@ -1,64 +1,112 @@
+// ============================================================
+// API ROUTE — COCKPIT DATA
+// /app/api/cockpit/route.ts
+// ============================================================
+
 import { NextRequest, NextResponse } from 'next/server';
-import { query } from '@/lib/db';
+import { fetchCockpitData, fetchTeam } from '@/lib/supabase-cockpit';
+import { createClient } from '@supabase/supabase-js';
 
-export async function GET(request: NextRequest) {
-  const tenantId = request.headers.get('x-tenant-id');
-  const userId = request.headers.get('x-user-id');
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
-  // Mode démo : retourner des données mockées si pas de tenant
-  if (!tenantId || !userId) {
-    return NextResponse.json({
-      activeProjects: 42,
-      delayPercentage: 12,
-      budgetConsumed: 7800000,
-      criticalRisks: 3,
-      totalBudget: 12000000,
-    });
-  }
-
+export async function GET(req: NextRequest) {
   try {
-    const activeProjects = await query<{ count: number }>(
-      `SELECT COUNT(*) as count FROM projects WHERE tenant_id = $1 AND status = 'ACTIVE'`,
-      [tenantId]
-    );
+    const { searchParams } = new URL(req.url);
+    const organizationId = searchParams.get('organizationId');
+    
+    console.log('[Cockpit API] organizationId:', organizationId);
+    console.log('[Cockpit API] Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
+    console.log('[Cockpit API] SERVICE_ROLE defined?', !!process.env.SUPABASE_SERVICE_ROLE_KEY);
+    console.log('[Cockpit API] ANON defined?', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+    
+    if (!organizationId) {
+      return NextResponse.json(
+        { error: 'MISSING_ORG_ID', message: 'organizationId requis' },
+        { status: 400 },
+      );
+    }
 
-    const delayedProjects = await query<{ count: number }>(
-      `SELECT COUNT(*) as count FROM projects WHERE tenant_id = $1 AND delay_probability > 50`,
-      [tenantId]
-    );
+    const data = await fetchCockpitData(organizationId);
+    const team = await fetchTeam(organizationId);
 
-    const totalProjects = await query<{ count: number }>(
-      `SELECT COUNT(*) as count FROM projects WHERE tenant_id = $1`,
-      [tenantId]
-    );
+    console.log('[Cockpit API] Data fetched successfully:', {
+      kpis: data.kpis.length,
+      projects: data.projects.length,
+      risks: data.risks.length,
+    });
 
-    const budgetData = await query<{ total: number; consumed: number }>(
-      `SELECT 
-        SUM(budget) as total,
-        SUM(actual_cost) as consumed
-      FROM projects
-      WHERE tenant_id = $1`,
-      [tenantId]
+    return NextResponse.json({ ...data, team }, { status: 200 });
+  } catch (error: any) {
+    console.error('[Cockpit API] ERROR:', error);
+    console.error('[Cockpit API] ERROR stack:', error.stack);
+    return NextResponse.json(
+      { error: 'COCKPIT_FETCH_FAILED', message: error.message ?? 'Unknown error' },
+      { status: 500 },
     );
+  }
+}
 
-    const criticalRisks = await query<{ count: number }>(
-      `SELECT COUNT(*) as count FROM risks WHERE tenant_id = $1 AND score >= 15`,
-      [tenantId]
-    );
+export async function DELETE(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const organizationId = searchParams.get('organizationId');
 
-    const delayPercentage = totalProjects[0]?.count && totalProjects[0].count > 0
-      ? Math.round((delayedProjects[0]?.count || 0) / totalProjects[0].count * 100)
-      : 0;
+    if (!organizationId) {
+      return NextResponse.json(
+        { error: 'MISSING_ORG_ID', message: 'organizationId requis' },
+        { status: 400 },
+      );
+    }
+
+    console.log('[Cockpit DELETE] Suppression pour organizationId:', organizationId);
+
+    // Supprimer TOUTES les données pour cette organisation
+    const tables = [
+      'governance_signals',
+      'scenarios', 
+      'executive_stories',
+      'ai_narratives',
+      'cockpit_kpis',
+      'risks',
+      'decisions',
+      'integrations',
+      'projects',
+      'organization_memberships',
+      'activity_log',
+      'committee_sessions',
+      'executive_decisions',
+      'kpis',
+    ];
+
+    let deleted = 0;
+    for (const table of tables) {
+      const { error, data } = await supabase
+        .from(table)
+        .delete()
+        .eq('organization_id', organizationId)
+        .select();
+
+      if (!error && data) {
+        deleted += data.length;
+        console.log(`[Cockpit DELETE] ${table}: ${data.length} lignes supprimées`);
+      }
+    }
+
+    console.log(`[Cockpit DELETE] Total: ${deleted} lignes supprimées`);
 
     return NextResponse.json({
-      activeProjects: activeProjects[0]?.count || 0,
-      delayPercentage,
-      budgetConsumed: budgetData[0]?.consumed || 0,
-      criticalRisks: criticalRisks[0]?.count || 0,
-      totalBudget: budgetData[0]?.total || 0,
-    });
-  } catch (error) {
-    console.error('Cockpit API error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+      success: true,
+      message: 'Toutes les données ont été supprimées',
+      deleted,
+    }, { status: 200 });
+  } catch (error: any) {
+    console.error('[Cockpit DELETE] ERROR:', error);
+    return NextResponse.json(
+      { error: 'DELETE_FAILED', message: error.message ?? 'Unknown error' },
+      { status: 500 },
+    );
   }
 }

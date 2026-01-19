@@ -1,0 +1,246 @@
+{
+  "common": {
+    "welcome": "Welcome to Powalyze",
+    "getStarted": "Get Started",
+    "learnMore": "Learn More",
+    "login": "Login",
+    "logout": "Logout",
+    "help": "Help",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "view": "View",
+    "details": "Details",
+    "new": "New",
+    "actions": "Actions"
+  },
+  "nav": {
+    "vitrine": "Home",
+    "features": "Features",
+    "pricing": "Pricing",
+    "contact": "Contact",
+    "cockpit": "Cockpit",
+    "enterCockpit": "Enter Cockpit",
+    "dashboard": "Dashboard",
+    "intelligence": "Intelligence",
+    "projects": "Projects",
+    "documents": "Documents",
+    "settings": "Settings",
+    "register": "Free Trial",
+    "risks": "Risks",
+    "decisions": "Decisions",
+    "committees": "Committees",
+    "journal": "Journal"
+  },
+  "hero": {
+    "title": "Powalyze — Executive Cockpit & AI Governance",
+    "subtitle": "Drive your strategic decisions with a 360° view of your portfolio",
+    "cta": "Access Cockpit",
+    "ctaDemo": "View Demo",
+    "whatYouSee": "What you see = What you use",
+    "cockpitInAction": "The cockpit in action",
+    "whyDifferent": "Why Powalyze is different",
+    "readyToStart": "Ready to drive your strategic decisions?"
+  },
+  "modules": {
+    "title": "Core Modules",
+    "risks": {
+      "title": "Risks",
+      "subtitle": "This module helps you identify and mitigate threats",
+      "description": "Identify, assess and mitigate risks in your projects in real-time",
+      "narration": "Track risks that may impact your strategic projects and anticipate threats before they become critical."
+    },
+    "decisions": {
+      "title": "Decisions",
+      "subtitle": "This module helps you track and follow strategic arbitrations",
+      "description": "Track and follow all critical decisions from your executive committee",
+      "narration": "Maintain clear governance by documenting every strategic decision with its context and impacts."
+    },
+    "projects": {
+      "title": "Projects",
+      "subtitle": "This module helps you drive portfolio execution",
+      "description": "Visualize progress and health of your project portfolio",
+      "narration": "Drive execution of your strategic projects with clear visibility on progress, risks and resources."
+    },
+    "committees": {
+      "title": "Committees",
+      "subtitle": "This module helps you structure executive governance",
+      "description": "Organize your governance committees and prepare your decisions",
+      "narration": "Structure your executive governance with clearly defined committees and traceable decisions."
+    },
+    "journal": {
+      "title": "Executive Journal",
+      "subtitle": "This module helps you track strategic events",
+      "description": "Centralize all events and weak signals from your organization",
+      "narration": "Keep a chronological record of all strategic events, weak signals and important decisions."
+    }
+  },
+  "pillars": {
+    "narrative": {
+      "title": "Narrative",
+      "description": "AI narrates and illuminates your strategic decisions with concise executive summaries"
+    },
+    "proactive": {
+      "title": "Proactive",
+      "description": "Alerts, scenarios and weak signals before the crisis to anticipate problems"
+    },
+    "executive": {
+      "title": "Executive",
+      "description": "Focused on arbitration, committees and governance decisions at the highest level"
+    }
+  },
+  "cockpit": {
+    "mode": {
+      "demo": "Demo Mode",
+      "pro": "Pro Mode"
+    },
+    "emptyState": {
+      "title": "No data available",
+      "description": "Start by creating your first item",
+      "cta": "Create now"
+    },
+    "title": "Executive Cockpit",
+    "subtitle": "Real-time overview",
+    "dashboard": "Dashboard",
+    "projects": "Projects",
+    "risks": "Risks",
+    "decisions": "Decisions",
+    "team": "Team",
+    "settings": "Settings",
+    "profile": "Profile",
+    "analytics": "Analytics",
+    "reports": "Reports",
+    "welcome": "Welcome to your executive cockpit",
+    "activeProjects": "Active projects",
+    "budget": "Committed budget",
+    "globalRisk": "Global risk",
+    "velocity": "Average velocity",
+    "lateProjects": "Late projects",
+    "remainingBudget": "Remaining budget",
+    "portfolioSphere": "Portfolio sphere"
+  },
+  "projects": {
+    "title": "Projects",
+    "createNew": "New Project",
+    "name": "Project Name",
+    "status": "Status",
+    "progress": "Progress",
+    "budget": "Budget",
+    "deadline": "Deadline",
+    "team": "Team",
+    "risk": "Risk",
+    "actions": "Actions",
+    "details": "Details",
+    "empty": "No projects yet",
+    "active": "Active",
+    "late": "Late",
+    "critical": "Critical",
+    "totalLoad": "Total Load",
+    "toLaunch": "To Launch",
+    "inProgress": "In Progress",
+    "inReview": "In Review",
+    "completed": "Completed"
+  },
+  "risks": {
+    "title": "Risks",
+    "createNew": "New Risk",
+    "name": "Risk Name",
+    "level": "Level",
+    "probability": "Probability",
+    "impact": "Impact",
+    "mitigation": "Mitigation",
+    "status": "Status",
+    "owner": "Owner",
+    "empty": "No risks identified",
+    "total": "Total",
+    "critical": "Critical",
+    "rising": "Rising",
+    "resolved": "Resolved",
+    "lastUpdate": "Last Update",
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low"
+  },
+  "decisions": {
+    "title": "Decisions",
+    "createNew": "New Decision",
+    "name": "Decision Title",
+    "date": "Date",
+    "status": "Status",
+    "committee": "Committee",
+    "origin": "Origin",
+    "impact": "Impact",
+    "deadline": "Deadline",
+    "empty": "No decisions recorded",
+    "pending": "Pending",
+    "validated": "Validated",
+    "late": "Late"
+  },
+  "committees": {
+    "title": "Committees",
+    "createNew": "New Committee",
+    "name": "Committee Name",
+    "frequency": "Frequency",
+    "nextMeeting": "Next Meeting",
+    "owner": "Owner",
+    "topics": "Topics",
+    "empty": "No committees defined",
+    "total": "Total Committees",
+    "upcoming": "Upcoming Meetings (7d)",
+    "resolutionRate": "Resolution Rate"
+  },
+  "journal": {
+    "title": "Executive Journal",
+    "createNew": "New Entry",
+    "date": "Date",
+    "type": "Type",
+    "entryTitle": "Title",
+    "impact": "Impact",
+    "empty": "No entries",
+    "entries30d": "Entries (30d)",
+    "weakSignals": "Weak Signals",
+    "trackedDecisions": "Tracked Decisions",
+    "emergingRisks": "Emerging Risks",
+    "typeRisk": "Risk",
+    "typeProject": "Project",
+    "typeDecision": "Decision",
+    "typeWeakSignal": "Weak Signal",
+    "typeStrategicInfo": "Strategic Info"
+  },
+  "ai": {
+    "narrative": "AI Summary",
+    "summary": "Executive Summary",
+    "analysis": "Analysis",
+    "recommendations": "Recommendations",
+    "scenarios": "Scenarios",
+    "alerts": "Alerts",
+    "loading": "Generating AI summary..."
+  },
+  "detail": {
+    "information": "Information",
+    "context": "Context",
+    "objectives": "Objectives",
+    "links": "Links",
+    "linkedRisks": "Linked Risks",
+    "linkedDecisions": "Linked Decisions",
+    "linkedProjects": "Linked Projects",
+    "linkedCommittees": "Linked Committees",
+    "history": "History",
+    "tracking": "Tracking"
+  },
+  "footer": {
+    "about": "About",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "contact": "Contact Us",
+    "copyright": "© {{year}} Powalyze. All rights reserved."
+  }
+}

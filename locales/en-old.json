@@ -1,0 +1,122 @@
+{
+  "common": {
+    "welcome": "Welcome to Powalyze",
+    "getStarted": "Get Started",
+    "learnMore": "Learn More",
+    "login": "Login",
+    "logout": "Logout",
+    "help": "Help",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success"
+  },
+  "nav": {
+    "vitrine": "Home",
+    "features": "Features",
+    "pricing": "Pricing",
+    "contact": "Contact",
+    "cockpit": "Cockpit",
+    "enterCockpit": "Enter the cockpit",
+    "dashboard": "Dashboard",
+    "intelligence": "Intelligence",
+    "projects": "Projects",
+    "documents": "Documents",
+    "settings": "Settings",
+    "register": "Free trial"
+  },
+  "hero": {
+    "title": "Powalyze — Executive Cockpit & AI Governance",
+    "subtitle": "Drive your strategic decisions with a 360° view of your portfolio",
+    "cta": "Access the cockpit"
+  },
+  "modules": {
+    "title": "Key Modules",
+    "risks": {
+      "title": "Risks",
+      "description": "Identify, assess and mitigate your project risks in real-time",
+      "narration": "This module helps you anticipate threats and protect your strategic investments."
+    },
+    "decisions": {
+      "title": "Decisions",
+      "description": "Track and follow all critical decisions from your executive committee",
+      "narration": "This module helps you maintain clear and documented governance."
+    },
+    "projects": {
+      "title": "Projects",
+      "description": "Visualize the progress and health of your project portfolio",
+      "narration": "This module helps you drive execution and maximize value creation."
+    }
+  },
+  "cockpit": {
+    "title": "Executive Cockpit",
+    "subtitle": "Real-time overview",
+    "dashboard": "Dashboard",
+    "projects": "Projects",
+    "risks": "Risks",
+    "decisions": "Decisions",
+    "team": "Team",
+    "settings": "Settings",
+    "profile": "Profile",
+    "analytics": "Analytics",
+    "reports": "Reports",
+    "welcome": "Welcome to your executive cockpit",
+    "activeProjects": "Active projects",
+    "budget": "Committed budget",
+    "globalRisk": "Global risk",
+    "velocity": "Average velocity",
+    "lateProjects": "Late projects",
+    "remainingBudget": "Remaining budget",
+    "portfolioSphere": "Portfolio sphere"
+  },
+  "projects": {
+    "title": "Projects",
+    "createNew": "New project",
+    "name": "Project name",
+    "status": "Status",
+    "progress": "Progress",
+    "budget": "Budget",
+    "deadline": "Deadline",
+    "team": "Team",
+    "risk": "Risk",
+    "actions": "Actions",
+    "details": "Details",
+    "empty": "No projects yet"
+  },
+  "risks": {
+    "title": "Risks",
+    "createNew": "New risk",
+    "name": "Risk name",
+    "level": "Level",
+    "probability": "Probability",
+    "impact": "Impact",
+    "mitigation": "Mitigation",
+    "status": "Status",
+    "owner": "Owner",
+    "empty": "No risks identified"
+  },
+  "decisions": {
+    "title": "Decisions",
+    "createNew": "New decision",
+    "name": "Decision title",
+    "date": "Date",
+    "status": "Status",
+    "committee": "Committee",
+    "impact": "Impact",
+    "empty": "No decisions recorded"
+  },
+  "footer": {
+    "about": "About",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "contact": "Contact Us",
+    "copyright": "© {{year}} Powalyze. All rights reserved."
+  }
+}

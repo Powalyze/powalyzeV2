@@ -1,0 +1,246 @@
+{
+  "common": {
+    "welcome": "Bienvenue sur Powalyze",
+    "getStarted": "Commencer",
+    "learnMore": "En savoir plus",
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "help": "Aide",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "close": "Fermer",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "export": "Exporter",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "view": "Voir",
+    "details": "Détails",
+    "new": "Nouveau",
+    "actions": "Actions"
+  },
+  "nav": {
+    "vitrine": "Vitrine",
+    "features": "Fonctionnalités",
+    "pricing": "Tarifs",
+    "contact": "Contact",
+    "cockpit": "Cockpit",
+    "enterCockpit": "Entrer dans le cockpit",
+    "dashboard": "Tableau de bord",
+    "intelligence": "Intelligence",
+    "projects": "Projets",
+    "documents": "Documents",
+    "settings": "Paramètres",
+    "register": "Essai gratuit",
+    "risks": "Risques",
+    "decisions": "Décisions",
+    "committees": "Comités",
+    "journal": "Journal"
+  },
+  "hero": {
+    "title": "Powalyze — Cockpit Exécutif & Gouvernance IA",
+    "subtitle": "Pilotez vos décisions stratégiques avec une vision 360° de votre portefeuille",
+    "cta": "Accéder au cockpit",
+    "ctaDemo": "Voir la démo",
+    "whatYouSee": "Ce que vous voyez = Ce que vous utilisez",
+    "cockpitInAction": "Le cockpit en action",
+    "whyDifferent": "Pourquoi Powalyze est différent",
+    "readyToStart": "Prêt à piloter vos décisions stratégiques ?"
+  },
+  "modules": {
+    "title": "Modules phares",
+    "risks": {
+      "title": "Risques",
+      "subtitle": "Ce module vous aide à identifier et mitiger les menaces",
+      "description": "Identifiez, évaluez et mitigez les risques de vos projets en temps réel",
+      "narration": "Suivez les risques qui peuvent impacter vos projets stratégiques et anticipez les menaces avant qu'elles ne deviennent critiques."
+    },
+    "decisions": {
+      "title": "Décisions",
+      "subtitle": "Ce module vous aide à tracer et suivre les arbitrages stratégiques",
+      "description": "Tracez et suivez toutes les décisions critiques de votre comité exécutif",
+      "narration": "Maintenez une gouvernance claire en documentant chaque décision stratégique avec son contexte et ses impacts."
+    },
+    "projects": {
+      "title": "Projets",
+      "subtitle": "Ce module vous aide à piloter l'exécution du portefeuille",
+      "description": "Visualisez l'avancement et la santé de votre portefeuille de projets",
+      "narration": "Pilotez l'exécution de vos projets stratégiques avec une vision claire des avancements, risques et ressources."
+    },
+    "committees": {
+      "title": "Comités",
+      "subtitle": "Ce module vous aide à structurer la gouvernance exécutive",
+      "description": "Organisez vos comités de gouvernance et préparez vos décisions",
+      "narration": "Structurez votre gouvernance exécutive avec des comités clairement définis et des décisions traçables."
+    },
+    "journal": {
+      "title": "Journal Exécutif",
+      "subtitle": "Ce module vous aide à suivre les événements stratégiques",
+      "description": "Centralisez tous les événements et signaux faibles de votre organisation",
+      "narration": "Gardez une trace chronologique de tous les événements stratégiques, signaux faibles et décisions importantes."
+    }
+  },
+  "pillars": {
+    "narrative": {
+      "title": "Narratif",
+      "description": "L'IA raconte et éclaire vos décisions stratégiques avec des synthèses exécutives concises"
+    },
+    "proactive": {
+      "title": "Proactif",
+      "description": "Alertes, scénarios et signaux faibles avant la crise pour anticiper les problèmes"
+    },
+    "executive": {
+      "title": "Exécutif",
+      "description": "Orienté arbitrage, comités et décisions de gouvernance au plus haut niveau"
+    }
+  },
+  "cockpit": {
+    "title": "Cockpit Exécutif",
+    "subtitle": "Vue d'ensemble en temps réel",
+    "dashboard": "Tableau de bord",
+    "projects": "Projets",
+    "risks": "Risques",
+    "decisions": "Décisions",
+    "team": "Équipe",
+    "settings": "Paramètres",
+    "profile": "Profil",
+    "analytics": "Analyses",
+    "reports": "Rapports",
+    "welcome": "Bienvenue dans votre cockpit exécutif",
+    "activeProjects": "Projets actifs",
+    "budget": "Budget engagé",
+    "globalRisk": "Risque global",
+    "velocity": "Vélocité moyenne",
+    "lateProjects": "Projets en retard",
+    "remainingBudget": "Budget restant",
+    "portfolioSphere": "Sphère portefeuille",
+    "mode": {
+      "demo": "Mode Démo",
+      "pro": "Mode Pro"
+    },
+    "emptyState": {
+      "title": "Aucune donnée disponible",
+      "description": "Commencez par créer votre premier élément",
+      "cta": "Créer maintenant"
+    }
+  },
+  "projects": {
+    "title": "Projets",
+    "createNew": "Nouveau projet",
+    "name": "Nom du projet",
+    "status": "Statut",
+    "progress": "Progression",
+    "budget": "Budget",
+    "deadline": "Échéance",
+    "team": "Équipe",
+    "risk": "Risque",
+    "actions": "Actions",
+    "details": "Détails",
+    "empty": "Aucun projet pour le moment",
+    "active": "Actifs",
+    "late": "En retard",
+    "critical": "Critiques",
+    "totalLoad": "Charge globale",
+    "toLaunch": "À lancer",
+    "inProgress": "En cours",
+    "inReview": "En revue",
+    "completed": "Terminé"
+  },
+  "risks": {
+    "title": "Risques",
+    "createNew": "Nouveau risque",
+    "name": "Nom du risque",
+    "level": "Niveau",
+    "probability": "Probabilité",
+    "impact": "Impact",
+    "mitigation": "Mitigation",
+    "status": "Statut",
+    "owner": "Responsable",
+    "empty": "Aucun risque identifié",
+    "total": "Total",
+    "critical": "Critiques",
+    "rising": "En hausse",
+    "resolved": "Résolus",
+    "lastUpdate": "Dernière MAJ",
+    "high": "Élevé",
+    "medium": "Moyen",
+    "low": "Faible"
+  },
+  "decisions": {
+    "title": "Décisions",
+    "createNew": "Nouvelle décision",
+    "name": "Titre de la décision",
+    "date": "Date",
+    "status": "Statut",
+    "committee": "Comité",
+    "origin": "Origine",
+    "impact": "Impact",
+    "deadline": "Échéance",
+    "empty": "Aucune décision enregistrée",
+    "pending": "En attente",
+    "validated": "Validées",
+    "late": "En retard"
+  },
+  "committees": {
+    "title": "Comités",
+    "createNew": "Nouveau comité",
+    "name": "Nom du comité",
+    "frequency": "Fréquence",
+    "nextMeeting": "Prochaine séance",
+    "owner": "Responsable",
+    "topics": "Points à traiter",
+    "empty": "Aucun comité défini",
+    "total": "Total comités",
+    "upcoming": "Prochaines séances (7j)",
+    "resolutionRate": "Taux de résolution"
+  },
+  "journal": {
+    "title": "Journal Exécutif",
+    "createNew": "Nouvelle entrée",
+    "date": "Date",
+    "type": "Type",
+    "entryTitle": "Titre",
+    "impact": "Impact",
+    "empty": "Aucune entrée",
+    "entries30d": "Entrées (30j)",
+    "weakSignals": "Signaux faibles",
+    "trackedDecisions": "Décisions tracées",
+    "emergingRisks": "Risques émergents",
+    "typeRisk": "Risque",
+    "typeProject": "Projet",
+    "typeDecision": "Décision",
+    "typeWeakSignal": "Signal faible",
+    "typeStrategicInfo": "Info stratégique"
+  },
+  "ai": {
+    "narrative": "Synthèse IA",
+    "summary": "Résumé exécutif",
+    "analysis": "Analyse",
+    "recommendations": "Recommandations",
+    "scenarios": "Scénarios",
+    "alerts": "Alertes",
+    "loading": "Génération de la synthèse IA..."
+  },
+  "detail": {
+    "information": "Informations",
+    "context": "Contexte",
+    "objectives": "Objectifs",
+    "links": "Liens",
+    "linkedRisks": "Risques liés",
+    "linkedDecisions": "Décisions liées",
+    "linkedProjects": "Projets liés",
+    "linkedCommittees": "Comités liés",
+    "history": "Historique",
+    "tracking": "Suivi"
+  },
+  "footer": {
+    "about": "À propos",
+    "terms": "Conditions d'utilisation",
+    "privacy": "Politique de confidentialité",
+    "contact": "Nous contacter",
+    "copyright": "© {{year}} Powalyze. Tous droits réservés."
+  }
+}

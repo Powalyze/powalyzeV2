@@ -1,0 +1,57 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "intelligence": "Intelligenz",
+    "projects": "Projekte",
+    "documents": "Dokumente",
+    "settings": "Einstellungen",
+    "login": "Anmelden",
+    "register": "Kostenlos testen"
+  },
+  "cockpit": {
+    "mode": {
+      "demo": "Demo-Modus",
+      "pro": "Pro-Modus"
+    },
+    "emptyState": {
+      "title": "Keine Daten verfügbar",
+      "description": "Beginnen Sie mit der Erstellung Ihres ersten Elements",
+      "cta": "Jetzt erstellen"
+    },
+    "title": "Executive Cockpit",
+    "subtitle": "Echtzeit-Übersicht",
+    "activeProjects": "Aktive Projekte",
+    "budget": "Budget zugesagt",
+    "globalRisk": "Globales Risiko",
+    "velocity": "Durchschnittliche Geschwindigkeit",
+    "lateProjects": "Verspätete Projekte",
+    "remainingBudget": "Verbleibendes Budget",
+    "portfolioSphere": "Portfolio-Sphäre",
+    "hoverToExplore": "Bewegen Sie den Mauszeiger, um zu erkunden",
+    "quickActions": "Schnellaktionen",
+    "documents": "Dokumente",
+    "messages": "Nachrichten",
+    "notifications": "Benachrichtigungen",
+    "newProject": "Neues Projekt",
+    "myAI": "Meine KI",
+    "askAI": "Fragen Sie Ihre KI...",
+    "risks": "Risiken & Warnungen",
+    "opportunities": "Möglichkeiten",
+    "projectsRoadmap": "Projekte & Roadmap",
+    "critical": "Kritisch",
+    "underControl": "Unter Kontrolle",
+    "monitored": "Überwacht",
+    "aiRecommendation": "KI-Empfehlung",
+    "impact": "Auswirkung",
+    "probability": "Wahrscheinlichkeit",
+    "sponsor": "Sponsor",
+    "deadline": "Frist",
+    "status": "Status"
+  },
+  "features": {
+    "title": "Funktionen",
+    "pricing": "Preise",
+    "about": "Über uns",
+    "contact": "Kontakt"
+  }
+}
