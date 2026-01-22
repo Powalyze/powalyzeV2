@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Navbar } from '@/components/Navbar';
+import { ModeProvider } from '@/lib/ModeContext';
 
 export const metadata: Metadata = {
   title: 'Powalyze – Cockpit Exécutif & Gouvernance IA',
@@ -15,8 +16,10 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className="bg-slate-950 text-slate-50 antialiased">
-        <Navbar />
-        <div className="pt-14">{children}</div>
+        <ModeProvider>
+          <Navbar />
+          <div className="pt-14">{children}</div>
+        </ModeProvider>
       </body>
     </html>
   );
