@@ -1,14 +1,10 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import './globals.css';
-import '../styles/theme.css';
-import { ModeProvider } from '@/lib/ModeContext';
-
-const inter = Inter({ subsets: ['latin'] });
+import { Navbar } from '@/components/Navbar';
 
 export const metadata: Metadata = {
-  title: 'Powalyze - Cockpit Exécutif & Gouvernance IA',
-  description: 'Plateforme de gouvernance augmentée par l\'IA - Pilotage portefeuille, risques, et décisions COMEX',
+  title: 'Powalyze – Cockpit Exécutif & Gouvernance IA',
+  description: 'Cockpit IA pour piloter portefeuilles, risques et décisions.',
 };
 
 export default function RootLayout({
@@ -18,10 +14,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
-      <body className={inter.className}>
-        <ModeProvider>
-          {children}
-        </ModeProvider>
+      <body className="bg-slate-950 text-slate-50 antialiased">
+        <Navbar />
+        <div className="pt-14">{children}</div>
       </body>
     </html>
   );
