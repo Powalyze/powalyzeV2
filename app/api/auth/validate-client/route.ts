@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateClientCode } from '@/lib/clientCodes';
+import { generateToken } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,9 +24,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Retourner les informations du client
+    // Générer le token JWT pour le client
+    const token = generateToken({
+      userId: client.organizationId,
+      tenantId: client.organizationId,
+      email: `${client.code.toLowerCase()}@powalyze.app`,
+      role: 'COMEX',
+    });
+
+    // Retourner les informations du client avec le token
     return NextResponse.json({
       success: true,
+      token,
       client: {
         code: client.code,
         name: client.name,

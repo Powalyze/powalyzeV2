@@ -30,7 +30,10 @@ export default function ProPage() {
 
       const data = await response.json();
 
-      if (data.success && data.client) {
+      if (data.success && data.client && data.token) {
+        // Stocker le token JWT
+        localStorage.setItem('powalyze_token', data.token);
+        
         // Stocker les informations client
         sessionStorage.setItem('powalyze_client_code', data.client.code);
         sessionStorage.setItem('powalyze_client_name', data.client.name);
