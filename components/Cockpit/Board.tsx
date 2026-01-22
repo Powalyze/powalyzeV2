@@ -2,8 +2,21 @@
 
 import { useState } from "react";
 
+type Statut = "En cours" | "À risque" | "OK";
+type Risque = "Faible" | "Moyen" | "Élevé";
+
+interface RowData {
+  id: number;
+  projet: string;
+  owner: string;
+  statut: Statut;
+  budget: string;
+  risque: Risque;
+  deadline: string;
+}
+
 export function Board() {
-  const [rows, setRows] = useState([
+  const [rows] = useState<RowData[]>([
     {
       id: 1,
       projet: "Migration Cloud",
@@ -33,13 +46,13 @@ export function Board() {
     },
   ]);
 
-  const statuses = {
+  const statuses: Record<Statut, string> = {
     "En cours": "bg-blue-500",
     "À risque": "bg-red-500",
     OK: "bg-emerald-500",
   };
 
-  const risks = {
+  const risks: Record<Risque, string> = {
     Faible: "text-emerald-400",
     Moyen: "text-yellow-400",
     Élevé: "text-red-400",
