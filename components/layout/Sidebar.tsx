@@ -5,22 +5,19 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { navigationItems, bottomNavigationItems } from '@/lib/navigation';
 import { cn } from '@/lib/utils';
-import PowalyzeLogo from '@/components/Logo';
 import { useMode } from '@/lib/ModeContext';
-import { useTranslation } from '@/lib/i18n';
+import Logo from '@/components/Logo';
 
 export const Sidebar: React.FC = () => {
   const pathname = usePathname();
   const { mode, isDemoMode } = useMode();
-  const { t } = useTranslation();
   
   return (
     <aside className="fixed left-0 top-0 h-screen w-64 bg-slate-950 border-r border-slate-800 flex flex-col z-50">
       {/* Logo */}
-      <div className="h-14 flex items-center px-4 border-b border-slate-800">
-        <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <PowalyzeLogo size={32} />
-          <span className="font-semibold text-slate-100">Powalyze</span>
+      <div className="h-16 flex items-center px-4 border-b border-slate-800">
+        <Link href="/" className="hover:opacity-80 transition-opacity">
+          <Logo size={40} variant="light" showText={true} />
         </Link>
       </div>
       

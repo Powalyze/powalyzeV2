@@ -1,24 +1,21 @@
 import Link from "next/link";
+import Logo from "@/components/Logo";
+import { guardDemoRoute } from "@/lib/guards";
 
-export default function CockpitDemoLayout({
+export default async function CockpitDemoLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // 🔒 GUARD: Vérifier que l'utilisateur est en MODE DEMO
+  await guardDemoRoute();
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <header className="border-b border-slate-800 bg-slate-900/30">
         <div className="px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-6">
-            <Link href="/cockpit-demo" className="flex items-center gap-3">
-              <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
-                <circle cx="50" cy="50" r="46" stroke="#C9A227" strokeWidth="4" />
-                <path d="M30 55 L50 25 L70 55 L50 75 Z" fill="#C9A227" />
-              </svg>
-              <div>
-                <div className="text-xs uppercase tracking-[0.2em] text-slate-400">Powalyze</div>
-                <div className="text-sm text-slate-300">Cockpit Exécutif DEMO</div>
-              </div>
+            <Link href="/cockpit-demo">
+              <Logo size={48} variant="light" showText={true} />
             </Link>
             <nav className="flex items-center gap-1 ml-6">
               <Link

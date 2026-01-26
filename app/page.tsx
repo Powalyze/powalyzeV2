@@ -28,13 +28,22 @@ export default function HomePage() {
 
 /* NAVBAR */
 
+import Logo, { LogoCompact } from "@/components/Logo";
+
 function Navbar() {
   return (
     <header className="fixed top-0 inset-x-0 z-40 border-b border-white/5 bg-black/40 backdrop-blur">
-      <div className="mx-auto max-w-6xl px-4 h-14 flex items-center justify-between">
+      <div className="mx-auto max-w-6xl px-4 h-16 flex items-center justify-between">
         <div className="flex items-center gap-6">
-          <Link href="/" className="text-base font-semibold tracking-tight">
-            Powalyze
+          <Link href="/" className="flex items-center">
+            {/* Desktop */}
+            <div className="hidden md:block">
+              <Logo size={48} variant="light" showText={true} />
+            </div>
+            {/* Mobile */}
+            <div className="md:hidden">
+              <LogoCompact size={40} variant="light" />
+            </div>
           </Link>
           <nav className="hidden md:flex items-center gap-5 text-base text-white/70">
             <Link href="#product">Produit</Link>
