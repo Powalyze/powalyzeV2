@@ -43,7 +43,7 @@ function LoginForm() {
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('role')
-        .eq('user_id', authData.user.id)
+        .eq('id', authData.user.id)
         .single();
 
       if (profileError || !profile) {

@@ -34,7 +34,6 @@ UPDATE profiles SET role = 'demo' WHERE role IS NULL;
 -- Table demo_projects (projets démo)
 CREATE TABLE IF NOT EXISTS demo_projects (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  organization_id UUID NOT NULL,
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   description TEXT,
@@ -52,7 +51,6 @@ CREATE TABLE IF NOT EXISTS demo_projects (
 -- Table demo_risks (risques démo)
 CREATE TABLE IF NOT EXISTS demo_risks (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  organization_id UUID NOT NULL,
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   project_id UUID REFERENCES demo_projects(id) ON DELETE CASCADE,
   title TEXT NOT NULL,
@@ -68,7 +66,6 @@ CREATE TABLE IF NOT EXISTS demo_risks (
 -- Table demo_decisions (décisions démo)
 CREATE TABLE IF NOT EXISTS demo_decisions (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  organization_id UUID NOT NULL,
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   project_id UUID REFERENCES demo_projects(id) ON DELETE CASCADE,
   title TEXT NOT NULL,
@@ -83,7 +80,6 @@ CREATE TABLE IF NOT EXISTS demo_decisions (
 
 -- Index pour performance
 CREATE INDEX IF NOT EXISTS idx_demo_projects_user ON demo_projects(user_id);
-CREATE INDEX IF NOT EXISTS idx_demo_projects_org ON demo_projects(organization_id);
 CREATE INDEX IF NOT EXISTS idx_demo_risks_user ON demo_risks(user_id);
 CREATE INDEX IF NOT EXISTS idx_demo_risks_project ON demo_risks(project_id);
 CREATE INDEX IF NOT EXISTS idx_demo_decisions_user ON demo_decisions(user_id);
@@ -99,14 +95,14 @@ ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Users can view own profile" ON profiles;
 CREATE POLICY "Users can view own profile"
   ON profiles FOR SELECT
-  USING (auth.uid() = user_id);
+  USING (auth.uid() = id);
 
 -- Policy: Utilisateurs peuvent mettre à jour leur propre profil (SAUF role)
 DROP POLICY IF EXISTS "Users can update own profile" ON profiles;
 CREATE POLICY "Users can update own profile"
   ON profiles FOR UPDATE
-  USING (auth.uid() = user_id)
-  WITH CHECK (auth.uid() = user_id AND role = (SELECT role FROM profiles WHERE user_id = auth.uid()));
+  USING (auth.uid() = id)
+  WITH CHECK (auth.uid() = id AND role = (SELECT role FROM profiles WHERE id = auth.uid()));
 
 -- Policy: Admins peuvent tout voir et modifier
 DROP POLICY IF EXISTS "Admins can view all profiles" ON profiles;
@@ -115,7 +111,7 @@ CREATE POLICY "Admins can view all profiles"
   USING (
     EXISTS (
       SELECT 1 FROM profiles 
-      WHERE user_id = auth.uid() AND role = 'admin'
+      WHERE id = auth.uid() AND role = 'admin'
     )
   );
 
@@ -125,7 +121,7 @@ CREATE POLICY "Admins can update all profiles"
   USING (
     EXISTS (
       SELECT 1 FROM profiles 
-      WHERE user_id = auth.uid() AND role = 'admin'
+      WHERE id = auth.uid() AND role = 'admin'
     )
   );
 
@@ -143,7 +139,7 @@ CREATE POLICY "Demo users can view own demo projects"
     user_id = auth.uid() 
     AND EXISTS (
       SELECT 1 FROM profiles 
-      WHERE user_id = auth.uid() AND role = 'demo'
+      WHERE id = auth.uid() AND role = 'demo'
     )
   );
 
@@ -154,7 +150,7 @@ CREATE POLICY "Demo users can insert own demo projects"
     user_id = auth.uid() 
     AND EXISTS (
       SELECT 1 FROM profiles 
-      WHERE user_id = auth.uid() AND role = 'demo'
+      WHERE id = auth.uid() AND role = 'demo'
     )
   );
 
@@ -165,7 +161,7 @@ CREATE POLICY "Demo users can update own demo projects"
     user_id = auth.uid() 
     AND EXISTS (
       SELECT 1 FROM profiles 
-      WHERE user_id = auth.uid() AND role = 'demo'
+      WHERE id = auth.uid() AND role = 'demo'
     )
   );
 
@@ -176,7 +172,7 @@ CREATE POLICY "Demo users can delete own demo projects"
     user_id = auth.uid() 
     AND EXISTS (
       SELECT 1 FROM profiles 
-      WHERE user_id = auth.uid() AND role = 'demo'
+      WHERE id = auth.uid() AND role = 'demo'
     )
   );
 
@@ -190,7 +186,7 @@ CREATE POLICY "Demo users can manage own demo risks"
     user_id = auth.uid() 
     AND EXISTS (
       SELECT 1 FROM profiles 
-      WHERE user_id = auth.uid() AND role = 'demo'
+      WHERE id = auth.uid() AND role = 'demo'
     )
   );
 
@@ -204,7 +200,7 @@ CREATE POLICY "Demo users can manage own demo decisions"
     user_id = auth.uid() 
     AND EXISTS (
       SELECT 1 FROM profiles 
-      WHERE user_id = auth.uid() AND role = 'demo'
+      WHERE id = auth.uid() AND role = 'demo'
     )
   );
 
@@ -219,10 +215,9 @@ DROP POLICY IF EXISTS "Pro users can view own org projects" ON projects;
 CREATE POLICY "Pro users can view own org projects"
   ON projects FOR SELECT
   USING (
-    organization_id = (SELECT organization_id FROM profiles WHERE user_id = auth.uid())
-    AND EXISTS (
+    EXISTS (
       SELECT 1 FROM profiles 
-      WHERE user_id = auth.uid() AND role IN ('pro', 'admin')
+      WHERE id = auth.uid() AND role IN ('pro', 'admin')
     )
   );
 
@@ -230,10 +225,9 @@ DROP POLICY IF EXISTS "Pro users can manage own org projects" ON projects;
 CREATE POLICY "Pro users can manage own org projects"
   ON projects FOR ALL
   USING (
-    organization_id = (SELECT organization_id FROM profiles WHERE user_id = auth.uid())
-    AND EXISTS (
+    EXISTS (
       SELECT 1 FROM profiles 
-      WHERE user_id = auth.uid() AND role IN ('pro', 'admin')
+      WHERE id = auth.uid() AND role IN ('pro', 'admin')
     )
   );
 
@@ -244,10 +238,9 @@ DROP POLICY IF EXISTS "Pro users can manage own org risks" ON risks;
 CREATE POLICY "Pro users can manage own org risks"
   ON risks FOR ALL
   USING (
-    organization_id = (SELECT organization_id FROM profiles WHERE user_id = auth.uid())
-    AND EXISTS (
+    EXISTS (
       SELECT 1 FROM profiles 
-      WHERE user_id = auth.uid() AND role IN ('pro', 'admin')
+      WHERE id = auth.uid() AND role IN ('pro', 'admin')
     )
   );
 
@@ -258,10 +251,9 @@ DROP POLICY IF EXISTS "Pro users can manage own org decisions" ON decisions;
 CREATE POLICY "Pro users can manage own org decisions"
   ON decisions FOR ALL
   USING (
-    organization_id = (SELECT organization_id FROM profiles WHERE user_id = auth.uid())
-    AND EXISTS (
+    EXISTS (
       SELECT 1 FROM profiles 
-      WHERE user_id = auth.uid() AND role IN ('pro', 'admin')
+      WHERE id = auth.uid() AND role IN ('pro', 'admin')
     )
   );
 
@@ -271,7 +263,7 @@ CREATE POLICY "Pro users can manage own org decisions"
 
 CREATE OR REPLACE FUNCTION get_user_role(user_uuid UUID)
 RETURNS TEXT AS $$
-  SELECT role FROM profiles WHERE user_id = user_uuid LIMIT 1;
+  SELECT role FROM profiles WHERE id = user_uuid LIMIT 1;
 $$ LANGUAGE SQL SECURITY DEFINER;
 
 -- ============================================================================
@@ -309,11 +301,10 @@ CREATE TRIGGER update_demo_decisions_updated_at
 -- ============================================================================
 
 -- Insérer des projets démo pour tous les utilisateurs demo existants
-INSERT INTO demo_projects (organization_id, user_id, name, description, status, rag_status, budget, spent, completion_percentage)
+INSERT INTO demo_projects (user_id, name, description, status, rag_status, budget, spent, completion_percentage)
 SELECT 
-  organization_id,
-  user_id,
-  'Projet Démo ' || ROW_NUMBER() OVER (PARTITION BY user_id),
+  id,
+  'Projet Démo ' || ROW_NUMBER() OVER (PARTITION BY id),
   'Projet de démonstration créé automatiquement',
   'ACTIVE',
   'GREEN',

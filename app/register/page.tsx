@@ -2,10 +2,15 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Mail, Lock, User, Building, ArrowRight, Eye, EyeOff, Check } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -13,10 +18,45 @@ export default function RegisterPage() {
     password: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Redirect to dashboard for demo
-    window.location.href = "/dashboard";
+    setLoading(true);
+
+    try {
+      // Inscription via Supabase
+      const { data, error } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            name: formData.name,
+            company: formData.company,
+          },
+        },
+      });
+
+      if (error) {
+        console.error('Signup error:', error);
+        toast.error(error.message);
+        setLoading(false);
+        return;
+      }
+
+      if (data.user) {
+        toast.success('Compte créé avec succès! Connexion en cours...');
+        
+        // Attendre 1 seconde pour que le trigger crée le profil
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Rediriger vers cockpit-demo (rôle par défaut = demo)
+        router.push('/cockpit-demo');
+        router.refresh();
+      }
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      toast.error('Erreur lors de la création du compte');
+      setLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -165,10 +205,20 @@ export default function RegisterPage() {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 rounded-lg transition-all font-semibold shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50"
+              disabled={loading}
+              className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 rounded-lg transition-all font-semibold shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Créer mon compte
-              <ArrowRight size={20} />
+              {loading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-slate-950/30 border-t-slate-950 rounded-full animate-spin" />
+                  Création...
+                </>
+              ) : (
+                <>
+                  Créer mon compte
+                  <ArrowRight size={20} />
+                </>
+              )}
             </button>
           </form>
 
