@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { BookOpen, Calendar, Tag, Plus, Filter as FilterIcon, Download } from 'lucide-react';
 import ModuleCard from '@/components/cockpit/ModuleCard';
-import KPICard from '@/components/cockpit/KPICard';
+import KpiCard from '@/components/cockpit/KpiCard';
 import AINarrativeBlock from '@/components/cockpit/AINarrativeBlock';
 import DetailSheet, { DetailSection, DetailField } from '@/components/cockpit/DetailSheet';
 import { useTranslation } from '@/lib/i18n';
@@ -78,23 +78,23 @@ export default function JournalPage() {
       >
         {/* Synthèse haute - 4 KPI */}
         <div className="ds-grid ds-grid-4 mb-8">
-          <KPICard
+          <KpiCard
             label={t('journal.entries30d')}
             value={entries30d}
             icon={<BookOpen className="w-5 h-5" />}
           />
-          <KPICard
+          <KpiCard
             label={t('journal.weakSignals')}
             value={weakSignals}
             variant="warning"
             icon={<Tag className="w-5 h-5" />}
           />
-          <KPICard
+          <KpiCard
             label={t('journal.trackedDecisions')}
             value={trackedDecisions}
             icon={<BookOpen className="w-5 h-5" />}
           />
-          <KPICard
+          <KpiCard
             label={t('journal.emergingRisks')}
             value={emergingRisks}
             variant="danger"
@@ -194,3 +194,4 @@ export default function JournalPage() {
     </div>
   );
 }
+

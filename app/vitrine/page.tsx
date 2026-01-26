@@ -324,3 +324,4 @@ export default function VitrinePage() {
     </div>
   );
 }
+

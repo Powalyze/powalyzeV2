@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Users, Calendar, Clock, Plus, Filter as FilterIcon, Download } from 'lucide-react';
 import ModuleCard from '@/components/cockpit/ModuleCard';
-import KPICard from '@/components/cockpit/KPICard';
+import KpiCard from '@/components/cockpit/KpiCard';
 import AINarrativeBlock from '@/components/cockpit/AINarrativeBlock';
 import DetailSheet, { DetailSection, DetailField } from '@/components/cockpit/DetailSheet';
 import { useTranslation } from '@/lib/i18n';
@@ -62,23 +62,23 @@ export default function ComitesPage() {
       >
         {/* Synthèse haute - 4 KPI */}
         <div className="ds-grid ds-grid-4 mb-8">
-          <KPICard
+          <KpiCard
             label={t('committees.total')}
             value={totalCommittees}
             icon={<Users className="w-5 h-5" />}
           />
-          <KPICard
+          <KpiCard
             label={t('committees.upcoming')}
             value={upcomingMeetings}
             variant="warning"
             icon={<Calendar className="w-5 h-5" />}
           />
-          <KPICard
+          <KpiCard
             label={t('committees.topics')}
             value={totalTopics}
             icon={<Clock className="w-5 h-5" />}
           />
-          <KPICard
+          <KpiCard
             label={t('committees.resolutionRate')}
             value={`${resolutionRate}%`}
             variant="success"
@@ -184,3 +184,4 @@ export default function ComitesPage() {
     </div>
   );
 }
+

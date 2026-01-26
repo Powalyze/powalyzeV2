@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { AlertTriangle, FileText, Folder, TrendingUp, Target, ArrowRight } from 'lucide-react';
 import BaseHeader from '@/components/cockpit/BaseHeader';
-import KPICard from '@/components/cockpit/KPICard';
+import KpiCard from '@/components/cockpit/KpiCard';
 import TopNav from '@/components/cockpit/TopNav';
 import { useTranslation } from '@/lib/i18n';
 
@@ -27,14 +27,14 @@ export default function CockpitDashboard() {
 
         {/* KPI Synthèse (MAX 4 cartes) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <KPICard
+          <KpiCard
             label={t('cockpit.kpi.activeProjects')}
             value="12"
             icon={<Folder className="w-5 h-5" />}
             trend="up"
             trendValue="+2"
           />
-          <KPICard
+          <KpiCard
             label={t('cockpit.kpi.criticalRisks')}
             value="7"
             variant="danger"
@@ -42,13 +42,13 @@ export default function CockpitDashboard() {
             trend="down"
             trendValue="-1"
           />
-          <KPICard
+          <KpiCard
             label={t('cockpit.kpi.pendingDecisions')}
             value="5"
             variant="warning"
             icon={<FileText className="w-5 h-5" />}
           />
-          <KPICard
+          <KpiCard
             label={t('cockpit.kpi.totalProjects')}
             value="1.5M€"
             icon={<TrendingUp className="w-5 h-5" />}
@@ -128,3 +128,4 @@ export default function CockpitDashboard() {
     </div>
   );
 }
+

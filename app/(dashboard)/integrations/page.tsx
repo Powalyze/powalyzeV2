@@ -366,3 +366,4 @@ function StatusBadge({ status }: { status: Integration["status"] }) {
   const { label, variant } = config[status];
   return <Badge variant={variant}>{label}</Badge>;
 }
+

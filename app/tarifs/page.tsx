@@ -318,3 +318,4 @@ export default function TarifsPage() {
     </div>
   );
 }
+

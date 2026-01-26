@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { AlertTriangle, TrendingUp, Clock, Plus, Filter, Download } from 'lucide-react';
 import BaseHeader from '@/components/cockpit/BaseHeader';
-import KPICard from '@/components/cockpit/KPICard';
+import KpiCard from '@/components/cockpit/KpiCard';
 import TopNav from '@/components/cockpit/TopNav';
 import AINarrative from '@/components/cockpit/AINarrative';
 import { useTranslation } from '@/lib/i18n';
@@ -66,12 +66,12 @@ export default function RisquesPage() {
 
         {/* KPI Synthèse (4 max) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <KPICard
+          <KpiCard
             label="Risques totaux"
             value={totalRisks}
             icon={<AlertTriangle className="w-5 h-5" />}
           />
-          <KPICard
+          <KpiCard
             label="Critiques"
             value={criticalRisks}
             variant="danger"
@@ -79,13 +79,13 @@ export default function RisquesPage() {
             trend="up"
             trendValue="+2"
           />
-          <KPICard
+          <KpiCard
             label="En hausse"
             value={risingRisks}
             variant="warning"
             icon={<TrendingUp className="w-5 h-5" />}
           />
-          <KPICard
+          <KpiCard
             label="Résolus"
             value={resolvedRisks}
             variant="success"
@@ -187,3 +187,4 @@ export default function RisquesPage() {
     </div>
   );
 }
+

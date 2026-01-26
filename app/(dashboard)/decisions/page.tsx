@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { FileText, Calendar, TrendingUp, Plus, Filter, Download } from 'lucide-react';
 import BaseHeader from '@/components/cockpit/BaseHeader';
-import KPICard from '@/components/cockpit/KPICard';
+import KpiCard from '@/components/cockpit/KpiCard';
 import TopNav from '@/components/cockpit/TopNav';
 import AINarrative from '@/components/cockpit/AINarrative';
 import { useTranslation } from '@/lib/i18n';
@@ -66,25 +66,25 @@ export default function DecisionsPage() {
 
         {/* KPI Synthèse (4 max) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <KPICard
+          <KpiCard
             label="En attente"
             value={pendingDecisions}
             variant="warning"
             icon={<FileText className="w-5 h-5" />}
           />
-          <KPICard
+          <KpiCard
             label="Validées"
             value={validatedDecisions}
             variant="success"
             icon={<FileText className="w-5 h-5" />}
           />
-          <KPICard
+          <KpiCard
             label="Critiques"
             value={criticalDecisions}
             variant="danger"
             icon={<TrendingUp className="w-5 h-5" />}
           />
-          <KPICard
+          <KpiCard
             label="En retard"
             value={lateDecisions}
             variant="danger"
@@ -173,3 +173,4 @@ export default function DecisionsPage() {
     </div>
   );
 }
+

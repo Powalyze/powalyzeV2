@@ -8,3 +8,4 @@ import CockpitRoot from "@/components/cockpit/CockpitRoot";
 export default function CockpitDemo() {
   return <CockpitRoot mode="demo" />;
 }
+

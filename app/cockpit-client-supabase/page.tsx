@@ -1852,3 +1852,4 @@ export default function CockpitClientSupabasePage() {
     </div>
   );
 }
+

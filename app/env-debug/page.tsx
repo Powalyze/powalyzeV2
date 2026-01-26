@@ -30,3 +30,4 @@ ${typeof window !== 'undefined' ? 'Running on CLIENT' : 'Running on SERVER'}`}
     </div>
   );
 }
+

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Filter, Download, Folder, AlertTriangle, TrendingUp, Clock } from 'lucide-react';
 import BaseHeader from '@/components/cockpit/BaseHeader';
-import KPICard from '@/components/cockpit/KPICard';
+import KpiCard from '@/components/cockpit/KpiCard';
 import TopNav from '@/components/cockpit/TopNav';
 import AINarrative from '@/components/cockpit/AINarrative';
 import { EmptyState } from '@/components/cockpit/EmptyState';
@@ -89,26 +89,26 @@ export default function ProjetsPage() {
         {/* KPI Synthèse (4 max) */}
         {projects.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <KPICard
+          <KpiCard
             label="Projets actifs"
             value={activeProjects}
             icon={<Folder className="w-5 h-5" />}
             trend="up"
             trendValue="+2"
           />
-          <KPICard
+          <KpiCard
             label="En retard"
             value={lateProjects}
             variant="danger"
             icon={<Clock className="w-5 h-5" />}
           />
-          <KPICard
+          <KpiCard
             label="Risque élevé"
             value={criticalProjects}
             variant="warning"
             icon={<AlertTriangle className="w-5 h-5" />}
           />
-          <KPICard
+          <KpiCard
             label="Budget total"
             value={`${totalBudget.toFixed(1)}M€`}
             icon={<TrendingUp className="w-5 h-5" />}
@@ -210,3 +210,4 @@ export default function ProjetsPage() {
     </div>
   );
 }
+

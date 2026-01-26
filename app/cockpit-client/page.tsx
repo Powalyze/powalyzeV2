@@ -2560,3 +2560,4 @@ export default function CockpitClientPage() {
     </div>
   );
 }
+

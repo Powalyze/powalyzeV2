@@ -572,3 +572,4 @@ function FooterColumn({ title, items }: { title: string; items: string[] }) {
     </div>
   );
 }
+

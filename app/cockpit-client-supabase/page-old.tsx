@@ -773,3 +773,4 @@ function CockpitClientSupabasePage() {
 }
 
 export default CockpitClientSupabasePage;
+

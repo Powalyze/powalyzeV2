@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Folder, Calendar, Users, TrendingUp, Plus, Filter as FilterIcon, Download, LayoutGrid, List } from 'lucide-react';
 import ModuleCard from '@/components/cockpit/ModuleCard';
-import KPICard from '@/components/cockpit/KPICard';
+import KpiCard from '@/components/cockpit/KpiCard';
 import AINarrativeBlock from '@/components/cockpit/AINarrativeBlock';
 import DetailSheet, { DetailSection, DetailField } from '@/components/cockpit/DetailSheet';
 import { useTranslation } from '@/lib/i18n';
@@ -94,24 +94,24 @@ export default function ProjetsPage() {
       >
         {/* Synthèse haute - 4 KPI */}
         <div className="ds-grid ds-grid-4 mb-8">
-          <KPICard
+          <KpiCard
             label={t('projects.active')}
             value={activeProjects}
             icon={<Folder className="w-5 h-5" />}
           />
-          <KPICard
+          <KpiCard
             label={t('projects.late')}
             value={lateProjects}
             variant="danger"
             icon={<Calendar className="w-5 h-5" />}
           />
-          <KPICard
+          <KpiCard
             label={t('projects.critical')}
             value={criticalProjects}
             variant="warning"
             icon={<TrendingUp className="w-5 h-5" />}
           />
-          <KPICard
+          <KpiCard
             label={t('projects.totalLoad')}
             value={`${(totalLoad / 1000000).toFixed(1)}M€`}
             icon={<Users className="w-5 h-5" />}
@@ -269,3 +269,4 @@ export default function ProjetsPage() {
     </div>
   );
 }
+

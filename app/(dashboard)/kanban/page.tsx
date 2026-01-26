@@ -254,3 +254,4 @@ function PriorityBadge({ priority }: { priority: Task["priority"] }) {
   const { label, variant } = config[priority];
   return <Badge variant={variant}>{label}</Badge>;
 }
+

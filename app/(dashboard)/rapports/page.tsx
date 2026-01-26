@@ -806,3 +806,4 @@ Généré par Powalyze - ${new Date().toLocaleDateString('fr-FR')} ${new Date().
     </div>
   );
 }
+

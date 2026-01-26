@@ -252,3 +252,4 @@ ajoutez-le manuellement dans lib/clientCodes.ts ou implémentez une API Supabase
     </div>
   );
 }
+

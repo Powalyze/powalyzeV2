@@ -441,3 +441,4 @@ function QuickActionButton({ icon, label, count }: { icon: React.ReactNode; labe
     </button>
   );
 }
+

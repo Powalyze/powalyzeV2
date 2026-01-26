@@ -16,3 +16,4 @@ export default function CockpitLayout({ children }: { children: React.ReactNode 
     </div>
   );
 }
+
