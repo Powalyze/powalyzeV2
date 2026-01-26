@@ -165,10 +165,6 @@ function logUnauthorizedAccess(
   // - Webhook pour alertes temps réel
   // await sendToMonitoring(logEntry);
 }
-    console.log('[Guard] Redirection DEMO → PRO bloquée, utilisateur en mode demo');
-    redirect('/cockpit-demo');
-  }
-}
 
 /**
  * Guard pour les routes /cockpit-demo (MODE DEMO uniquement)
