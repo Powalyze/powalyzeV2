@@ -33,10 +33,10 @@ function Navbar() {
     <header className="fixed top-0 inset-x-0 z-40 border-b border-white/5 bg-black/40 backdrop-blur">
       <div className="mx-auto max-w-6xl px-4 h-14 flex items-center justify-between">
         <div className="flex items-center gap-6">
-          <Link href="/" className="text-sm font-semibold tracking-tight">
+          <Link href="/" className="text-base font-semibold tracking-tight">
             Powalyze
           </Link>
-          <nav className="hidden md:flex items-center gap-5 text-xs text-white/70">
+          <nav className="hidden md:flex items-center gap-5 text-base text-white/70">
             <Link href="#product">Produit</Link>
             <Link href="#governance">Gouvernance IA</Link>
             <Link href="#insights">Insights</Link>
@@ -44,7 +44,7 @@ function Navbar() {
             <Link href="#customers">Clients</Link>
           </nav>
         </div>
-        <div className="flex items-center gap-3 text-xs">
+        <div className="flex items-center gap-3 text-base">
           <Link href="/login" className="hidden md:inline">
             Connexion
           </Link>
@@ -66,65 +66,83 @@ function Hero() {
   return (
     <section
       id="product"
-      className="mx-auto max-w-6xl px-4 py-24 md:py-32 grid md:grid-cols-[1.1fr,1fr] gap-12 items-center"
+      className="relative h-screen w-full overflow-hidden"
     >
-      <div>
-        <p className="text-xs uppercase tracking-[0.2em] text-white/50 mb-4">
-          Cockpit exécutif • Gouvernance IA • Portefeuilles complexes
-        </p>
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight mb-5">
-          Powalyze est un cockpit conçu pour piloter les portefeuilles les plus
-          sensibles.
-        </h1>
-        <p className="text-sm md:text-base text-white/70 mb-4 max-w-xl">
-          Un système moderne pour la gouvernance : risques, budgets, décisions,
-          comités. Une seule source de vérité pour les équipes dirigeantes.
-        </p>
-        <p className="text-xs md:text-sm text-white/50 mb-6 max-w-xl">
-          Remplace les Excel, les slides et les mails dispersés par un cockpit
-          temps réel assisté par IA, inspiré des meilleurs outils produits.
-        </p>
-        <div className="flex flex-wrap gap-3">
-          <Link
-            href="/cockpit"
-            className="px-4 py-2 rounded-full bg-white text-black text-xs font-semibold"
-          >
-            Démarrer avec Powalyze
-          </Link>
-          <Link
-            href="/contact"
-            className="px-4 py-2 rounded-full border border-white/15 text-xs text-white/80"
-          >
-            Parler à un humain
-          </Link>
-        </div>
-      </div>
-      <div className="relative">
-        <div className="absolute -inset-10 bg-[radial-gradient(circle_at_top,_rgba(96,165,250,0.3),_transparent_60%),radial-gradient(circle_at_bottom,_rgba(244,114,182,0.25),_transparent_60%)] opacity-70" />
-        <div className="relative rounded-2xl border border-white/10 bg-gradient-to-b from-white/5 to-white/0 p-4">
-          <div className="flex items-center justify-between text-[10px] text-white/60 mb-3">
-            <span>Vue d'ensemble portefeuille</span>
-            <span>Analyse IA active</span>
-          </div>
-          <div className="grid grid-cols-2 gap-3 text-[11px]">
-            <div className="space-y-2">
-              <Kpi label="Projets actifs" value="42" detail="4 à risque" />
-              <Kpi label="Budget total" value="7.8M€" detail="98% consommé" />
-              <Kpi label="Taux de succès" value="94%" detail="+4 pts vs objectif" />
+      {/* Vidéo Background */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 h-full w-full object-cover"
+        src="/videos/powalyze-manifeste.mp4"
+      />
+      
+      {/* Overlay sombre */}
+      <div className="absolute inset-0 bg-black/40" />
+      
+      {/* Contenu Hero */}
+      <div className="relative z-10 mx-auto max-w-6xl px-4 h-full flex items-center">
+        <div className="grid md:grid-cols-[1.1fr,1fr] gap-12 items-center w-full">
+          <div>
+            <p className="text-base uppercase tracking-[0.2em] text-white/50 mb-4">
+              Cockpit exécutif • Gouvernance IA • Portefeuilles complexes
+            </p>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight mb-5">
+              Powalyze est un cockpit conçu pour piloter les portefeuilles les plus
+              sensibles.
+            </h1>
+            <p className="text-base md:text-lg text-white/70 mb-4 max-w-xl">
+              Un système moderne pour la gouvernance : risques, budgets, décisions,
+              comités. Une seule source de vérité pour les équipes dirigeantes.
+            </p>
+            <p className="text-base text-white/50 mb-6 max-w-xl">
+              Remplace les Excel, les slides et les mails dispersés par un cockpit
+              temps réel assisté par IA, inspiré des meilleurs outils produits.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href="/cockpit"
+                className="px-4 py-2 rounded-full bg-white text-black text-base font-semibold"
+              >
+                Démarrer avec Powalyze
+              </Link>
+              <Link
+                href="/contact"
+                className="px-4 py-2 rounded-full border border-white/15 text-base text-white/80"
+              >
+                Parler à un humain
+              </Link>
             </div>
-            <div className="space-y-2">
-              <div className="rounded-xl border border-white/10 p-2">
-                <div className="text-[10px] text-white/60 mb-1">
-                  Chief of Staff IA
-                </div>
-                <ul className="space-y-1 text-[11px] text-white/80">
-                  <li>• Optimiser portefeuille Q2 (+12% vélocité)</li>
-                  <li>• Identifier 3 projets à risque (-450K€)</li>
-                  <li>• Fast‑track Cloud (+3 semaines)</li>
-                </ul>
+          </div>
+          <div className="relative">
+            <div className="absolute -inset-10 bg-[radial-gradient(circle_at_top,_rgba(96,165,250,0.3),_transparent_60%),radial-gradient(circle_at_bottom,_rgba(244,114,182,0.25),_transparent_60%)] opacity-70" />
+            <div className="relative rounded-2xl border border-white/10 bg-gradient-to-b from-white/5 to-white/0 p-4">
+              <div className="flex items-center justify-between text-[10px] text-white/60 mb-3">
+                <span>Vue d'ensemble portefeuille</span>
+                <span>Analyse IA active</span>
               </div>
-              <div className="rounded-xl border border-white/10 p-2 text-[10px] text-white/60">
-                Portfolio sain • Aucun blocage critique détecté.
+              <div className="grid grid-cols-2 gap-3 text-[11px]">
+                <div className="space-y-2">
+                  <Kpi label="Projets actifs" value="42" detail="4 à risque" />
+                  <Kpi label="Budget total" value="7.8M€" detail="98% consommé" />
+                  <Kpi label="Taux de succès" value="94%" detail="+4 pts vs objectif" />
+                </div>
+                <div className="space-y-2">
+                  <div className="rounded-xl border border-white/10 p-2">
+                    <div className="text-[10px] text-white/60 mb-1">
+                      Chief of Staff IA
+                    </div>
+                    <ul className="space-y-1 text-[11px] text-white/80">
+                      <li>• Optimiser portefeuille Q2 (+12% vélocité)</li>
+                      <li>• Identifier 3 projets à risque (-450K€)</li>
+                      <li>• Fast‑track Cloud (+3 semaines)</li>
+                    </ul>
+                  </div>
+                  <div className="rounded-xl border border-white/10 p-2 text-[10px] text-white/60">
+                    Portfolio sain • Aucun blocage critique détecté.
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -149,10 +167,10 @@ function Kpi({ label, value, detail }: { label: string; value: string; detail: s
 function Logos() {
   return (
     <section className="mx-auto max-w-6xl px-4 py-12">
-      <p className="text-center text-xs text-white/50 mb-6">
+      <p className="text-center text-base text-white/50 mb-6">
         Adopté par les meilleures équipes produit
       </p>
-      <div className="flex flex-wrap justify-center gap-8 text-xs text-white/60">
+      <div className="flex flex-wrap justify-center gap-8 text-base text-white/60">
         <span>OpenAI</span>
         <span>Vercel</span>
         <span>Coinbase</span>
@@ -191,7 +209,7 @@ function Pillar({ title, text }: { title: string; text: string }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
       <h2 className="text-lg font-semibold mb-2">{title}</h2>
-      <p className="text-sm text-white/70">{text}</p>
+      <p className="text-base text-white/70">{text}</p>
     </div>
   );
 }
@@ -208,18 +226,18 @@ function SectionIA() {
         <h2 className="text-2xl md:text-3xl font-semibold mb-3">
           Gouvernance assistée par IA
         </h2>
-        <p className="text-sm text-white/70 mb-4 max-w-lg">
+        <p className="text-base text-white/70 mb-4 max-w-lg">
           Powalyze analyse en continu vos projets, budgets et charges pour
           détecter les dérives, recommander des actions et simuler des scénarios
           d'arbitrage.
         </p>
-        <p className="text-xs text-white/50 mb-6 max-w-lg">
+        <p className="text-base text-white/50 mb-6 max-w-lg">
           L'IA ne remplace pas vos comités, elle les prépare : synthèses,
           risques, décisions, impacts chiffrés.
         </p>
         <Link
           href="/cockpit"
-          className="inline-flex items-center gap-2 text-xs font-semibold"
+          className="inline-flex items-center gap-2 text-base font-semibold"
         >
           Découvrir le cockpit IA
           <span>→</span>
@@ -268,21 +286,21 @@ function SectionOps() {
     <section className="mx-auto max-w-6xl px-4 py-20 grid md:grid-cols-2 gap-10">
       <div>
         <h3 className="text-lg font-semibold mb-2">Opérations auto‑pilotées</h3>
-        <p className="text-sm text-white/70 mb-3">
+        <p className="text-base text-white/70 mb-3">
           Automatisez le tri, la priorisation et la préparation des comités.
           Powalyze propose des plans d'actions prêts à être validés.
         </p>
-        <p className="text-xs text-white/50">
+        <p className="text-base text-white/50">
           Moins de temps à consolider, plus de temps à décider.
         </p>
       </div>
       <div>
         <h3 className="text-lg font-semibold mb-2">Connecteurs Powalyze</h3>
-        <p className="text-sm text-white/70 mb-3">
+        <p className="text-base text-white/70 mb-3">
           Connectez vos outils : Jira, GitHub, Slack, ERP, CRM, fichiers plats.
           Powalyze devient la couche de gouvernance au‑dessus de votre stack.
         </p>
-        <p className="text-xs text-white/50">
+        <p className="text-base text-white/50">
           Les données restent là où elles sont, la décision se prend dans le
           cockpit.
         </p>
@@ -299,11 +317,11 @@ function SectionDirection() {
       <h2 className="text-2xl md:text-3xl font-semibold mb-3">
         Définissez la direction
       </h2>
-      <p className="text-sm text-white/70 mb-6 max-w-xl">
+      <p className="text-base text-white/70 mb-6 max-w-xl">
         Alignez votre organisation autour d'une feuille de route unifiée :
         initiatives, jalons, capacités, risques et décisions.
       </p>
-      <div className="rounded-2xl border border-white/10 bg-black/60 p-4 h-40 flex items-center justify-center text-xs text-white/50">
+      <div className="rounded-2xl border border-white/10 bg-black/60 p-4 h-40 flex items-center justify-center text-base text-white/50">
         Timeline stratégique (initiatives, jalons, capacités) — placeholder
       </div>
     </section>
@@ -317,21 +335,21 @@ function SectionProjects() {
     <section className="mx-auto max-w-6xl px-4 py-20 grid md:grid-cols-2 gap-10">
       <div>
         <h3 className="text-lg font-semibold mb-2">Vue projet complète</h3>
-        <p className="text-sm text-white/70 mb-3">
+        <p className="text-base text-white/70 mb-3">
           Spécifications, jalons, tâches, risques, décisions, documents. Chaque
           projet devient une unité de pilotage claire.
         </p>
-        <p className="text-xs text-white/50">
+        <p className="text-base text-white/50">
           Une vue unique pour les sponsors, les équipes et les PMO.
         </p>
       </div>
       <div>
         <h3 className="text-lg font-semibold mb-2">Mises à jour projet</h3>
-        <p className="text-sm text-white/70 mb-3">
+        <p className="text-base text-white/70 mb-3">
           Communiquez l'avancement, les alertes et les décisions en un format
           lisible, prêt pour les comités.
         </p>
-        <p className="text-xs text-white/50">
+        <p className="text-base text-white/50">
           Fini les slides bricolées la veille du comité.
         </p>
       </div>
@@ -368,8 +386,8 @@ function SectionDocs() {
             key={item.title}
             className="rounded-2xl border border-white/10 bg-white/5 p-4"
           >
-            <h4 className="text-sm font-semibold mb-1">{item.title}</h4>
-            <p className="text-xs text-white/70">{item.text}</p>
+            <h4 className="text-base font-semibold mb-1">{item.title}</h4>
+            <p className="text-base text-white/70">{item.text}</p>
           </div>
         ))}
       </div>
@@ -385,11 +403,11 @@ function SectionIssues() {
       <h2 className="text-2xl md:text-3xl font-semibold mb-3">
         Gestion des anomalies et actions
       </h2>
-      <p className="text-sm text-white/70 mb-6 max-w-xl">
+      <p className="text-base text-white/70 mb-6 max-w-xl">
         Créez, suivez et résolvez les problèmes rapidement. Powalyze relie
         anomalies, risques, décisions et impacts budgétaires.
       </p>
-      <div className="rounded-2xl border border-white/10 bg-black/60 p-4 h-48 flex items-center justify-center text-xs text-white/50">
+      <div className="rounded-2xl border border-white/10 bg-black/60 p-4 h-48 flex items-center justify-center text-base text-white/50">
         Board des anomalies et actions — placeholder
       </div>
     </section>
@@ -403,21 +421,21 @@ function SectionCycles() {
     <section className="mx-auto max-w-6xl px-4 py-20 grid md:grid-cols-2 gap-10">
       <div>
         <h3 className="text-lg font-semibold mb-2">Cycles</h3>
-        <p className="text-sm text-white/70 mb-3">
+        <p className="text-base text-white/70 mb-3">
           Rythmez votre organisation avec des cycles de pilotage clairs :
           mensuels, trimestriels, annuels.
         </p>
-        <p className="text-xs text-white/50">
+        <p className="text-base text-white/50">
           Chaque cycle devient une boucle d'apprentissage et d'arbitrage.
         </p>
       </div>
       <div>
         <h3 className="text-lg font-semibold mb-2">Triage</h3>
-        <p className="text-sm text-white/70 mb-3">
+        <p className="text-base text-white/70 mb-3">
           Gérez les demandes entrantes, les urgences et les signaux faibles
           avant qu'ils ne deviennent des crises.
         </p>
-        <p className="text-xs text-white/50">
+        <p className="text-base text-white/50">
           Une inbox exécutive pour les sujets qui comptent vraiment.
         </p>
       </div>
@@ -433,11 +451,11 @@ function SectionInsights() {
       <h2 className="text-2xl md:text-3xl font-semibold mb-3">
         Insights Powalyze
       </h2>
-      <p className="text-sm text-white/70 mb-6 max-w-xl">
+      <p className="text-base text-white/70 mb-6 max-w-xl">
         Analysez vos données en profondeur : vélocité, capacité, risques,
         dérives, corrélations. Une vue analytique conçue pour les comités.
       </p>
-      <div className="rounded-2xl border border-white/10 bg-black/60 p-4 h-56 flex items-center justify-center text-xs text-white/50">
+      <div className="rounded-2xl border border-white/10 bg-black/60 p-4 h-56 flex items-center justify-center text-base text-white/50">
         Scatter chart Insights — placeholder
       </div>
     </section>
@@ -452,11 +470,11 @@ function SectionWorkflows() {
       <h2 className="text-2xl md:text-3xl font-semibold mb-3">
         Workflows et intégrations
       </h2>
-      <p className="text-sm text-white/70 mb-6 max-w-xl">
+      <p className="text-base text-white/70 mb-6 max-w-xl">
         Étendez les capacités de Powalyze avec des workflows personnalisés,
         des vues adaptées à chaque rôle et des intégrations profondes.
       </p>
-      <ul className="grid md:grid-cols-2 gap-3 text-sm text-white/70">
+      <ul className="grid md:grid-cols-2 gap-3 text-base text-white/70">
         <li>Workflows personnalisés</li>
         <li>Vues exécutives et opérationnelles</li>
         <li>Filtres avancés et segments</li>
@@ -497,8 +515,8 @@ function SectionExtras() {
           key={item.title}
           className="rounded-2xl border border-white/10 bg-white/5 p-4"
         >
-          <h3 className="text-sm font-semibold mb-1">{item.title}</h3>
-          <p className="text-xs text-white/70">{item.text}</p>
+          <h3 className="text-base font-semibold mb-1">{item.title}</h3>
+          <p className="text-base text-white/70">{item.text}</p>
         </div>
       ))}
     </section>
@@ -518,19 +536,19 @@ function Footer() {
           <div className="flex justify-center gap-3">
             <Link
               href="/contact"
-              className="px-4 py-2 rounded-full border border-white/15 text-xs text-white/80"
+              className="px-4 py-2 rounded-full border border-white/15 text-base text-white/80"
             >
               Contacter l'équipe
             </Link>
             <Link
               href="/cockpit"
-              className="px-4 py-2 rounded-full bg-white text-black text-xs font-semibold"
+              className="px-4 py-2 rounded-full bg-white text-black text-base font-semibold"
             >
               Commencer
             </Link>
           </div>
         </div>
-        <div className="grid md:grid-cols-5 gap-8 text-xs text-white/60">
+        <div className="grid md:grid-cols-5 gap-8 text-base text-white/60">
           <FooterColumn
             title="Fonctionnalités"
             items={["Pilotage", "IA", "Insights", "Demandes clients", "Mobile"]}
@@ -563,7 +581,7 @@ function Footer() {
 function FooterColumn({ title, items }: { title: string; items: string[] }) {
   return (
     <div>
-      <h4 className="text-xs font-semibold mb-2 text-white/80">{title}</h4>
+      <h4 className="text-base font-semibold mb-2 text-white/80">{title}</h4>
       <ul className="space-y-1">
         {items.map((item) => (
           <li key={item}>{item}</li>
