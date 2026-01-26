@@ -60,11 +60,21 @@ export default function CockpitDemoLayout({
             </nav>
           </div>
           <div className="flex items-center gap-3">
-            <div className="px-3 py-1.5 bg-blue-500/10 text-blue-500 border border-blue-500/20 rounded-full flex items-center gap-2">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-              <span className="text-xs font-semibold uppercase">MODE DÉMO</span>
+            <div className="flex items-center gap-2">
+              <Link
+                href="/cockpit"
+                className="px-3 py-1.5 text-xs font-semibold uppercase text-slate-400 hover:text-emerald-400 hover:bg-slate-800 rounded-lg transition-all duration-200"
+                title="MODE PRO - Tables réelles vierges"
+              >
+                MODE PRO
+              </Link>
+              <div className="px-3 py-1.5 bg-blue-500/10 text-blue-500 border border-blue-500/20 rounded-full flex items-center gap-2">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                <span className="text-xs font-semibold uppercase">MODE DÉMO</span>
+                <span className="text-[10px] px-1.5 py-0.5 bg-blue-400/20 rounded">Actif</span>
+              </div>
             </div>
             <Link
               href="/login"

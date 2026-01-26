@@ -31,6 +31,24 @@ export const Topbar: React.FC = () => {
           <span>IA</span>
         </button>
         
+        {/* Mode Switcher */}
+        <div className="flex items-center gap-2 px-2 py-1.5 bg-slate-900/50 border border-slate-800 rounded-lg">
+          <button 
+            onClick={() => router.push('/cockpit')}
+            className="px-3 py-1.5 rounded-md text-xs font-semibold transition-all duration-200 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+            title="MODE PRO - Tables réelles vierges"
+          >
+            MODE PRO
+          </button>
+          <button 
+            onClick={() => router.push('/cockpit-demo')}
+            className="px-3 py-1.5 rounded-md text-xs font-semibold transition-all duration-200 text-slate-400 hover:text-slate-100 hover:bg-slate-800"
+            title="MODE DÉMO - Données mock pré-remplies"
+          >
+            MODE DÉMO
+          </button>
+        </div>
+        
         {/* Client Selector */}
         <button className="flex items-center gap-2 px-3 py-1.5 bg-slate-900/50 border border-slate-800 rounded-lg text-sm text-slate-300 hover:border-slate-700 transition-colors">
           <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
