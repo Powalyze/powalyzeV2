@@ -1,16 +1,14 @@
+"use client";
+
 import { createAnomaly } from "@/actions/anomalies";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { createClient } from "@/utils/supabase/server";
+import { getCockpitData } from "@/lib/cockpitData";
 
-export default async function NouveauAnomaliePage() {
-  const supabase = await createClient();
-  
-  // Récupérer la liste des projets
-  const { data: projects } = await supabase
-    .from("projects")
-    .select("id, name")
-    .order("name", { ascending: true });
+export default function NouveauAnomaliePage() {
+  // Récupérer la liste des projets depuis cockpitData
+  const cockpitData = getCockpitData();
+  const projects = cockpitData.projects;
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center gap-4">
@@ -87,7 +85,7 @@ export default async function NouveauAnomaliePage() {
               className="w-full px-4 py-2 bg-slate-900/50 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
             >
               <option value="">Sélectionner un projet</option>
-              {projects?.map((project) => (
+              {projects.map((project) => (
                 <option key={project.id} value={project.id}>
                   {project.name}
                 </option>
