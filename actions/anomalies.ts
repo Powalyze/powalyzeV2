@@ -3,6 +3,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getTableName } from "@/lib/modeDetection";
 
 export async function createAnomaly(formData: FormData) {
   const supabase = await createClient();
@@ -17,8 +18,10 @@ export async function createAnomaly(formData: FormData) {
   const severity = formData.get("severity") as string;
   const project_id = formData.get("project_id") as string;
 
+  const tableName = await getTableName("anomalies");
+
   const { data, error } = await supabase
-    .from("anomalies")
+    .from(tableName)
     .insert({
       user_id: user.id,
       project_id: project_id || null,
@@ -65,8 +68,10 @@ export async function updateAnomaly(id: string, formData: FormData) {
     updateData.resolved_at = new Date().toISOString();
   }
 
+  const tableName = await getTableName("anomalies");
+
   const { error } = await supabase
-    .from("anomalies")
+    .from(tableName)
     .update(updateData)
     .eq("id", id)
     .eq("user_id", user.id);
@@ -89,8 +94,10 @@ export async function deleteAnomaly(id: string) {
     throw new Error("Non authentifié");
   }
 
+  const tableName = await getTableName("anomalies");
+
   const { error } = await supabase
-    .from("anomalies")
+    .from(tableName)
     .delete()
     .eq("id", id)
     .eq("user_id", user.id);
@@ -102,4 +109,53 @@ export async function deleteAnomaly(id: string) {
 
   revalidatePath("/cockpit/anomalies");
   redirect("/cockpit/anomalies");
+}
+
+export async function getAnomalies() {
+  const supabase = await createClient();
+  
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    return [];
+  }
+
+  const tableName = await getTableName("anomalies");
+
+  const { data, error } = await supabase
+    .from(tableName)
+    .select("*")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Erreur récupération anomalies:", error);
+    return [];
+  }
+
+  return data || [];
+}
+
+export async function getAnomaly(id: string) {
+  const supabase = await createClient();
+  
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    return null;
+  }
+
+  const tableName = await getTableName("anomalies");
+
+  const { data, error } = await supabase
+    .from(tableName)
+    .select("*")
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .single();
+
+  if (error) {
+    console.error("Erreur récupération anomalie:", error);
+    return null;
+  }
+
+  return data;
 }

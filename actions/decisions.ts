@@ -3,6 +3,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getTableName } from "@/lib/modeDetection";
 
 export async function createDecision(formData: FormData) {
   const supabase = await createClient();
@@ -18,8 +19,10 @@ export async function createDecision(formData: FormData) {
   const decision_maker = formData.get("decision_maker") as string;
   const project_id = formData.get("project_id") as string;
 
+  const tableName = await getTableName("decisions");
+
   const { data, error } = await supabase
-    .from("decisions")
+    .from(tableName)
     .insert({
       user_id: user.id,
       project_id: project_id || null,
@@ -66,8 +69,10 @@ export async function updateDecision(id: string, formData: FormData) {
     updateData.decided_at = new Date().toISOString();
   }
 
+  const tableName = await getTableName("decisions");
+
   const { error } = await supabase
-    .from("decisions")
+    .from(tableName)
     .update(updateData)
     .eq("id", id)
     .eq("user_id", user.id);
@@ -90,8 +95,10 @@ export async function deleteDecision(id: string) {
     throw new Error("Non authentifié");
   }
 
+  const tableName = await getTableName("decisions");
+
   const { error } = await supabase
-    .from("decisions")
+    .from(tableName)
     .delete()
     .eq("id", id)
     .eq("user_id", user.id);
@@ -103,4 +110,53 @@ export async function deleteDecision(id: string) {
 
   revalidatePath("/cockpit/decisions");
   redirect("/cockpit/decisions");
+}
+
+export async function getDecisions() {
+  const supabase = await createClient();
+  
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    return [];
+  }
+
+  const tableName = await getTableName("decisions");
+
+  const { data, error } = await supabase
+    .from(tableName)
+    .select("*")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Erreur récupération décisions:", error);
+    return [];
+  }
+
+  return data || [];
+}
+
+export async function getDecision(id: string) {
+  const supabase = await createClient();
+  
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    return null;
+  }
+
+  const tableName = await getTableName("decisions");
+
+  const { data, error } = await supabase
+    .from(tableName)
+    .select("*")
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .single();
+
+  if (error) {
+    console.error("Erreur récupération décision:", error);
+    return null;
+  }
+
+  return data;
 }

@@ -3,6 +3,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getTableName } from "@/lib/modeDetection";
 
 export async function createConnector(formData: FormData) {
   const supabase = await createClient();
@@ -18,8 +19,10 @@ export async function createConnector(formData: FormData) {
   const secret = formData.get("secret") as string;
   const api_url = formData.get("api_url") as string;
 
+  const tableName = await getTableName("connectors");
+
   const { data, error } = await supabase
-    .from("connectors")
+    .from(tableName)
     .insert({
       user_id: user.id,
       name,
@@ -56,8 +59,10 @@ export async function updateConnector(id: string, formData: FormData) {
   const api_url = formData.get("api_url") as string;
   const status = formData.get("status") as string;
 
+  const tableName = await getTableName("connectors");
+
   const { error } = await supabase
-    .from("connectors")
+    .from(tableName)
     .update({
       name,
       connector_type,
@@ -88,8 +93,10 @@ export async function deleteConnector(id: string) {
     throw new Error("Non authentifié");
   }
 
+  const tableName = await getTableName("connectors");
+
   const { error } = await supabase
-    .from("connectors")
+    .from(tableName)
     .delete()
     .eq("id", id)
     .eq("user_id", user.id);
@@ -112,8 +119,10 @@ export async function testConnector(id: string) {
   }
 
   // Mettre à jour la date de dernière synchronisation
+  const tableName = await getTableName("connectors");
+
   const { error } = await supabase
-    .from("connectors")
+    .from(tableName)
     .update({
       last_sync: new Date().toISOString()
     })
@@ -127,4 +136,53 @@ export async function testConnector(id: string) {
 
   revalidatePath(`/cockpit/connecteurs/${id}`);
   return { success: true };
+}
+
+export async function getConnectors() {
+  const supabase = await createClient();
+  
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    return [];
+  }
+
+  const tableName = await getTableName("connectors");
+
+  const { data, error } = await supabase
+    .from(tableName)
+    .select("*")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Erreur récupération connecteurs:", error);
+    return [];
+  }
+
+  return data || [];
+}
+
+export async function getConnector(id: string) {
+  const supabase = await createClient();
+  
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    return null;
+  }
+
+  const tableName = await getTableName("connectors");
+
+  const { data, error } = await supabase
+    .from(tableName)
+    .select("*")
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .single();
+
+  if (error) {
+    console.error("Erreur récupération connecteur:", error);
+    return null;
+  }
+
+  return data;
 }

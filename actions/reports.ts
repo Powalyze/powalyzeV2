@@ -3,6 +3,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getTableName } from "@/lib/modeDetection";
 
 export async function createReport(formData: FormData) {
   const supabase = await createClient();
@@ -17,8 +18,10 @@ export async function createReport(formData: FormData) {
   const report_type = formData.get("report_type") as string;
   const project_id = formData.get("project_id") as string;
 
+  const tableName = await getTableName("reports");
+
   const { data, error } = await supabase
-    .from("reports")
+    .from(tableName)
     .insert({
       user_id: user.id,
       project_id: project_id || null,
@@ -50,8 +53,10 @@ export async function updateReport(id: string, formData: FormData) {
   const content = formData.get("content") as string;
   const report_type = formData.get("report_type") as string;
 
+  const tableName = await getTableName("reports");
+
   const { error } = await supabase
-    .from("reports")
+    .from(tableName)
     .update({
       title,
       content,
@@ -79,8 +84,10 @@ export async function deleteReport(id: string) {
     throw new Error("Non authentifié");
   }
 
+  const tableName = await getTableName("reports");
+
   const { error } = await supabase
-    .from("reports")
+    .from(tableName)
     .delete()
     .eq("id", id)
     .eq("user_id", user.id);
@@ -92,4 +99,53 @@ export async function deleteReport(id: string) {
 
   revalidatePath("/cockpit/rapports");
   redirect("/cockpit/rapports");
+}
+
+export async function getReports() {
+  const supabase = await createClient();
+  
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    return [];
+  }
+
+  const tableName = await getTableName("reports");
+
+  const { data, error } = await supabase
+    .from(tableName)
+    .select("*")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Erreur récupération rapports:", error);
+    return [];
+  }
+
+  return data || [];
+}
+
+export async function getReport(id: string) {
+  const supabase = await createClient();
+  
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    return null;
+  }
+
+  const tableName = await getTableName("reports");
+
+  const { data, error } = await supabase
+    .from(tableName)
+    .select("*")
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .single();
+
+  if (error) {
+    console.error("Erreur récupération rapport:", error);
+    return null;
+  }
+
+  return data;
 }
