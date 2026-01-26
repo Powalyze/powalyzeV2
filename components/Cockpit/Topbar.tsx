@@ -1,6 +1,7 @@
 "use client";
 
-import { Bell, Search, User } from "lucide-react";
+import { Bell, Search } from "lucide-react";
+import UserMenu from "@/components/UserMenu";
 
 export function Topbar() {
   return (
@@ -24,14 +25,7 @@ export function Topbar() {
           <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
         </button>
 
-        <button 
-          className="flex items-center gap-2 p-2 hover:bg-slate-800 rounded-lg transition"
-          aria-label="User menu"
-          title="User menu"
-        >
-          <User className="w-5 h-5 text-slate-400" />
-          <span className="text-sm text-slate-300">Admin</span>
-        </button>
+        <UserMenu />
       </div>
     </header>
   );

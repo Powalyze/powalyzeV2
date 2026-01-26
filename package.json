@@ -10,6 +10,7 @@
     "db:migrate": "node scripts/migrate.js"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.90.1",
     "@types/node": "^20.12.0",
     "@types/react": "^19.2.8",

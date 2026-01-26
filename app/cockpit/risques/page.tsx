@@ -2,6 +2,7 @@
 
 import React from "react";
 import { AlertTriangle, Shield, AlertCircle } from "lucide-react";
+import Link from "next/link";
 
 export default function RisquesPage() {
   return (
@@ -11,9 +12,12 @@ export default function RisquesPage() {
           <h1 className="text-2xl font-bold text-white">Gestion des Risques</h1>
           <p className="text-slate-400 mt-1">Identification et suivi des risques projets</p>
         </div>
-        <button className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg font-medium transition-colors">
+        <Link
+          href="/cockpit/risques/nouveau"
+          className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg font-medium transition-colors"
+        >
           + Déclarer un Risque
-        </button>
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

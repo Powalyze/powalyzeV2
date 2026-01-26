@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Plug, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
+import Link from "next/link";
 
 export default function ConnecteursPage() {
   return (
@@ -11,9 +12,12 @@ export default function ConnecteursPage() {
           <h1 className="text-2xl font-bold text-white">Connecteurs & Intégrations</h1>
           <p className="text-slate-400 mt-1">Gestion des connexions aux systèmes externes</p>
         </div>
-        <button className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors">
+        <Link
+          href="/cockpit/connecteurs/nouveau"
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors"
+        >
           + Ajouter Connecteur
-        </button>
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

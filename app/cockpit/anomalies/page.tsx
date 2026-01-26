@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Bug, AlertTriangle, CheckCircle2 } from "lucide-react";
+import Link from "next/link";
 
 export default function AnomaliesPage() {
   return (
@@ -11,9 +12,12 @@ export default function AnomaliesPage() {
           <h1 className="text-2xl font-bold text-white">Anomalies & Incidents</h1>
           <p className="text-slate-400 mt-1">Suivi des anomalies détectées et incidents</p>
         </div>
-        <button className="px-4 py-2 bg-orange-600 hover:bg-orange-500 text-white rounded-lg font-medium transition-colors">
+        <Link
+          href="/cockpit/anomalies/nouveau"
+          className="px-4 py-2 bg-orange-600 hover:bg-orange-500 text-white rounded-lg font-medium transition-colors"
+        >
           + Signaler Anomalie
-        </button>
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

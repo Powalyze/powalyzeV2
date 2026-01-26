@@ -2,6 +2,7 @@
 
 import React from "react";
 import { CheckCircle2, Clock, XCircle } from "lucide-react";
+import Link from "next/link";
 
 export default function DecisionsPage() {
   return (
@@ -11,9 +12,12 @@ export default function DecisionsPage() {
           <h1 className="text-2xl font-bold text-white">Registre des Décisions</h1>
           <p className="text-slate-400 mt-1">Suivi des décisions stratégiques et tactiques</p>
         </div>
-        <button className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors">
+        <Link
+          href="/cockpit/decisions/nouveau"
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors"
+        >
           + Nouvelle Décision
-        </button>
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

@@ -2,6 +2,7 @@
 
 import React from "react";
 import { FileText, Download, Calendar } from "lucide-react";
+import Link from "next/link";
 
 export default function RapportsPage() {
   return (
@@ -11,9 +12,12 @@ export default function RapportsPage() {
           <h1 className="text-2xl font-bold text-white">Rapports & Exports</h1>
           <p className="text-slate-400 mt-1">Génération et consultation des rapports</p>
         </div>
-        <button className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-medium transition-colors">
+        <Link
+          href="/cockpit/rapports/nouveau"
+          className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-medium transition-colors"
+        >
           + Nouveau Rapport
-        </button>
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
