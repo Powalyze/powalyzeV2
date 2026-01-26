@@ -18,20 +18,20 @@ export function Sidebar() {
 
   return (
     <aside className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col">
-      <div className="px-5 py-4 text-lg font-bold tracking-tight">
+      <div className="px-5 py-4 text-lg font-bold tracking-tight text-white">
         Powalyze
       </div>
 
       <nav className="flex-1 px-3 space-y-1">
         {items.map((item) => {
-          const active = pathname.startsWith(item.href);
+          const active = pathname === item.href || (item.href !== "/cockpit" && pathname.startsWith(item.href));
 
           return (
             <Link
               key={item.name}
               href={item.href}
-              className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm transition 
-                ${active ? "bg-slate-800 text-white" : "text-slate-400 hover:bg-slate-800/60"}`}
+              className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors
+                ${active ? "bg-slate-800 text-white" : "text-slate-300 hover:bg-slate-800/60 hover:text-white"}`}
             >
               <span className="flex items-center gap-2">
                 <span>{item.icon}</span>
@@ -39,7 +39,7 @@ export function Sidebar() {
               </span>
 
               {item.count && (
-                <span className="text-xs bg-slate-700 px-2 py-0.5 rounded-full">
+                <span className="text-xs bg-slate-700 text-slate-200 px-2 py-0.5 rounded-full">
                   {item.count}
                 </span>
               )}

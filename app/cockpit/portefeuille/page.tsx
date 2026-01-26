@@ -2,6 +2,7 @@
 
 import React from "react";
 import { FolderKanban, TrendingUp, AlertCircle, CheckCircle2 } from "lucide-react";
+import Link from "next/link";
 
 export default function PortefeuillePage() {
   return (
@@ -11,9 +12,12 @@ export default function PortefeuillePage() {
           <h1 className="text-2xl font-bold text-white">Portefeuille de Projets</h1>
           <p className="text-slate-400 mt-1">Vue d'ensemble de tous les projets actifs</p>
         </div>
-        <button className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-medium transition-colors">
+        <Link
+          href="/cockpit/portefeuille/nouveau"
+          className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-medium transition-colors"
+        >
           + Nouveau Projet
-        </button>
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

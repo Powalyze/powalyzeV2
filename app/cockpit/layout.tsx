@@ -4,7 +4,7 @@ import { Topbar } from "@/components/cockpit/Topbar";
 
 export default function CockpitLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-screen bg-slate-950 text-slate-100">
+    <div className="flex h-screen bg-slate-950">
       <Sidebar />
 
       <div className="flex flex-col flex-1">
