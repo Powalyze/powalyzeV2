@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Logo from "@/components/Logo";
-import { guardDemoRoute } from "@/lib/guards";
+import { guardDemo } from "@/lib/guards";
 
 export default async function CockpitDemoLayout({
   children,
@@ -8,7 +8,7 @@ export default async function CockpitDemoLayout({
   children: React.ReactNode;
 }) {
   // 🔒 GUARD: Vérifier que l'utilisateur est en MODE DEMO
-  await guardDemoRoute();
+  await guardDemo();
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <header className="border-b border-slate-800 bg-slate-900/30">

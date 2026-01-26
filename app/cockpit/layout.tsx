@@ -1,11 +1,11 @@
 import "../globals.css";
 import { Sidebar } from "@/components/cockpit/Sidebar";
 import { Topbar } from "@/components/cockpit/Topbar";
-import { guardProRoute } from "@/lib/guards";
+import { guardPro } from "@/lib/guards";
 
 export default async function CockpitLayout({ children }: { children: React.ReactNode }) {
   // 🔒 GUARD: Vérifier que l'utilisateur est en MODE PRO
-  await guardProRoute();
+  await guardPro();
   return (
     <div className="flex h-screen bg-slate-950">
       <Sidebar />

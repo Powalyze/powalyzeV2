@@ -167,53 +167,25 @@ function logUnauthorizedAccess(
 }
 
 /**
- * Guard pour les routes /cockpit-demo (MODE DEMO uniquement)
- * Redirige vers /cockpit si l'utilisateur est en mode pro
- */
-export async function guardDemoRoute(): Promise<void> {
-  const mode = await getUserMode();
-  
-  if (!mode) {
-    redirect('/login');
-  }
-
-  if (mode === 'pro') {
-    console.log('[Guard] Redirection PRO → DEMO bloquée, utilisateur en mode pro');
-    redirect('/cockpit');
-  }
-}
-
-/**
- * Guard flexible: retourne le mode et laisse la page décider
- */
-export async function checkUserMode(): Promise<{ mode: UserMode | null; isAuthenticated: boolean }> {
-  const mode = await getUserMode();
-  return {
-    mode,
-    isAuthenticated: mode !== null
-  };
-}
-
-/**
  * Vérifie que l'utilisateur a accès à la ressource
  * Empêche les fuites de données entre DEMO et PRO
  */
 export async function guardResourceAccess(tableName: string): Promise<void> {
-  const mode = await getUserMode();
+  const role = await getUserRole();
   
-  if (!mode) {
+  if (!role) {
     throw new Error("Non authentifié");
   }
 
-  // Vérifier que la table correspond au mode
+  // Vérifier que la table correspond au rôle
   const isDemoTable = tableName.startsWith('demo_');
   const isProTable = !isDemoTable;
 
-  if (mode === 'demo' && isProTable) {
-    throw new Error("Accès refusé: utilisateur en mode DEMO ne peut pas accéder aux tables PRO");
+  if (role === 'demo' && isProTable) {
+    throw new Error("Accès refusé: utilisateur DEMO ne peut pas accéder aux tables PRO");
   }
 
-  if (mode === 'pro' && isDemoTable) {
-    throw new Error("Accès refusé: utilisateur en mode PRO ne peut pas accéder aux tables DEMO");
+  if ((role === 'pro' || role === 'admin') && isDemoTable) {
+    throw new Error("Accès refusé: utilisateur PRO/ADMIN ne peut pas accéder aux tables DEMO");
   }
 }
