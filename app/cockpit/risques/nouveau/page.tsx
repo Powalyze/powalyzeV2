@@ -1,8 +1,16 @@
 import { createRisk } from "@/actions/risks";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { createClient } from "@/utils/supabase/server";
 
-export default function NouveauRisquePage() {
+export default async function NouveauRisquePage() {
+  const supabase = await createClient();
+  
+  // Récupérer la liste des projets
+  const { data: projects } = await supabase
+    .from("projects")
+    .select("id, name")
+    .order("name", { ascending: true });
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center gap-4">
@@ -95,13 +103,18 @@ export default function NouveauRisquePage() {
             <label htmlFor="project_id" className="block text-sm font-medium text-slate-300 mb-2">
               Projet associé (optionnel)
             </label>
-            <input
-              type="text"
+            <select
               id="project_id"
               name="project_id"
-              className="w-full px-4 py-2 bg-slate-900/50 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-              placeholder="ID du projet"
-            />
+              className="w-full px-4 py-2 bg-slate-900/50 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            >
+              <option value="">Sélectionner un projet</option>
+              {projects?.map((project) => (
+                <option key={project.id} value={project.id}>
+                  {project.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Actions */}
