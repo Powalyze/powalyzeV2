@@ -3,6 +3,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getTableName } from "@/lib/modeDetection";
 
 export async function createRisk(formData: FormData) {
   const supabase = await createClient();
@@ -18,8 +19,10 @@ export async function createRisk(formData: FormData) {
   const probability = parseInt(formData.get("probability") as string);
   const project_id = formData.get("project_id") as string;
 
+  const tableName = await getTableName("risks");
+
   const { data, error } = await supabase
-    .from("risks")
+    .from(tableName)
     .insert({
       user_id: user.id,
       project_id: project_id || null,
@@ -55,8 +58,10 @@ export async function updateRisk(id: string, formData: FormData) {
   const probability = parseInt(formData.get("probability") as string);
   const status = formData.get("status") as string;
 
+  const tableName = await getTableName("risks");
+
   const { error } = await supabase
-    .from("risks")
+    .from(tableName)
     .update({
       title,
       description,
@@ -86,8 +91,10 @@ export async function deleteRisk(id: string) {
     throw new Error("Non authentifié");
   }
 
+  const tableName = await getTableName("risks");
+
   const { error } = await supabase
-    .from("risks")
+    .from(tableName)
     .delete()
     .eq("id", id)
     .eq("user_id", user.id);
