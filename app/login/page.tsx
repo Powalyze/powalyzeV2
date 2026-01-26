@@ -4,6 +4,8 @@ import React, { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Mail, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 function LoginForm() {
   const router = useRouter();
@@ -11,14 +13,80 @@ function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Set authentication
-    localStorage.setItem('powalyze_auth', 'true');
-    // Redirect to cockpit or to the page they were trying to access
-    const redirect = searchParams.get('redirect') || '/cockpit';
-    router.push(redirect);
+    setLoading(true);
+
+    try {
+      // 1. Connexion via Supabase
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (authError) {
+        console.error('Login error:', authError);
+        toast.error('Identifiants incorrects');
+        setLoading(false);
+        return;
+      }
+
+      if (!authData.user) {
+        toast.error('Erreur lors de la connexion');
+        setLoading(false);
+        return;
+      }
+
+      // 2. Récupérer le rôle de l'utilisateur
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('user_id', authData.user.id)
+        .single();
+
+      if (profileError || !profile) {
+        console.error('Profile error:', profileError);
+        toast.error('Profil introuvable');
+        setLoading(false);
+        return;
+      }
+
+      const userRole = profile.role as 'demo' | 'pro' | 'admin';
+
+      // 3. Redirection selon le rôle
+      let redirectPath = '/cockpit';
+
+      if (userRole === 'demo') {
+        redirectPath = '/cockpit-demo';
+      } else if (userRole === 'pro' || userRole === 'admin') {
+        redirectPath = '/cockpit';
+      }
+
+      // 4. Vérifier s'il y a une redirection dans l'URL
+      const redirectParam = searchParams.get('redirect');
+      if (redirectParam) {
+        // Valider que la redirection correspond au rôle
+        if (userRole === 'demo' && redirectParam.startsWith('/cockpit-demo')) {
+          redirectPath = redirectParam;
+        } else if ((userRole === 'pro' || userRole === 'admin') && redirectParam.startsWith('/cockpit') && !redirectParam.startsWith('/cockpit-demo')) {
+          redirectPath = redirectParam;
+        }
+      }
+
+      // 5. Success notification
+      toast.success(`Bienvenue ! (${userRole.toUpperCase()})`);
+
+      // 6. Redirect
+      router.push(redirectPath);
+      router.refresh();
+      
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      toast.error('Erreur lors de la connexion');
+      setLoading(false);
+    }
   };
 
   return (
@@ -108,10 +176,11 @@ function LoginForm() {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 rounded-lg transition-all font-semibold shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50"
+              disabled={loading}
+              className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 rounded-lg transition-all font-semibold shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Se connecter
-              <ArrowRight size={20} />
+              {loading ? 'Connexion...' : 'Se connecter'}
+              {!loading && <ArrowRight size={20} />}
             </button>
           </form>
 

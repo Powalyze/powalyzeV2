@@ -1,19 +1,21 @@
 // ====================================================================
 // GUARDS: PROTECTION DES ROUTES DEMO/PRO
 // ====================================================================
-// Middleware pour empêcher la fuite de données entre MODE DEMO et MODE PRO
-// Vérifie le mode utilisateur et redirige si nécessaire
+// Protection stricte des routes selon les rôles (demo/pro/admin)
+// Empêche toute fuite de données entre environnements
 // ====================================================================
 
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import { supabase as clientSupabase } from './supabase';
 
-export type UserMode = 'demo' | 'pro';
+export type UserRole = 'demo' | 'pro' | 'admin';
 
 /**
- * Vérifie le mode de l'utilisateur (demo ou pro) depuis la table profiles
+ * Récupère le rôle de l'utilisateur depuis Supabase
+ * Version serveur (Server Components)
  */
-export async function getUserMode(): Promise<UserMode | null> {
+export async function getUserRole(): Promise<UserRole | null> {
   const supabase = await createClient();
   
   const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -21,33 +23,148 @@ export async function getUserMode(): Promise<UserMode | null> {
     return null;
   }
 
-  // Récupérer le mode depuis la table profiles
+  // Récupérer le rôle depuis la table profiles
   const { data: profile, error: profileError } = await supabase
     .from('profiles')
-    .select('mode')
-    .eq('id', user.id)
+    .select('role')
+    .eq('user_id', user.id)
     .single();
 
   if (profileError || !profile) {
-    console.warn('[Guard] Profil non trouvé, mode par défaut: demo');
+    console.warn('[Guard] Profil non trouvé, rôle par défaut: demo');
     return 'demo';
   }
 
-  return (profile.mode as UserMode) || 'demo';
+  return (profile.role as UserRole) || 'demo';
 }
 
 /**
- * Guard pour les routes /cockpit (MODE PRO uniquement)
- * Redirige vers /cockpit-demo si l'utilisateur est en mode demo
+ * Récupère le rôle de l'utilisateur (version client)
  */
-export async function guardProRoute(): Promise<void> {
-  const mode = await getUserMode();
+export async function getUserRoleClient(): Promise<UserRole | null> {
+  const { data: { session } } = await clientSupabase.auth.getSession();
   
-  if (!mode) {
+  if (!session) {
+    return null;
+  }
+
+  const { data, error } = await clientSupabase
+    .from('profiles')
+    .select('role')
+    .eq('user_id', session.user.id)
+    .single();
+
+  if (error || !data) {
+    console.error('[Guard Client] Error fetching user role:', error);
+    return null;
+  }
+
+  return data.role as UserRole;
+}
+
+/**
+ * Guard DEMO: Protège les routes /cockpit-demo
+ * Autorise uniquement les utilisateurs avec role = 'demo'
+ */
+export async function guardDemo(): Promise<void> {
+  const role = await getUserRole();
+  
+  if (!role) {
+    console.warn('[GUARD DEMO] Non authentifié - redirection vers login');
+    redirect('/login?redirect=/cockpit-demo');
+  }
+
+  if (role !== 'demo') {
+    console.warn(`[GUARD DEMO] Accès refusé - rôle: ${role}, attendu: demo`);
+    logUnauthorizedAccess('/cockpit-demo', 'demo', role);
+    
+    // Rediriger selon le rôle
+    if (role === 'pro' || role === 'admin') {
+      redirect('/cockpit');
+    } else {
+      redirect('/');
+    }
+  }
+}
+
+/**
+ * Guard PRO: Protège les routes /cockpit (PRO uniquement)
+ * Autorise les utilisateurs avec role = 'pro' ou 'admin'
+ */
+export async function guardPro(): Promise<void> {
+  const role = await getUserRole();
+  
+  if (!role) {
+    console.warn('[GUARD PRO] Non authentifié - redirection vers login');
+    redirect('/login?redirect=/cockpit');
+  }
+
+  if (role !== 'pro' && role !== 'admin') {
+    console.warn(`[GUARD PRO] Accès refusé - rôle: ${role}, attendu: pro ou admin`);
+    logUnauthorizedAccess('/cockpit', 'pro', role);
+    
+    // Rediriger selon le rôle
+    if (role === 'demo') {
+      redirect('/cockpit-demo');
+    } else {
+      redirect('/');
+    }
+  }
+}
+
+/**
+ * Guard ADMIN: Protège les routes /admin
+ * Autorise uniquement les utilisateurs avec role = 'admin'
+ */
+export async function guardAdmin(): Promise<void> {
+  const role = await getUserRole();
+  
+  if (!role) {
+    console.warn('[GUARD ADMIN] Non authentifié - redirection vers login');
     redirect('/login');
   }
 
-  if (mode === 'demo') {
+  if (role !== 'admin') {
+    console.warn(`[GUARD ADMIN] Accès refusé - rôle: ${role}, attendu: admin`);
+    logUnauthorizedAccess('/admin', 'admin', role);
+    
+    // Rediriger selon le rôle
+    if (role === 'demo') {
+      redirect('/cockpit-demo');
+    } else if (role === 'pro') {
+      redirect('/cockpit');
+    } else {
+      redirect('/');
+    }
+  }
+}
+
+/**
+ * Helper: Log des tentatives d'accès non autorisées
+ * Pour monitoring et alerting de sécurité
+ */
+function logUnauthorizedAccess(
+  path: string,
+  expectedRole: string,
+  actualRole: UserRole | null
+) {
+  const logEntry = {
+    timestamp: new Date().toISOString(),
+    path,
+    expected_role: expectedRole,
+    actual_role: actualRole,
+    severity: 'warning',
+    event: 'unauthorized_access_attempt'
+  };
+
+  console.warn('[SECURITY] Tentative d\'accès non autorisée:', logEntry);
+
+  // TODO: Envoyer à un service de monitoring
+  // - Sentry pour tracking des erreurs
+  // - Datadog pour métriques de sécurité
+  // - Webhook pour alertes temps réel
+  // await sendToMonitoring(logEntry);
+}
     console.log('[Guard] Redirection DEMO → PRO bloquée, utilisateur en mode demo');
     redirect('/cockpit-demo');
   }
