@@ -45,11 +45,8 @@ export default function RegisterPage() {
       if (data.user) {
         toast.success('Compte créé avec succès! Connexion en cours...');
         
-        // Attendre 1 seconde pour que le trigger crée le profil
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Rediriger vers cockpit-demo (rôle par défaut = demo)
-        router.push('/cockpit-demo');
+        // Rediriger vers cockpit PRO (tous les comptes créés sont PRO)
+        router.push('/cockpit');
         router.refresh();
       }
     } catch (error) {

@@ -77,30 +77,13 @@ export function Navbar() {
           </nav>
         </div>
         <div className="flex items-center gap-3 text-xs">
-          {/* Bouton Démo */}
+          {/* Bouton Démo - Accès direct sans auth */}
           <Link 
             href="/cockpit-demo"
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-colors ${
-              isOnCockpitDemo 
-                ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' 
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 hover:bg-blue-500/30 transition-colors"
           >
             <TestTube className="h-3.5 w-3.5" />
-            Démo
-          </Link>
-
-          {/* Bouton Accès Pro */}
-          <Link 
-            href="/cockpit"
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-colors ${
-              isOnCockpitPro 
-                ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' 
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <Shield className="h-3.5 w-3.5" />
-            Accès Pro
+            Essayer la démo
           </Link>
 
           {isAuthenticated ? (

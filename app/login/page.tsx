@@ -39,47 +39,18 @@ function LoginForm() {
         return;
       }
 
-      // 2. Récupérer le rôle de l'utilisateur
-      const { data: profile, error: profileError } = await supabase
+      // 2. Récupérer le rôle de l'utilisateur (optionnel - par défaut tous sont 'pro')
+      const { data: profile } = await supabase
         .from('profiles')
         .select('role')
         .eq('id', authData.user.id)
         .single();
 
-      if (profileError || !profile) {
-        console.error('Profile error:', profileError);
-        toast.error('Profil introuvable');
-        setLoading(false);
-        return;
-      }
+      const userRole = profile?.role || 'pro'; // Par défaut PRO
 
-      const userRole = profile.role as 'demo' | 'pro' | 'admin';
-
-      // 3. Redirection selon le rôle
-      let redirectPath = '/cockpit';
-
-      if (userRole === 'demo') {
-        redirectPath = '/cockpit-demo';
-      } else if (userRole === 'pro' || userRole === 'admin') {
-        redirectPath = '/cockpit';
-      }
-
-      // 4. Vérifier s'il y a une redirection dans l'URL
-      const redirectParam = searchParams.get('redirect');
-      if (redirectParam) {
-        // Valider que la redirection correspond au rôle
-        if (userRole === 'demo' && redirectParam.startsWith('/cockpit-demo')) {
-          redirectPath = redirectParam;
-        } else if ((userRole === 'pro' || userRole === 'admin') && redirectParam.startsWith('/cockpit') && !redirectParam.startsWith('/cockpit-demo')) {
-          redirectPath = redirectParam;
-        }
-      }
-
-      // 5. Success notification
-      toast.success(`Bienvenue ! (${userRole.toUpperCase()})`);
-
-      // 6. Redirect
-      router.push(redirectPath);
+      // 3. Redirection vers cockpit PRO
+      toast.success(`Bienvenue !`);
+      router.push('/cockpit');
       router.refresh();
       
     } catch (error) {

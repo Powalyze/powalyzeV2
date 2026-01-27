@@ -1,11 +1,17 @@
 import "../globals.css";
 import { Sidebar } from "@/components/cockpit/Sidebar";
 import { Topbar } from "@/components/cockpit/Topbar";
-import { guardPro } from "@/lib/guards";
+import { redirect } from "next/navigation";
+import { createClient } from "@/utils/supabase/server";
 
 export default async function CockpitLayout({ children }: { children: React.ReactNode }) {
-  // 🔒 GUARD: Vérifier que l'utilisateur est en MODE PRO
-  await guardPro();
+  // 🔒 MODE PRO: Vérifier authentification Supabase
+  const supabase = await createClient();
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  if (!session) {
+    redirect('/login');
+  }
   return (
     <div className="flex h-screen bg-slate-950">
       <Sidebar />
