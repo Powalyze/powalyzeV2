@@ -7,6 +7,7 @@ import { ModeProvider } from '@/lib/ModeContext';
 import { Toaster } from 'sonner';
 import { ToastProvider } from '@/components/ui/ToastProvider';
 import { CockpitProvider } from '@/components/providers/CockpitProvider';
+import { HeadersErrorBoundary } from '@/components/HeadersErrorBoundary';
 
 export const metadata: Metadata = {
   title: 'Powalyze – Cockpit Exécutif & Gouvernance IA',
@@ -21,17 +22,19 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className="bg-slate-950 text-slate-50 antialiased" suppressHydrationWarning>
-        <ModeProvider>
-          <CockpitProvider>
-            <ToastProvider>
-              <Navbar />
-              <div className="pt-14">{children}</div>
-              <Footer />
-              <CookieBanner />
-              <Toaster position="top-center" richColors closeButton />
-            </ToastProvider>
-          </CockpitProvider>
-        </ModeProvider>
+        <HeadersErrorBoundary>
+          <ModeProvider>
+            <CockpitProvider>
+              <ToastProvider>
+                <Navbar />
+                <div className="pt-14">{children}</div>
+                <Footer />
+                <CookieBanner />
+                <Toaster position="top-center" richColors closeButton />
+              </ToastProvider>
+            </CockpitProvider>
+          </ModeProvider>
+        </HeadersErrorBoundary>
       </body>
     </html>
   );

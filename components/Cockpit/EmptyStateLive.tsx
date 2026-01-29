@@ -1,73 +1,99 @@
 'use client';
 
-import { Button } from '@/components/ui/Button';
-import { Plus, Rocket, FileText, Users, BarChart } from 'lucide-react';
+import { useState } from 'react';
+import { Rocket, FileText, Users, BarChart3 } from 'lucide-react';
 import Link from 'next/link';
+import { useCockpitCopy } from '@/lib/i18n/cockpit';
+import { CreateProjectModal, ProjectFormData } from './CreateProjectModal';
 
 interface EmptyStateLiveProps {
-  onCreateProject?: () => void;
+  onCreateProject?: (data: ProjectFormData) => Promise<void>;
+  language?: 'fr' | 'en';
 }
 
-export function EmptyStateLive({ onCreateProject }: EmptyStateLiveProps) {
+export function EmptyStateLive({ onCreateProject, language = 'fr' }: EmptyStateLiveProps) {
+  const copy = useCockpitCopy(language);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleCreateProject = async (data: ProjectFormData) => {
+    if (onCreateProject) {
+      await onCreateProject(data);
+    }
+  };
+
   return (
-    <div className="flex min-h-[80vh] flex-col items-center justify-center px-4">
-      {/* Hero Section */}
-      <div className="mb-8 flex h-32 w-32 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg">
-        <Rocket className="h-16 w-16 text-white" />
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 px-4">
+      <div className="w-full max-w-4xl">
+        {/* Hero Section */}
+        <div className="text-center mb-12 animate-in fade-in duration-500">
+          <div className="mb-6 flex justify-center">
+            <div className="relative">
+              <div className="absolute inset-0 bg-blue-600 blur-2xl opacity-20 animate-pulse" />
+              <div className="relative rounded-full bg-gradient-to-br from-blue-600 to-blue-800 p-6">
+                <Rocket size={48} className="text-white" />
+              </div>
+            </div>
+          </div>
+          
+          <h1 className="mb-4 text-4xl font-bold text-white sm:text-5xl">
+            {copy.emptyState.title}
+          </h1>
+          
+          <p className="mx-auto max-w-2xl text-lg text-slate-400 mb-8">
+            {copy.emptyState.subtitle}
+          </p>
+          
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-8 py-4 text-lg font-semibold text-white hover:bg-blue-700 active:scale-95 transition-all duration-150 shadow-lg shadow-blue-600/20"
+          >
+            <Rocket size={20} />
+            {copy.emptyState.cta}
+          </button>
+        </div>
+
+        {/* Features Cards */}
+        <div className="grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-3 mb-12">
+          <FeatureCard
+            icon={<BarChart3 className="h-8 w-8 text-blue-500" />}
+            title={copy.emptyState.features.analytics}
+            description={copy.emptyState.features.analyticsDesc}
+          />
+          <FeatureCard
+            icon={<Users className="h-8 w-8 text-green-500" />}
+            title={copy.emptyState.features.collaboration}
+            description={copy.emptyState.features.collaborationDesc}
+          />
+          <FeatureCard
+            icon={<FileText className="h-8 w-8 text-purple-500" />}
+            title={copy.emptyState.features.reports}
+            description={copy.emptyState.features.reportsDesc}
+          />
+        </div>
+
+        {/* Navigation secondaire */}
+        <div className="flex justify-center gap-6 text-sm">
+          <Link href="/cockpit/demo" className="text-slate-400 hover:text-white transition-colors">
+            {copy.emptyState.links.demo}
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/ressources/documentation" className="text-slate-400 hover:text-white transition-colors">
+            {copy.emptyState.links.documentation}
+          </Link>
+          <span className="text-slate-700">•</span>
+          <Link href="/contact" className="text-slate-400 hover:text-white transition-colors">
+            {copy.emptyState.links.support}
+          </Link>
+        </div>
       </div>
 
-      <h1 className="mb-4 text-center text-4xl font-bold text-gray-900">
-        Bienvenue dans votre <span className="text-blue-600">Cockpit Powalyze</span>
-      </h1>
-
-      <p className="mb-8 max-w-2xl text-center text-lg text-gray-600">
-        Commencez votre voyage vers une gouvernance de portefeuille optimale. 
-        Créez votre premier projet et bénéficiez d'une vision stratégique complète.
-      </p>
-
-      {/* CTA Principal */}
-      <Button
-        onClick={onCreateProject}
-        size="lg"
-        className="mb-12 gap-2 bg-blue-600 px-8 py-6 text-lg hover:bg-blue-700"
-      >
-        <Plus className="h-5 w-5" />
-        Créer mon premier projet
-      </Button>
-
-      {/* Features Cards */}
-      <div className="grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-3">
-        <FeatureCard
-          icon={<BarChart className="h-8 w-8 text-blue-600" />}
-          title="Analytics en temps réel"
-          description="Visualisez instantanément vos KPIs et prenez les bonnes décisions"
-        />
-        <FeatureCard
-          icon={<Users className="h-8 w-8 text-blue-600" />}
-          title="Collaboration d'équipe"
-          description="Invitez votre équipe et travaillez ensemble efficacement"
-        />
-        <FeatureCard
-          icon={<FileText className="h-8 w-8 text-blue-600" />}
-          title="Rapports automatisés"
-          description="Générez des rapports COMEX en un clic avec l'IA"
-        />
-      </div>
-
-      {/* Navigation secondaire */}
-      <div className="mt-16 flex gap-4 text-sm text-gray-600">
-        <Link href="/cockpit/demo" className="hover:text-blue-600">
-          Voir la démo
-        </Link>
-        <span>•</span>
-        <Link href="/documentation" className="hover:text-blue-600">
-          Documentation
-        </Link>
-        <span>•</span>
-        <Link href="/support" className="hover:text-blue-600">
-          Support
-        </Link>
-      </div>
+      {/* Modal création projet */}
+      <CreateProjectModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleCreateProject}
+        language={language}
+      />
     </div>
   );
 }
@@ -78,10 +104,12 @@ function FeatureCard({ icon, title, description }: {
   description: string;
 }) {
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
-      <div className="mb-4">{icon}</div>
-      <h3 className="mb-2 font-semibold text-gray-900">{title}</h3>
-      <p className="text-sm text-gray-600">{description}</p>
+    <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm hover:border-slate-700 transition-colors">
+      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-600/10">
+        {icon}
+      </div>
+      <h3 className="mb-2 font-semibold text-white">{title}</h3>
+      <p className="text-sm text-slate-400">{description}</p>
     </div>
   );
 }

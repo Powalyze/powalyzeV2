@@ -1,5 +1,8 @@
 'use client';
 
+import { useState } from 'react';
+import { CreateProjectModal, type ProjectFormData } from './CreateProjectModal';
+
 interface Project {
   id: string;
   name: string;
@@ -19,10 +22,16 @@ interface CockpitDashboardProps {
   mode: 'demo' | 'live';
   projects: Project[];
   isMobile: boolean;
-  onCreateProject: () => void;
+  onCreateProject: (data: ProjectFormData) => Promise<void>;
 }
 
 export function CockpitDashboard({ mode, projects, isMobile, onCreateProject }: CockpitDashboardProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleCreateProject = async (data: ProjectFormData) => {
+    await onCreateProject(data);
+  };
+
   return (
     <div className="p-6">
       <div className="mb-6 flex items-center justify-between">
@@ -35,7 +44,7 @@ export function CockpitDashboard({ mode, projects, isMobile, onCreateProject }: 
           </p>
         </div>
         <button
-          onClick={onCreateProject}
+          onClick={() => setIsModalOpen(true)}
           className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
         >
           Nouveau projet
@@ -48,6 +57,13 @@ export function CockpitDashboard({ mode, projects, isMobile, onCreateProject }: 
           <ProjectCard key={project.id} project={project} />
         ))}
       </div>
+
+      {/* Modal création projet */}
+      <CreateProjectModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleCreateProject}
+      />
     </div>
   );
 }

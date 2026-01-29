@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useCockpit } from '@/components/providers/CockpitProvider';
+import { useProjects } from '@/hooks/useProjects';
 import { EmptyStateLive } from './EmptyStateLive';
 import { CockpitShell } from './CockpitShell';
 import { CockpitDashboard } from './CockpitDashboard';
+import { CockpitMobile } from './CockpitMobile';
 import { useToast } from '@/components/ui/ToastProvider';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
@@ -28,88 +29,26 @@ interface CockpitProps {
 }
 
 export function Cockpit({ mode }: CockpitProps) {
-  const { getItems, addItem, refreshCount } = useCockpit();
+  const { projects, isLoading, error, createProject, refetch } = useProjects({ mode });
   const { showToast } = useToast();
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isInitialized, setIsInitialized] = useState(false);
-  const [showNewProjectModal, setShowNewProjectModal] = useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
 
-  // Charger les projets au montage
-  useEffect(() => {
-    if (!isInitialized) {
-      const storedProjects = getItems('projects');
-      
-      // MODE DEMO: Créer des projets démo si vide
-      if (mode === 'demo' && storedProjects.length === 0) {
-        const demoProjects: Project[] = [
-          {
-            id: 'demo-1',
-            name: 'Transformation Digitale',
-            description: 'Migration vers le cloud et modernisation des applications',
-            status: 'active',
-            budget: 500000,
-            progress: 65,
-            startDate: '2024-01-15',
-            endDate: '2024-12-31',
-            team: ['Alice Martin', 'Bob Durant', 'Claire Dubois'],
-            risks: 3,
-            tasks: 45,
-            created_at: new Date().toISOString()
-          },
-          {
-            id: 'demo-2',
-            name: 'Refonte Site Web',
-            description: 'Nouvelle plateforme e-commerce et expérience utilisateur',
-            status: 'active',
-            budget: 150000,
-            progress: 40,
-            startDate: '2024-02-01',
-            endDate: '2024-06-30',
-            team: ['David Leroy', 'Emma Rousseau'],
-            risks: 2,
-            tasks: 28,
-            created_at: new Date().toISOString()
-          },
-          {
-            id: 'demo-3',
-            name: 'CRM Implementation',
-            description: 'Déploiement Salesforce et formation des équipes',
-            status: 'pending',
-            budget: 200000,
-            progress: 15,
-            startDate: '2024-03-01',
-            endDate: '2024-09-30',
-            team: ['François Bernard'],
-            risks: 5,
-            tasks: 32,
-            created_at: new Date().toISOString()
-          }
-        ];
-
-        demoProjects.forEach(project => addItem('projects', project));
-        setProjects(demoProjects);
-      } else {
-        // MODE LIVE ou projets existants
-        setProjects(storedProjects);
-      }
-
-      setIsInitialized(true);
-      setIsLoading(false);
+  const handleCreateProject = async (data: import('./CreateProjectModal').ProjectFormData) => {
+    try {
+      await createProject(data);
+      showToast('success', '✅ Projet créé', 'Votre projet est prêt');
+      refetch();
+    } catch (err) {
+      showToast('error', 'Erreur', 'Impossible de créer le projet');
     }
-  }, [mode, isInitialized, getItems, addItem]);
-
-  // Re-charger les projets quand refreshCount change
-  useEffect(() => {
-    if (isInitialized) {
-      setProjects(getItems('projects'));
-    }
-  }, [refreshCount, isInitialized, getItems]);
-
-  const handleCreateProject = () => {
-    setShowNewProjectModal(true);
   };
+
+  // Show error if any
+  useEffect(() => {
+    if (error) {
+      showToast('error', 'Erreur', error);
+    }
+  }, [error, showToast]);
 
   // Loading state
   if (isLoading) {
@@ -123,12 +62,23 @@ export function Cockpit({ mode }: CockpitProps) {
     );
   }
 
+  // MODE LIVE + MOBILE: Layout mobile dédié
+  if (mode === 'live' && isMobile) {
+    return (
+      <CockpitMobile 
+        mode={mode}
+        projects={projects}
+        onCreateProject={handleCreateProject}
+      />
+    );
+  }
+
   // MODE LIVE: Empty state si aucun projet
   if (mode === 'live' && projects.length === 0) {
     return <EmptyStateLive onCreateProject={handleCreateProject} />;
   }
 
-  // Afficher le cockpit complet
+  // Afficher le cockpit complet (desktop)
   return (
     <CockpitShell>
       <CockpitDashboard 

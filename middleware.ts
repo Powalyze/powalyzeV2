@@ -2,8 +2,25 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
+/**
+ * 🔥 HOTFIX: Sanitize header value (ISO-8859-1 only)
+ */
+function sanitizeHeaderValue(value: string): string {
+  // Vérifier si la valeur contient des caractères non-ASCII
+  const isAscii = /^[\x00-\x7F]*$/.test(value);
+  if (isAscii) return value;
+  
+  // Encoder en base64url si non-ASCII
+  try {
+    return Buffer.from(value, 'utf-8').toString('base64url');
+  } catch {
+    // Fallback: supprimer les caractères non-ASCII
+    return value.replace(/[^\x00-\x7F]/g, '');
+  }
+}
+
 export async function middleware(req: NextRequest) {
-  const res = NextResponse.next();
+  let res = NextResponse.next();
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -14,7 +31,9 @@ export async function middleware(req: NextRequest) {
           return req.cookies.get(name)?.value;
         },
         set(name: string, value: string, options: any) {
-          res.cookies.set({ name, value, ...options });
+          // 🔥 HOTFIX: Sanitize cookie value avant set
+          const sanitizedValue = sanitizeHeaderValue(value);
+          res.cookies.set({ name, value: sanitizedValue, ...options });
         },
         remove(name: string, options: any) {
           res.cookies.set({ name, value: "", ...options });
