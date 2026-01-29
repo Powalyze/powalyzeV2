@@ -22,7 +22,7 @@ export async function signup(
 
   const data = await res.json();
   if (!res.ok) {
-    return { error: { message: data?.error || 'Erreur inconnue' }, needsEmailConfirmation: false };
+    return { error: { message: data?.error || 'Unknown error' }, needsEmailConfirmation: false };
   }
 
   return { error: null, needsEmailConfirmation: data?.needsEmailConfirmation ?? true };

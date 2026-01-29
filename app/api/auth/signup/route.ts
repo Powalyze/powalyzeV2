@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
 
     if (!email || !password || !firstName || !lastName) {
       return NextResponse.json(
-        { error: 'Champs requis manquants' },
+        { error: 'Missing required fields' },
         { status: 400 }
       );
     }
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
 
     if (!supabaseUrl || !supabaseAnonKey) {
       return NextResponse.json(
-        { error: 'Configuration Supabase manquante' },
+        { error: 'Missing Supabase configuration' },
         { status: 500 }
       );
     }
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
       
       if (needsEmailConfirmation) {
         if (!resendApiKey) {
-          return NextResponse.json({ error: 'RESEND_API_KEY manquant' }, { status: 500 });
+          return NextResponse.json({ error: 'Missing RESEND_API_KEY' }, { status: 500 });
         }
 
         const { data: linkData, error: linkError } = await admin.auth.admin.generateLink({
@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
 
         const actionLink = linkData?.properties?.action_link;
         if (!actionLink) {
-          return NextResponse.json({ error: 'Lien de confirmation introuvable' }, { status: 500 });
+          return NextResponse.json({ error: 'Confirmation link not found' }, { status: 500 });
         }
 
         const html = `
@@ -139,7 +139,7 @@ export async function POST(request: NextRequest) {
 
         if (!emailResponse.ok) {
           const errorText = await emailResponse.text();
-          return NextResponse.json({ error: errorText || 'Envoi email échoué' }, { status: 500 });
+          return NextResponse.json({ error: errorText || 'Email sending failed' }, { status: 500 });
         }
       }
     }
@@ -150,7 +150,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (err: any) {
     return NextResponse.json(
-      { error: err?.message || 'Erreur inconnue' },
+      { error: err?.message || 'Unknown error' },
       { status: 500 }
     );
   }
