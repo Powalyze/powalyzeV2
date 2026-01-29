@@ -1,32 +1,78 @@
 <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Définition du dégradé or premium -->
+  <!-- Définitions high-tech -->
   <defs>
-    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#D4AF37;stop-opacity:1" />
-      <stop offset="50%" style="stop-color:#F4D03F;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#C9A227;stop-opacity:1" />
+    <!-- Gradient bleu cyan électrique -->
+    <linearGradient id="cyberBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00D4FF;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#0096FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0066FF;stop-opacity:1" />
     </linearGradient>
-    <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#0A1A3C;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#152B5E;stop-opacity:1" />
+    <!-- Gradient or néon -->
+    <linearGradient id="neonGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFA500;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF8C00;stop-opacity:1" />
     </linearGradient>
+    <!-- Glow bleu -->
+    <filter id="blueGlow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <!-- Glow or -->
+    <filter id="goldGlow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
   </defs>
   
-  <!-- Grand P bleu -->
-  <path d="M 50 40 L 50 160 L 70 160 L 70 115 L 120 115 C 145 115 160 100 160 75 C 160 50 145 40 120 40 L 50 40 Z M 70 55 L 118 55 C 132 55 140 63 140 75 C 140 87 132 100 118 100 L 70 100 Z" 
-        fill="url(#blueGradient)" 
-        stroke="#0A1A3C" 
-        stroke-width="2"/>
+  <!-- Hexagone arrière-plan subtil -->
+  <polygon points="100,20 160,60 160,140 100,180 40,140 40,60" 
+           fill="none" 
+           stroke="#00D4FF" 
+           stroke-width="1" 
+           opacity="0.15"/>
   
-  <!-- O en or qui plonge dans le P -->
-  <circle cx="125" cy="130" r="30" 
-          fill="url(#goldGradient)" 
-          stroke="#C9A227" 
-          stroke-width="3"
-          opacity="0.95"/>
+  <!-- Grand P bleu électrique avec glow -->
+  <path d="M 50 40 L 50 160 L 75 160 L 75 115 L 125 115 C 150 115 165 100 165 75 C 165 50 150 40 125 40 L 50 40 Z M 75 58 L 123 58 C 137 58 145 66 145 75 C 145 84 137 97 123 97 L 75 97 Z" 
+        fill="url(#cyberBlue)" 
+        stroke="#00D4FF" 
+        stroke-width="3"
+        filter="url(#blueGlow)"/>
   
-  <!-- Reflet subtil sur le O -->
-  <ellipse cx="120" cy="122" rx="12" ry="8" 
+  <!-- Lignes tech sur le P -->
+  <line x1="52" y1="50" x2="73" y2="50" stroke="#00FFFF" stroke-width="1.5" opacity="0.6"/>
+  <line x1="52" y1="80" x2="73" y2="80" stroke="#00FFFF" stroke-width="1.5" opacity="0.6"/>
+  <line x1="52" y1="135" x2="73" y2="135" stroke="#00FFFF" stroke-width="1.5" opacity="0.6"/>
+  
+  <!-- O en or néon qui plonge dans le P -->
+  <circle cx="128" cy="132" r="32" 
+          fill="url(#neonGold)" 
+          stroke="#FFD700" 
+          stroke-width="4"
+          filter="url(#goldGlow)"
+          opacity="0.98"/>
+  
+  <!-- Cercle intérieur or pour effet 3D -->
+  <circle cx="128" cy="132" r="22" 
+          fill="none" 
+          stroke="#FFED4E" 
+          stroke-width="2"
+          opacity="0.4"/>
+  
+  <!-- Reflet high-tech sur le O -->
+  <ellipse cx="122" cy="124" rx="14" ry="10" 
            fill="white" 
-           opacity="0.3"/>
+           opacity="0.5"/>
+  
+  <!-- Points tech décoratifs -->
+  <circle cx="45" cy="35" r="2" fill="#00D4FF" opacity="0.8"/>
+  <circle cx="155" cy="35" r="2" fill="#00D4FF" opacity="0.8"/>
+  <circle cx="45" cy="165" r="2" fill="#FFD700" opacity="0.8"/>
+  <circle cx="155" cy="165" r="2" fill="#FFD700" opacity="0.8"/>
 </svg>
