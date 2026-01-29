@@ -208,3 +208,160 @@ export interface DecisionFilters {
   search?: string;
 }
 
+// ================================================================
+// PACK 10 - MODULE RISQUES EXÉCUTIFS
+// ================================================================
+
+export interface RiskExecutive {
+  id: string;
+  organization_id: string;
+  project_id: string | null;
+  
+  // Informations de base
+  title: string;
+  description: string | null;
+  
+  // Scoring (1-5)
+  severity: number; // 1=Faible, 5=Critique
+  probability: number; // 1=Très faible, 5=Très élevée
+  score: number; // Auto-calculé: severity * probability (1-25)
+  
+  // Statut
+  status: 'open' | 'in_progress' | 'mitigated' | 'closed';
+  
+  // Tendance (calculée par IA AAR)
+  trend: 'rising' | 'stable' | 'falling' | null;
+  
+  // Analyse IA (Agent AAR)
+  ai_analysis: RiskAnalysis | null;
+  ai_analyzed_at: Date | null;
+  
+  // Mitigation
+  mitigation_actions: string | null;
+  mitigation_date: Date | null;
+  mitigated_by: string | null;
+  
+  // Métadonnées
+  created_by: string | null;
+  created_at: Date;
+  updated_at: Date;
+  closed_at: Date | null;
+  
+  // Relations (joined)
+  project?: Project | null;
+  history?: RiskHistory[];
+}
+
+export interface RiskAnalysis {
+  // Résumé exécutif
+  executive_summary: string;
+  
+  // Analyse détaillée
+  risk_nature: string;
+  impact_analysis: string;
+  probability_rationale: string;
+  
+  // Risques émergents détectés
+  emerging_risks: EmergingRisk[];
+  
+  // Recommandations
+  recommendations: RiskRecommendation[];
+  
+  // Tendance évaluée
+  trend_evaluation: {
+    trend: 'rising' | 'stable' | 'falling';
+    rationale: string;
+    confidence: number; // 0-100%
+  };
+  
+  // Métadonnées
+  analyzed_at: Date;
+  confidence_score: number; // 0-100%
+}
+
+export interface EmergingRisk {
+  title: string;
+  description: string;
+  probability_evolution: string; // "Augmentation probable", "Stable", etc.
+  potential_impact: string;
+  detection_confidence: number; // 0-100%
+}
+
+export interface RiskRecommendation {
+  type: 'immediate' | 'short_term' | 'long_term';
+  priority: 'critical' | 'high' | 'medium' | 'low';
+  title: string;
+  description: string;
+  expected_impact: string;
+  estimated_effort: string; // "Faible", "Moyen", "Élevé"
+}
+
+export interface RiskHistory {
+  id: string;
+  risk_id: string;
+  organization_id: string;
+  
+  // Action effectuée
+  action: 'created' | 'updated' | 'severity_changed' | 'probability_changed' | 
+          'status_changed' | 'trend_changed' | 'ai_analyzed' | 'mitigation_added' | 
+          'mitigated' | 'closed';
+  
+  // Données de l'action
+  old_value: string | null;
+  new_value: string | null;
+  details: Record<string, any> | null;
+  
+  // Audit
+  performed_by: string | null;
+  performed_at: Date;
+}
+
+export interface RiskFormData {
+  title: string;
+  description: string;
+  project_id: string | null;
+  severity: number; // 1-5
+  probability: number; // 1-5
+  mitigation_actions?: string;
+}
+
+export interface RiskFilters {
+  status?: 'open' | 'in_progress' | 'mitigated' | 'closed' | 'all';
+  severity?: 1 | 2 | 3 | 4 | 5 | 'all';
+  probability?: 1 | 2 | 3 | 4 | 5 | 'all';
+  score_min?: number; // 1-25
+  score_max?: number; // 1-25
+  trend?: 'rising' | 'stable' | 'falling' | 'all';
+  project_id?: string;
+  search?: string;
+}
+
+export interface RiskStats {
+  total: number;
+  open: number;
+  in_progress: number;
+  mitigated: number;
+  closed: number;
+  
+  // Stats par criticité (score)
+  critical: number; // score 15-25
+  high: number; // score 8-14
+  moderate: number; // score 4-7
+  low: number; // score 1-3
+  
+  // Stats par tendance
+  rising: number;
+  stable: number;
+  falling: number;
+  
+  // Distribution heatmap
+  heatmap: HeatmapCell[];
+}
+
+export interface HeatmapCell {
+  severity: number; // 1-5
+  probability: number; // 1-5
+  count: number; // Nombre de risques dans cette cellule
+  risk_ids: string[]; // IDs des risques
+}
+
