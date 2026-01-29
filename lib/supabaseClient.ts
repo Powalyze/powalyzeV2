@@ -4,7 +4,15 @@ function cleanEnv(value?: string) {
   return value?.replace(/^\uFEFF/, '').trim();
 }
 
+// Singleton instances
+let browserClientInstance: ReturnType<typeof createBrowserClient> | null = null;
+
 export function createSupabaseBrowserClient() {
+  // Return existing instance if available
+  if (browserClientInstance) {
+    return browserClientInstance;
+  }
+
   const supabaseUrl = cleanEnv(process.env.NEXT_PUBLIC_SUPABASE_URL);
   const supabaseKey = cleanEnv(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 
@@ -12,7 +20,8 @@ export function createSupabaseBrowserClient() {
     throw new Error('Missing Supabase environment variables');
   }
 
-  return createBrowserClient(supabaseUrl, supabaseKey);
+  browserClientInstance = createBrowserClient(supabaseUrl, supabaseKey);
+  return browserClientInstance;
 }
 
 export async function createSupabaseServerClient() {

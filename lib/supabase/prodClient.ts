@@ -1,45 +1,93 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+
+// Singleton instances
+let supabaseProdInstance: SupabaseClient | null = null;
+let supabaseProdAdminInstance: SupabaseClient | null = null;
 
 /**
- * Client Supabase PRODUCTION
- * Utilisé pour les vrais clients en mode LIVE (/cockpit)
- * Pointe vers le projet Supabase de production (vide au départ)
+ * Get PRODUCTION Supabase client (singleton)
+ * Used for real clients in LIVE mode (/cockpit)
+ * Points to production Supabase project
  */
-export const supabaseProd = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_PROD_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.NEXT_PUBLIC_SUPABASE_PROD_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
-  {
+export function getSupabaseProd(): SupabaseClient {
+  if (supabaseProdInstance) {
+    return supabaseProdInstance;
+  }
+
+  const url = process.env.NEXT_PUBLIC_SUPABASE_PROD_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const key = process.env.NEXT_PUBLIC_SUPABASE_PROD_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+
+  if (!url || !key) {
+    throw new Error('Missing Supabase PROD environment variables');
+  }
+
+  supabaseProdInstance = createClient(url, key, {
     auth: {
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true,
       flowType: 'pkce',
     }
-  }
-);
+  });
+
+  return supabaseProdInstance;
+}
 
 /**
- * Service role client pour opérations admin en PROD
- * NE JAMAIS exposer côté client
+ * Legacy export for backward compatibility
  */
-export const supabaseProdAdmin = process.env.SUPABASE_PROD_SERVICE_ROLE_KEY
-  ? createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_PROD_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-      process.env.SUPABASE_PROD_SERVICE_ROLE_KEY,
-      {
-        auth: {
-          persistSession: false,
-          autoRefreshToken: false,
-        }
-      }
-    )
-  : null;
+export const supabaseProd = new Proxy({} as SupabaseClient, {
+  get(target, prop) {
+    return getSupabaseProd()[prop as keyof SupabaseClient];
+  }
+});
 
 /**
- * Récupérer l'organization_id de l'utilisateur connecté
+ * Get service role client for admin operations in PROD (singleton)
+ * NEVER expose on client side
+ */
+export function getSupabaseProdAdmin(): SupabaseClient | null {
+  if (supabaseProdAdminInstance) {
+    return supabaseProdAdminInstance;
+  }
+
+  const serviceRoleKey = process.env.SUPABASE_PROD_SERVICE_ROLE_KEY;
+  if (!serviceRoleKey) {
+    return null;
+  }
+
+  const url = process.env.NEXT_PUBLIC_SUPABASE_PROD_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  if (!url) {
+    return null;
+  }
+
+  supabaseProdAdminInstance = createClient(url, serviceRoleKey, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+    }
+  });
+
+  return supabaseProdAdminInstance;
+}
+
+/**
+ * Legacy export for backward compatibility
+ */
+export const supabaseProdAdmin = new Proxy({} as SupabaseClient, {
+  get(target, prop) {
+    const admin = getSupabaseProdAdmin();
+    if (!admin) return undefined;
+    return admin[prop as keyof SupabaseClient];
+  }
+});
+
+/**
+ * Get organization_id of connected user
  */
 export async function getOrganizationId(): Promise<string | null> {
-  const { data: { session }, error } = await supabaseProd.auth.getSession();
+  const supabase = getSupabaseProd();
+  const { data: { session }, error } = await supabase.auth.getSession();
   
   if (error || !session) {
     console.warn('⚠️ [LIVE] Aucune session active');

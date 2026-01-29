@@ -1,16 +1,12 @@
 /**
- * ⚠️ DEPRECATED - Utiliser lib/supabase/prodClient.ts à la place
- * Ce fichier est gardé pour compatibilité avec le code existant
- * 
- * MIGRATION:
- * - import { createClient } from '@/utils/supabase/client'  ❌
- * + import { supabaseProd } from '@/lib/supabase/prodClient'  ✅
+ * Singleton client for browser-side Supabase operations
+ * This ensures only ONE GoTrueClient instance is created
  */
 
 import { supabaseProd } from '@/lib/supabase/prodClient';
 
 export function createClient() {
-  console.warn('⚠️ createClient() est deprecated, utilisez supabaseProd directement');
+  // supabaseProd is already a singleton, no warning needed
   return supabaseProd;
 }
 
