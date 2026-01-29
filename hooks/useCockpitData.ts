@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createClient } from '@/utils/supabase/client';
+import { supabase, getOrganizationId } from '@/lib/supabase/client';
 
 const STORAGE_PREFIX = 'powalyze_demo_';
 
@@ -21,7 +21,6 @@ export function useCockpitData<T>(
     async function loadData() {
       if (hasSupabase && supabaseTable) {
         try {
-          const supabase = createClient();
           const { data: supabaseData, error } = await supabase
             .from(supabaseTable)
             .select('*')
@@ -64,7 +63,6 @@ export function useCockpitData<T>(
 
     if (useSupabase && supabaseTable) {
       try {
-        const supabase = createClient();
         const { data: inserted, error } = await supabase
           .from(supabaseTable)
           .insert([item])
@@ -92,7 +90,6 @@ export function useCockpitData<T>(
   const update = async (id: string, updates: Partial<T>): Promise<void> => {
     if (useSupabase && supabaseTable) {
       try {
-        const supabase = createClient();
         const { error } = await supabase
           .from(supabaseTable)
           .update({ ...updates, updated_at: new Date().toISOString() })
@@ -122,7 +119,6 @@ export function useCockpitData<T>(
   const remove = async (id: string): Promise<void> => {
     if (useSupabase && supabaseTable) {
       try {
-        const supabase = createClient();
         const { error } = await supabase
           .from(supabaseTable)
           .delete()
