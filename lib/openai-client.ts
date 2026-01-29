@@ -12,8 +12,7 @@ export const openaiClient = hasApiKey ? (isAzure
   ? new OpenAI({
       apiKey: process.env.AZURE_OPENAI_API_KEY,
       baseURL: `${process.env.AZURE_OPENAI_ENDPOINT}/openai/deployments/${process.env.AZURE_OPENAI_DEPLOYMENT_NAME}`,
-      defaultQuery: { 'api-version': '2024-02-01' },
-      defaultHeaders: { 'api-key': process.env.AZURE_OPENAI_API_KEY }
+      defaultQuery: { 'api-version': '2024-02-15-preview' }
     })
   : new OpenAI({
       apiKey: process.env.OPENAI_API_KEY

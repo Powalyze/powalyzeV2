@@ -1,0 +1,14 @@
+[
+  {
+    "title": "Validation architecture cloud",
+    "description": "Choix entre AWS et Azure",
+    "decision_maker": "Comité Technique",
+    "status": "approved"
+  },
+  {
+    "title": "Budget additionnel cybersécurité",
+    "description": "Allocation de 30K€ supplémentaires",
+    "decision_maker": "COMEX",
+    "status": "pending"
+  }
+]

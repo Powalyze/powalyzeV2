@@ -34,3 +34,19 @@ export function extractTokenFromHeader(authHeader?: string): string | null {
   }
   return authHeader.substring(7);
 }
+
+/**
+ * Decode base64-encoded email from request headers
+ * Used to decode x-user-email header set by middleware
+ */
+export function decodeEmailHeader(encodedEmail?: string | null): string | null {
+  if (!encodedEmail) {
+    return null;
+  }
+  try {
+    return Buffer.from(encodedEmail, 'base64').toString('utf-8');
+  } catch (error) {
+    console.error('Failed to decode email header:', error);
+    return null;
+  }
+}

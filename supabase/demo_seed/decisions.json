@@ -1,0 +1,20 @@
+[
+  {
+    "title": "Arbitrage budget marketing vs R&D",
+    "description": "Allocation des ressources Q2 2026",
+    "status": "À valider",
+    "owner": "Comité exécutif"
+  },
+  {
+    "title": "Choix du partenaire Cloud principal",
+    "description": "AWS vs Azure vs GCP",
+    "status": "En revue",
+    "owner": "CTO + DSI"
+  },
+  {
+    "title": "Priorisation des pays pour le lancement Europe",
+    "description": "France, Allemagne, UK en priorité",
+    "status": "Validée",
+    "owner": "Direction Générale"
+  }
+]

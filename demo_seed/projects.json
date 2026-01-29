@@ -1,0 +1,23 @@
+[
+  {
+    "title": "Lancement Produit Europe",
+    "description": "Déploiement du nouveau produit sur le marché européen",
+    "status": "active",
+    "progress": 65,
+    "budget": 250000
+  },
+  {
+    "title": "Migration Cloud AWS",
+    "description": "Migration complète de l'infrastructure vers AWS",
+    "status": "active",
+    "progress": 40,
+    "budget": 180000
+  },
+  {
+    "title": "Refonte SI Finance",
+    "description": "Modernisation du système d'information financier",
+    "status": "active",
+    "progress": 85,
+    "budget": 120000
+  }
+]

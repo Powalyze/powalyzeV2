@@ -1,0 +1,18 @@
+[
+  {
+    "title": "Dépassement budgétaire",
+    "description": "Risque de dépassement du budget prévu de 20%",
+    "severity": "high",
+    "probability": 4,
+    "impact": 4,
+    "mitigation": "Mise en place d'un comité de suivi mensuel"
+  },
+  {
+    "title": "Retard livraison fournisseur",
+    "description": "Dépendances externes non respectées",
+    "severity": "medium",
+    "probability": 3,
+    "impact": 3,
+    "mitigation": "Plan de contingence avec fournisseurs alternatifs"
+  }
+]

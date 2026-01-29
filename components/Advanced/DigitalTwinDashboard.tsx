@@ -41,7 +41,8 @@ export default function DigitalTwinDashboard({ projectId }: { projectId: string 
     const fetchTwinData = () => {
       fetch(`/api/ai/digital-twin?project_id=${projectId}`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
       })
         .then(res => res.json())
@@ -69,8 +70,8 @@ export default function DigitalTwinDashboard({ projectId }: { projectId: string 
       const response = await fetch('/api/ai/auto-healing', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify({ project_id: projectId }),
       });

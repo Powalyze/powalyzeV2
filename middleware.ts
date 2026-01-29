@@ -1,69 +1,66 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken, JWTPayload } from './lib/auth';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { createServerClient } from "@supabase/ssr";
 
-export interface RequestWithTenant extends NextRequest {
-  tenant?: JWTPayload;
-}
+export async function middleware(req: NextRequest) {
+  const res = NextResponse.next();
 
-export async function middleware(request: NextRequest) {
-  const authHeader = request.headers.get('authorization');
-  
-  if (request.nextUrl.pathname.startsWith('/api/')) {
-    // Routes publiques (pas d'authentification requise)
-    const publicRoutes = [
-      '/api/auth/login',
-      '/api/auth/register',
-      '/api/auth/validate-client',
-      '/api/test-supabase',
-      '/api/cockpit',
-      '/api/projects',
-      '/api/risks',
-      '/api/decisions',
-      '/api/team/invite',
-      '/api/team/member',
-      '/api/team/add',
-      '/api/team/remove',
-      '/api/team/list',
-      '/api/integrations',
-      '/api/export/pdf',
-      '/api/export/ppt',
-      '/api/export/csv',
-      '/api/export/json',
-      '/api/admin/reset-pro',
-    ];
-    
-    if (publicRoutes.includes(request.nextUrl.pathname)) {
-      return NextResponse.next();
-    }
-
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const token = authHeader.substring(7);
-    
-    try {
-      const payload = verifyToken(token);
-      
-      const requestHeaders = new Headers(request.headers);
-      requestHeaders.set('x-tenant-id', payload.tenantId);
-      requestHeaders.set('x-user-id', payload.userId);
-      requestHeaders.set('x-user-role', payload.role);
-      requestHeaders.set('x-user-email', payload.email);
-
-      return NextResponse.next({
-        request: {
-          headers: requestHeaders,
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return req.cookies.get(name)?.value;
         },
-      });
-    } catch (error) {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+        set(name: string, value: string, options: any) {
+          res.cookies.set({ name, value, ...options });
+        },
+        remove(name: string, options: any) {
+          res.cookies.set({ name, value: "", ...options });
+        }
+      }
     }
+  );
+
+  const {
+    data: { session }
+  } = await supabase.auth.getSession();
+
+  const path = req.nextUrl.pathname;
+
+  // ========================================
+  // REDIRECTIONS LEGACY ROUTES (301 permanent)
+  // ========================================
+  const legacyRedirects: Record<string, string> = {
+    '/demo': '/signup?demo=true',
+    '/pro': '/cockpit/pro',
+    '/cockpit-demo': '/cockpit/demo',
+    '/inscription': '/signup',
+    '/register': '/signup',
+    '/portefeuille': '/cockpit/pro',
+    '/anomalies': '/cockpit/pro',
+    '/dashboard': '/cockpit/pro'
+  };
+
+  if (legacyRedirects[path]) {
+    return NextResponse.redirect(new URL(legacyRedirects[path], req.url), { status: 301 });
   }
 
-  return NextResponse.next();
+  // ========================================
+  // AUTH ACTIVÉ : Accès SaaS réservé aux inscrits
+  // ========================================
+  const isDemoPath = path.startsWith('/cockpit/demo');
+
+  if (!session && !isDemoPath) {
+    const redirectUrl = new URL('/signup', req.url);
+    redirectUrl.searchParams.set('redirect', path);
+    return NextResponse.redirect(redirectUrl);
+  }
+
+  return res;
 }
 
 export const config = {
-  matcher: '/api/:path*',
+  matcher: ["/cockpit/:path*", "/tarifs", "/welcome"]
 };

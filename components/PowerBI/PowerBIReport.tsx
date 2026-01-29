@@ -16,7 +16,8 @@ export default function PowerBIReport({ reportId, datasetId }: PowerBIReportProp
   useEffect(() => {
     fetch(`/api/powerbi/token?reportId=${reportId}&datasetId=${datasetId}`, {
       headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
       },
     })
       .then(res => res.json())

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getEmbedToken, powerBIConfig } from '@/lib/powerbi';
+import { generateEmbedToken } from '@/lib/powerbi';
 
 export async function GET(request: NextRequest) {
   const tenantId = request.headers.get('x-tenant-id');
@@ -10,20 +10,19 @@ export async function GET(request: NextRequest) {
 
   try {
     const { searchParams } = new URL(request.url);
-    const reportId = searchParams.get('reportId') || powerBIConfig.reportId;
-    const datasetId = searchParams.get('datasetId') || '';
+    const reportId = searchParams.get('reportId');
+    const datasetId = searchParams.get('datasetId') || undefined;
 
-    if (!datasetId) {
-      return NextResponse.json({ error: 'datasetId required' }, { status: 400 });
+    if (!reportId) {
+      return NextResponse.json({ error: 'reportId required' }, { status: 400 });
     }
 
-    const embedToken = await getEmbedToken(reportId, datasetId);
+    const embedToken = await generateEmbedToken(reportId, datasetId);
     
     return NextResponse.json({
-      token: embedToken.token,
-      expiration: embedToken.expiration,
+      token: embedToken,
       reportId: reportId,
-      embedUrl: `https://app.powerbi.com/reportEmbed?reportId=${reportId}&groupId=${powerBIConfig.workspaceId}`,
+      embedUrl: `https://app.powerbi.com/reportEmbed?reportId=${reportId}&groupId=${process.env.POWERBI_WORKSPACE_ID}`,
     });
   } catch (error) {
     console.error('Power BI Token error:', error);

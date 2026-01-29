@@ -9,7 +9,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { supabase as clientSupabase } from './supabase';
 
-export type UserRole = 'demo' | 'pro' | 'admin';
+export type UserRole = 'demo' | 'pro' | 'pro-owner' | 'pro-member' | 'admin';
 
 /**
  * Récupère le rôle de l'utilisateur depuis Supabase
@@ -27,7 +27,7 @@ export async function getUserRole(): Promise<UserRole | null> {
   const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('role')
-    .eq('user_id', user.id)
+    .eq('id', user.id)
     .single();
 
   if (profileError || !profile) {
@@ -89,7 +89,7 @@ export async function guardDemo(): Promise<void> {
 
 /**
  * Guard PRO: Protège les routes /cockpit (PRO uniquement)
- * Autorise les utilisateurs avec role = 'pro' ou 'admin'
+ * Autorise les utilisateurs avec role = 'pro-owner' ou 'pro-member' ou 'admin'
  */
 export async function guardPro(): Promise<void> {
   const role = await getUserRole();
@@ -99,9 +99,9 @@ export async function guardPro(): Promise<void> {
     redirect('/login?redirect=/cockpit');
   }
 
-  if (role !== 'pro' && role !== 'admin') {
-    console.warn(`[GUARD PRO] Accès refusé - rôle: ${role}, attendu: pro ou admin`);
-    logUnauthorizedAccess('/cockpit', 'pro', role);
+  if (role !== 'pro-owner' && role !== 'pro-member' && role !== 'admin') {
+    console.warn(`[GUARD PRO] Accès refusé - rôle: ${role}, attendu: pro-owner, pro-member ou admin`);
+    logUnauthorizedAccess('/cockpit', 'pro-owner|pro-member', role);
     
     // Rediriger selon le rôle
     if (role === 'demo') {

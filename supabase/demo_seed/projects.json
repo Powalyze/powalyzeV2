@@ -1,0 +1,29 @@
+[
+  {
+    "title": "Lancement Produit Europe",
+    "status": "En cours",
+    "owner": "Direction",
+    "priority": "Haute",
+    "description": "Déploiement du nouveau produit sur les marchés européens",
+    "progress": 65,
+    "budget": 250000
+  },
+  {
+    "title": "Migration Cloud",
+    "status": "Planifié",
+    "owner": "CTO",
+    "priority": "Moyenne",
+    "description": "Migration de l'infrastructure vers AWS",
+    "progress": 30,
+    "budget": 180000
+  },
+  {
+    "title": "Refonte UX",
+    "status": "En cours",
+    "owner": "Product",
+    "priority": "Haute",
+    "description": "Amélioration de l'expérience utilisateur",
+    "progress": 50,
+    "budget": 120000
+  }
+]

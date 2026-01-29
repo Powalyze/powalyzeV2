@@ -1,6 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+  pageExtensions: ['tsx', 'ts', 'jsx', 'js'].map(ext => {
+    return ext;
+  }),
   images: {
     remotePatterns: [
       {

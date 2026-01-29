@@ -14,8 +14,7 @@ const openai = hasApiKey ? new OpenAI({
   baseURL: process.env.AZURE_OPENAI_ENDPOINT 
     ? `${process.env.AZURE_OPENAI_ENDPOINT}/openai/deployments/${process.env.AZURE_OPENAI_DEPLOYMENT_NAME}`
     : undefined,
-  defaultQuery: process.env.AZURE_OPENAI_ENDPOINT ? { 'api-version': '2024-02-15-preview' } : undefined,
-  defaultHeaders: process.env.AZURE_OPENAI_ENDPOINT ? { 'api-key': process.env.AZURE_OPENAI_API_KEY } : undefined
+  defaultQuery: process.env.AZURE_OPENAI_ENDPOINT ? { 'api-version': '2024-02-15-preview' } : undefined
 }) : null;
 
 // ============================================

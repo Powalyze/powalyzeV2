@@ -1,109 +1,139 @@
-"use client";
+// app/cockpit/rapports/page.tsx
+import { listReports, getReportEmbedConfig, importReport } from './actions';
+import { PowerBIViewer } from '@/components/PowerBIViewer';
+import { revalidatePath } from 'next/cache';
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 
-import React from "react";
-import { FileText, Download, Calendar } from "lucide-react";
-import Link from "next/link";
+export default async function RapportsPage({
+  searchParams,
+}: {
+  searchParams: { projectId?: string; reportId?: string };
+}) {
+  const projectId = searchParams.projectId;
+  const activeReportId = searchParams.reportId;
 
-export default function RapportsPage() {
+  const { reports } = await listReports(projectId);
+
+  let embedConfig: {
+    embedUrl: string;
+    embedToken: string;
+    reportId: string;
+  } | null = null;
+
+  if (activeReportId) {
+    const cfg = await getReportEmbedConfig(activeReportId);
+    if (!cfg.error && cfg.embedUrl && cfg.embedToken && cfg.reportId) {
+      embedConfig = {
+        embedUrl: cfg.embedUrl,
+        embedToken: cfg.embedToken,
+        reportId: cfg.reportId,
+      };
+    }
+  }
+
+  async function handleImport(formData: FormData) {
+    'use server';
+    const res = await importReport(formData);
+    if (!res.error) {
+      revalidatePath('/cockpit/rapports');
+    }
+  }
+
   return (
     <div className="p-6 space-y-6">
+      {/* Bouton retour */}
+      <Link 
+        href="/cockpit" 
+        className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-4"
+      >
+        <ArrowLeft size={18} />
+        <span>Retour au cockpit</span>
+      </Link>
+
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Rapports & Exports</h1>
-          <p className="text-slate-400 mt-1">Génération et consultation des rapports</p>
+          <h1 className="text-xl font-semibold text-white">
+            Rapports Power BI
+          </h1>
+          <p className="text-sm text-slate-400">
+            Importez vos rapports .pbix et visualisez-les directement dans le
+            cockpit.
+          </p>
         </div>
-        <Link
-          href="/cockpit/rapports/nouveau"
-          className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-medium transition-colors"
-        >
-          + Nouveau Rapport
-        </Link>
+
+        <form action={handleImport} className="flex items-center gap-2">
+          <input type="hidden" name="projectId" value={projectId ?? ''} />
+          <input
+            type="text"
+            name="reportName"
+            placeholder="Nom du rapport"
+            className="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-sm text-slate-100"
+            required
+          />
+          <input
+            type="file"
+            name="file"
+            accept=".pbix"
+            className="text-xs text-slate-300"
+            required
+          />
+          <button
+            type="submit"
+            className="bg-amber-500 text-slate-950 text-sm font-medium px-3 py-1.5 rounded"
+          >
+            Importer .pbix
+          </button>
+        </form>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-5">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-slate-400 text-sm">Ce mois</span>
-            <FileText className="text-blue-400" size={20} />
-          </div>
-          <div className="text-3xl font-bold text-white">12</div>
-          <div className="text-sm text-slate-400 mt-1">Rapports générés</div>
-        </div>
-
-        <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-5">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-slate-400 text-sm">Téléchargements</span>
-            <Download className="text-emerald-400" size={20} />
-          </div>
-          <div className="text-3xl font-bold text-white">48</div>
-          <div className="text-sm text-slate-400 mt-1">Cette semaine</div>
-        </div>
-
-        <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-5">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-slate-400 text-sm">Programmés</span>
-            <Calendar className="text-purple-400" size={20} />
-          </div>
-          <div className="text-3xl font-bold text-white">5</div>
-          <div className="text-sm text-slate-400 mt-1">Automatisés</div>
-        </div>
-      </div>
-
-      <div className="bg-slate-800/30 border border-slate-700 rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-white mb-4">Rapports Disponibles</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[
-            { name: "Rapport Exécutif Mensuel", type: "PDF", size: "2.4 MB", date: "2026-01-25" },
-            { name: "Dashboard KPI Hebdomadaire", type: "Excel", size: "1.8 MB", date: "2026-01-24" },
-            { name: "Analyse Risques Q1 2026", type: "PDF", size: "3.1 MB", date: "2026-01-22" },
-            { name: "Budget vs Actuel Janvier", type: "Excel", size: "2.2 MB", date: "2026-01-20" },
-            { name: "Performance Portfolio", type: "PowerPoint", size: "5.6 MB", date: "2026-01-18" },
-            { name: "Rapport Conformité", type: "PDF", size: "1.9 MB", date: "2026-01-15" },
-          ].map((report, i) => (
-            <div key={i} className="p-4 bg-slate-800/50 border border-slate-700 rounded-lg hover:border-purple-500/50 transition-all group cursor-pointer">
-              <div className="flex items-start justify-between mb-2">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <FileText className="text-purple-400" size={16} />
-                    <span className="text-white font-medium group-hover:text-purple-400 transition-colors">{report.name}</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-sm text-slate-400">
-                    <span>{report.type}</span>
-                    <span>•</span>
-                    <span>{report.size}</span>
-                  </div>
+      <div className="grid grid-cols-4 gap-4">
+        <div className="col-span-1 space-y-2">
+          <h2 className="text-sm font-medium text-slate-200">
+            Rapports disponibles
+          </h2>
+          <div className="space-y-1">
+            {reports.length === 0 && (
+              <p className="text-xs text-slate-500">
+                Aucun rapport importé pour le moment.
+              </p>
+            )}
+            {reports.map((r: any) => (
+              <a
+                key={r.id}
+                href={`/cockpit/rapports?projectId=${projectId ?? ''}&reportId=${
+                  r.powerbi_report_id
+                }`}
+                className={`block px-3 py-2 rounded text-sm border ${
+                  activeReportId === r.powerbi_report_id
+                    ? 'bg-slate-800 border-amber-500 text-amber-200'
+                    : 'bg-slate-900 border-slate-700 text-slate-200'
+                }`}
+              >
+                <div className="font-medium truncate">{r.report_name}</div>
+                <div className="text-[11px] text-slate-500">
+                  {r.created_at}
                 </div>
-                <button className="p-2 hover:bg-slate-700 rounded-lg transition-colors opacity-0 group-hover:opacity-100">
-                  <Download size={18} className="text-slate-400" />
-                </button>
-              </div>
-              <div className="text-xs text-slate-500 mt-2">Généré le {report.date}</div>
-            </div>
-          ))}
+              </a>
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div className="bg-slate-800/30 border border-slate-700 rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-white mb-4">Exports Rapides</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <button className="p-4 bg-slate-800/50 border border-slate-700 rounded-lg hover:border-blue-500/50 hover:bg-slate-800 transition-all text-left">
-            <FileText className="text-blue-400 mb-2" size={24} />
-            <div className="text-white font-medium">Export PDF</div>
-            <div className="text-sm text-slate-400 mt-1">Vue synthétique</div>
-          </button>
-          <button className="p-4 bg-slate-800/50 border border-slate-700 rounded-lg hover:border-emerald-500/50 hover:bg-slate-800 transition-all text-left">
-            <FileText className="text-emerald-400 mb-2" size={24} />
-            <div className="text-white font-medium">Export Excel</div>
-            <div className="text-sm text-slate-400 mt-1">Données détaillées</div>
-          </button>
-          <button className="p-4 bg-slate-800/50 border border-slate-700 rounded-lg hover:border-purple-500/50 hover:bg-slate-800 transition-all text-left">
-            <FileText className="text-purple-400 mb-2" size={24} />
-            <div className="text-white font-medium">Export PowerPoint</div>
-            <div className="text-sm text-slate-400 mt-1">Présentation COMEX</div>
-          </button>
+        <div className="col-span-3">
+          {embedConfig ? (
+            <PowerBIViewer
+              embedUrl={embedConfig.embedUrl}
+              embedToken={embedConfig.embedToken}
+              reportId={embedConfig.reportId}
+            />
+          ) : (
+            <div className="h-[70vh] rounded-xl border border-dashed border-slate-700 flex items-center justify-center text-sm text-slate-500">
+              Sélectionnez un rapport dans la liste ou importez un .pbix pour
+              commencer.
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
-

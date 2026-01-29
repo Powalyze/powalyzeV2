@@ -1,0 +1,20 @@
+[
+  {
+    "title": "Dépendance fournisseur unique – Composant clé",
+    "description": "Risque de rupture d'approvisionnement",
+    "level": "Critique",
+    "owner": "Direction Achats"
+  },
+  {
+    "title": "Retard potentiel – Migration Cloud",
+    "description": "Complexité technique sous-estimée",
+    "level": "Élevé",
+    "owner": "CTO"
+  },
+  {
+    "title": "Surcharge équipes – Lancement Europe",
+    "description": "Ressources limitées sur plusieurs projets",
+    "level": "Modéré",
+    "owner": "COO"
+  }
+]
