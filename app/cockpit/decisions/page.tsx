@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Search, Filter, Brain, Plus, ThumbsUp, ThumbsDown, MessageSquare, Eye, Edit2, Copy, Trash2 } from 'lucide-react';
-import { useToast } from '@/components/ui/ToastProvider';
+import { ToastProvider, useToast } from '@/components/ui/ToastProvider';
 import { useCockpit } from '@/components/providers/CockpitProvider';
 import { CockpitShell } from '@/components/cockpit/CockpitShell';
 import { ActionMenu } from '@/components/ui/ActionMenu';
@@ -25,7 +25,7 @@ interface Decision {
   project: string;
 }
 
-export default function DecisionsPage() {
+function DecisionsPageContent() {
   const { showToast } = useToast();
   const { getItems, addItem, updateItem, deleteItem, refreshCount } = useCockpit();
   
@@ -415,5 +415,13 @@ export default function DecisionsPage() {
         </div>
       )}
     </CockpitShell>
+  );
+}
+
+export default function DecisionsPage() {
+  return (
+    <ToastProvider>
+      <DecisionsPageContent />
+    </ToastProvider>
   );
 }

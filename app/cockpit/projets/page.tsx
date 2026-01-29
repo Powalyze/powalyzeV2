@@ -1,7 +1,7 @@
 "use client";
 
 import { CockpitShell } from "@/components/cockpit/CockpitShell";
-import { useToast } from "@/components/ui/ToastProvider";
+import { ToastProvider, useToast } from "@/components/ui/ToastProvider";
 import { useState, useEffect } from "react";
 import { Plus, Star, StarOff, Trash2, MoreHorizontal } from "lucide-react";
 import { getProjects, createProject, deleteProject, toggleStarProject } from "./actions";
@@ -21,7 +21,7 @@ interface Project {
   starred: boolean;
 }
 
-export default function ProjetsPage() {
+function ProjetsPageContent() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [showProjectModal, setShowProjectModal] = useState(false);
@@ -282,5 +282,13 @@ export default function ProjetsPage() {
         )}
       </div>
     </CockpitShell>
+  );
+}
+
+export default function ProjetsPage() {
+  return (
+    <ToastProvider>
+      <ProjetsPageContent />
+    </ToastProvider>
   );
 }

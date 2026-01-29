@@ -3,18 +3,31 @@
 import { CockpitShell } from "@/components/cockpit/CockpitShell";
 import { useEffect, useMemo, useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabaseClient";
-import { User, Mail, Building, Globe, Bell, Shield, Palette, Save, LogOut } from "lucide-react";
+import { User, Mail, Building, Globe, Bell, Shield, Palette, Save, LogOut, Users, UserPlus, Key, ToggleLeft } from "lucide-react";
+import { getAllUsers, createUser, updateUser, disableUser, enableUser, resetPassword } from '@/actions/users';
+import { ToastProvider, useToast } from '@/components/ui/ToastProvider';
 
 type Language = "fr" | "en" | "de" | "it";
 type Theme = "dark" | "light" | "auto";
+type RoleGlobal = 'super_admin' | 'admin' | 'chef_projet' | 'contributeur' | 'lecteur';
 
-export default function ProfilPage() {
-  const [activeTab, setActiveTab] = useState<"profile" | "preferences" | "security" | "notifications">("profile");
+const ROLE_LABELS: Record<RoleGlobal, string> = {
+  super_admin: 'Super Admin',
+  admin: 'Administrateur',
+  chef_projet: 'Chef de projet',
+  contributeur: 'Contributeur',
+  lecteur: 'Lecteur'
+};
+
+function ProfilPageContent() {
+  const { showToast } = useToast();
+  const [activeTab, setActiveTab] = useState<"profile" | "preferences" | "security" | "notifications" | "admin">("profile");
   const [language, setLanguage] = useState<Language>("fr");
   const [theme, setTheme] = useState<Theme>("dark");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [profile, setProfile] = useState({
     firstName: "",
     lastName: "",
@@ -54,6 +67,15 @@ export default function ProfilPage() {
           email: dbProfile?.email || user.email || "",
           role: dbProfile?.role || "member"
         });
+
+        // Check if user is admin
+        const { data: userRole } = await supabase
+          .from("user_roles")
+          .select("role_global")
+          .eq("user_id", user.id)
+          .single();
+        
+        setIsAdmin(userRole?.role_global === 'admin' || userRole?.role_global === 'super_admin');
       } catch {
         setError("Impossible de charger le profil");
       } finally {
@@ -144,6 +166,14 @@ export default function ProfilPage() {
             active={activeTab === "notifications"}
             onClick={() => setActiveTab("notifications")}
           />
+          {isAdmin && (
+            <TabButton
+              label="Administration"
+              icon={<Users size={18} />}
+              active={activeTab === "admin"}
+              onClick={() => setActiveTab("admin")}
+            />
+          )}
         </div>
 
         {/* Content */}
@@ -161,8 +191,376 @@ export default function ProfilPage() {
         {activeTab === "preferences" && <PreferencesTab language={language} setLanguage={setLanguage} theme={theme} setTheme={setTheme} />}
         {activeTab === "security" && <SecurityTab />}
         {activeTab === "notifications" && <NotificationsTab />}
+        {activeTab === "admin" && isAdmin && <AdminTab showToast={showToast} />}
       </div>
     </CockpitShell>
+  );
+}
+
+function AdminTab({ showToast }: { showToast: (type: 'success' | 'error' | 'info', title: string, message: string) => void }) {
+  const [users, setUsers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+
+  const [createForm, setCreateForm] = useState({
+    email: '',
+    password: '',
+    firstName: '',
+    lastName: '',
+    roleGlobal: 'contributeur' as RoleGlobal
+  });
+
+  const [editForm, setEditForm] = useState({
+    firstName: '',
+    lastName: '',
+    roleGlobal: 'contributeur' as RoleGlobal
+  });
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    setLoading(true);
+    const result = await getAllUsers();
+    if (result.success) {
+      setUsers(result.data || []);
+    }
+    setLoading(false);
+  };
+
+  const filteredUsers = users.filter(user => {
+    const query = searchQuery.toLowerCase();
+    return (
+      user.id?.toLowerCase().includes(query) ||
+      user.first_name?.toLowerCase().includes(query) ||
+      user.last_name?.toLowerCase().includes(query)
+    );
+  });
+
+  const handleCreateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const result = await createUser({ ...createForm, organizationId: 'default-org' });
+    if (result.success) {
+      showToast('success', '✅ Utilisateur créé', `${createForm.email} a été créé avec succès`);
+      setShowCreateModal(false);
+      setCreateForm({ email: '', password: '', firstName: '', lastName: '', roleGlobal: 'contributeur' });
+      fetchUsers();
+    } else {
+      showToast('error', 'Erreur', result.error || 'Impossible de créer l\'utilisateur');
+    }
+  };
+
+  const handleUpdateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedUser) return;
+    
+    const result = await updateUser({
+      userId: selectedUser.id,
+      firstName: editForm.firstName,
+      lastName: editForm.lastName,
+      roleGlobal: editForm.roleGlobal
+    });
+
+    if (result.success) {
+      showToast('success', '✅ Utilisateur modifié', '');
+      setShowEditModal(false);
+      setSelectedUser(null);
+      fetchUsers();
+    } else {
+      showToast('error', 'Erreur', result.error || 'Impossible de modifier l\'utilisateur');
+    }
+  };
+
+  const handleToggleStatus = async (userId: string, isActive: boolean) => {
+    const result = isActive ? await disableUser(userId) : await enableUser(userId);
+    if (result.success) {
+      showToast('success', isActive ? '🔒 Compte désactivé' : '✅ Compte activé', '');
+      fetchUsers();
+    } else {
+      showToast('error', 'Erreur', result.error || 'Impossible de modifier le statut');
+    }
+  };
+
+  const handleResetPassword = async (email: string) => {
+    const result = await resetPassword(email);
+    if (result.success) {
+      showToast('success', '📧 Email envoyé', `Email de réinitialisation envoyé à ${email}`);
+    } else {
+      showToast('error', 'Erreur', result.error || 'Impossible d\'envoyer l\'email');
+    }
+  };
+
+  const openEditModal = (user: any) => {
+    setSelectedUser(user);
+    setEditForm({
+      firstName: user.first_name || '',
+      lastName: user.last_name || '',
+      roleGlobal: user.user_roles[0]?.role_global || 'contributeur'
+    });
+    setShowEditModal(true);
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <Users size={24} className="text-amber-400" />
+            Gestion des utilisateurs
+          </h2>
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 rounded-lg font-semibold flex items-center gap-2 transition-all"
+          >
+            <UserPlus size={18} />
+            Créer un utilisateur
+          </button>
+        </div>
+
+        <input
+          type="text"
+          placeholder="Rechercher un utilisateur..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full mb-4 px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+        />
+
+        {loading ? (
+          <div className="text-center py-8 text-slate-400">Chargement...</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-slate-800 bg-slate-950">
+                  <th className="text-left p-4 font-semibold">Utilisateur</th>
+                  <th className="text-left p-4 font-semibold">Rôle global</th>
+                  <th className="text-left p-4 font-semibold">Projets</th>
+                  <th className="text-left p-4 font-semibold">Statut</th>
+                  <th className="text-left p-4 font-semibold">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredUsers.map((user) => (
+                  <tr key={user.id} className="border-b border-slate-800 hover:bg-slate-800/50 transition-colors">
+                    <td className="p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-white font-semibold">
+                          {user.first_name?.[0]}{user.last_name?.[0]}
+                        </div>
+                        <div>
+                          <div className="font-semibold">{user.first_name} {user.last_name}</div>
+                          <div className="text-sm text-slate-400">{user.id}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="p-4">
+                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/20 text-purple-400">
+                        {ROLE_LABELS[user.user_roles[0]?.role_global as RoleGlobal] || 'N/A'}
+                      </span>
+                    </td>
+                    <td className="p-4 text-slate-400">
+                      {user.project_members?.length || 0} projet(s)
+                    </td>
+                    <td className="p-4">
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                        user.is_active
+                          ? 'bg-green-500/20 text-green-400'
+                          : 'bg-red-500/20 text-red-400'
+                      }`}>
+                        {user.is_active ? 'Actif' : 'Désactivé'}
+                      </span>
+                    </td>
+                    <td className="p-4">
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => openEditModal(user)}
+                          className="p-2 hover:bg-slate-700 rounded transition-colors"
+                          title="Modifier"
+                        >
+                          <User size={16} />
+                        </button>
+                        <button
+                          onClick={() => handleResetPassword(user.id)}
+                          className="p-2 hover:bg-slate-700 rounded transition-colors text-yellow-400"
+                          title="Réinitialiser mot de passe"
+                        >
+                          <Key size={16} />
+                        </button>
+                        <button
+                          onClick={() => handleToggleStatus(user.id, user.is_active)}
+                          className={`p-2 hover:bg-slate-700 rounded transition-colors ${
+                            user.is_active ? 'text-red-400' : 'text-green-400'
+                          }`}
+                          title={user.is_active ? 'Désactiver' : 'Activer'}
+                        >
+                          <ToggleLeft size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Modal: Create User */}
+      {showCreateModal && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setShowCreateModal(false)}>
+          <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-2xl font-bold mb-4">Créer un utilisateur</h2>
+            <form onSubmit={handleCreateUser} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Email</label>
+                <input
+                  type="email"
+                  required
+                  value={createForm.email}
+                  onChange={(e) => setCreateForm({ ...createForm, email: e.target.value })}
+                  placeholder="utilisateur@exemple.com"
+                  className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Mot de passe</label>
+                <input
+                  type="password"
+                  required
+                  value={createForm.password}
+                  onChange={(e) => setCreateForm({ ...createForm, password: e.target.value })}
+                  placeholder="Min. 8 caractères"
+                  className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Prénom</label>
+                <input
+                  type="text"
+                  required
+                  value={createForm.firstName}
+                  onChange={(e) => setCreateForm({ ...createForm, firstName: e.target.value })}
+                  placeholder="Jean"
+                  className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Nom</label>
+                <input
+                  type="text"
+                  required
+                  value={createForm.lastName}
+                  onChange={(e) => setCreateForm({ ...createForm, lastName: e.target.value })}
+                  placeholder="Dupont"
+                  className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Rôle global</label>
+                <select
+                  value={createForm.roleGlobal}
+                  onChange={(e) => setCreateForm({ ...createForm, roleGlobal: e.target.value as RoleGlobal })}
+                  aria-label="Sélectionner le rôle global"
+                  className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                >
+                  {Object.entries(ROLE_LABELS).map(([value, label]) => (
+                    <option key={value} value={value}>{label}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowCreateModal(false)}
+                  className="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 rounded-lg font-semibold transition-all"
+                >
+                  Créer
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Edit User */}
+      {showEditModal && selectedUser && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setShowEditModal(false)}>
+          <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-2xl font-bold mb-4">Modifier l'utilisateur</h2>
+            <form onSubmit={handleUpdateUser} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Prénom</label>
+                <input
+                  type="text"
+                  required
+                  value={editForm.firstName}
+                  onChange={(e) => setEditForm({ ...editForm, firstName: e.target.value })}
+                  placeholder="Jean"
+                  className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Nom</label>
+                <input
+                  type="text"
+                  required
+                  value={editForm.lastName}
+                  onChange={(e) => setEditForm({ ...editForm, lastName: e.target.value })}
+                  placeholder="Dupont"
+                  className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Rôle global</label>
+                <select
+                  value={editForm.roleGlobal}
+                  onChange={(e) => setEditForm({ ...editForm, roleGlobal: e.target.value as RoleGlobal })}
+                  aria-label="Sélectionner le rôle global"
+                  className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                >
+                  {Object.entries(ROLE_LABELS).map(([value, label]) => (
+                    <option key={value} value={value}>{label}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  className="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 rounded-lg font-semibold transition-all"
+                >
+                  Modifier
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function ProfilPage() {
+  return (
+    <ToastProvider>
+      <ProfilPageContent />
+    </ToastProvider>
   );
 }
 
