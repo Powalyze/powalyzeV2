@@ -36,6 +36,8 @@ export async function middleware(req: NextRequest) {
     '/demo': '/signup?demo=true',
     '/pro': '/cockpit/pro',
     '/cockpit-demo': '/cockpit/demo',
+    '/cockpit-real': '/cockpit',
+    '/cockpit-client': '/cockpit/client',
     '/inscription': '/signup',
     '/register': '/signup',
     '/portefeuille': '/cockpit/pro',
@@ -78,9 +80,7 @@ export async function middleware(req: NextRequest) {
 
         // Redirection automatique selon le rôle
         if (role === 'admin') {
-          const adminUrl = new URL('/cockpit/admin', req.url);
-          adminUrl.searchParams.set('userId', session.user.id);
-          return NextResponse.redirect(adminUrl);
+          return NextResponse.redirect(new URL('/cockpit/admin', req.url));
         }
 
         if (role === 'demo') {
@@ -98,10 +98,9 @@ export async function middleware(req: NextRequest) {
       }
     } catch (error) {
       console.error('Error fetching user role:', error);
+      // Fallback to client cockpit on error
+      return NextResponse.redirect(new URL('/cockpit/client', req.url));
     }
-
-    // Fallback : rediriger vers demo si rôle non trouvé
-    return NextResponse.redirect(new URL('/cockpit/demo', req.url));
   }
 
   // ========================================
@@ -118,10 +117,16 @@ export async function middleware(req: NextRequest) {
           .single();
 
         if (userData?.role !== 'admin') {
-          return NextResponse.redirect(new URL('/cockpit/demo', req.url));
+          // Redirect based on actual role
+          if (userData?.role === 'demo') {
+            return NextResponse.redirect(new URL('/cockpit/demo', req.url));
+          } else {
+            return NextResponse.redirect(new URL('/cockpit/client', req.url));
+          }
         }
       } catch (error) {
-        return NextResponse.redirect(new URL('/cockpit/demo', req.url));
+        // Redirect to client cockpit by default on error
+        return NextResponse.redirect(new URL('/cockpit/client', req.url));
       }
     }
 

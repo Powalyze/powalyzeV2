@@ -44,18 +44,23 @@ export default function LoginForm() {
         return;
       }
 
-      // 2. Get user profile to determine mode
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('mode')
+      // 2. Get user role to determine redirect (use users.role instead of profiles.mode)
+      const { data: userData } = await supabase
+        .from('users')
+        .select('role')
         .eq('id', data.user.id)
         .single();
 
-      // 3. Redirect based on mode
-      if (profile?.mode === 'pro') {
-        router.push('/cockpit');
+      // 3. Redirect based on role
+      const role = userData?.role as 'admin' | 'client' | 'demo' | null;
+      
+      if (role === 'admin') {
+        router.push('/cockpit/admin');
+      } else if (role === 'demo') {
+        router.push('/cockpit/demo');
       } else {
-        router.push('/cockpit');
+        // Default: client cockpit
+        router.push('/cockpit/client');
       }
       
     } catch (err: any) {
