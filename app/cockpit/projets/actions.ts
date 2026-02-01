@@ -79,22 +79,19 @@ async function getOrganizationId() {
     
     // Créer l'entrée user (insert simple, ignore les erreurs de doublon)
     if (defaultOrg) {
-      await supabaseService
+      const { error: insertError } = await supabaseService
         .from('users')
         .insert({
           id: session.user.id,
           email: session.user.email,
           tenant_id: defaultOrg.id,
           role: 'client'
-        })
-        .select()
-        .single()
-        .then(({ error }) => {
-          // Ignorer l'erreur si l'utilisateur existe déjà
-          if (error && !error.message.includes('duplicate')) {
-            console.error('Error creating user:', error);
-          }
         });
+      
+      // Ignorer l'erreur si l'utilisateur existe déjà (duplicate key)
+      if (insertError && !insertError.code?.includes('23505')) {
+        console.error('Error creating user:', insertError);
+      }
       
       return defaultOrg.id;
     }
