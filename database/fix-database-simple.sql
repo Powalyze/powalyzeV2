@@ -21,6 +21,14 @@ BEGIN
     -- Ajouter role si manquant
     ALTER TABLE users ADD COLUMN role VARCHAR(20) NOT NULL DEFAULT 'client' CHECK (role IN ('admin', 'client', 'demo'));
   END IF;
+
+  IF NOT EXISTS (
+    SELECT FROM information_schema.columns 
+    WHERE table_name = 'users' AND column_name = 'pro_active'
+  ) THEN
+    -- Ajouter pro_active si manquant (NOUVEAU pour système 3 états)
+    ALTER TABLE users ADD COLUMN pro_active BOOLEAN NOT NULL DEFAULT FALSE;
+  END IF;
 END $$;
 
 -- 2. Créer une organisation par défaut si elle n'existe pas
