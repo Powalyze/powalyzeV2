@@ -34,15 +34,15 @@ export async function middleware(req: NextRequest) {
   // ========================================
   const legacyRedirects: Record<string, string> = {
     '/demo': '/signup?demo=true',
-    '/pro': '/cockpit/pro',
+    '/pro': '/cockpit/client',              // Pro mode = client cockpit
     '/cockpit-demo': '/cockpit/demo',
     '/cockpit-real': '/cockpit',
     '/cockpit-client': '/cockpit/client',
     '/inscription': '/signup',
     '/register': '/signup',
-    '/portefeuille': '/cockpit/pro',
-    '/anomalies': '/cockpit/pro',
-    '/dashboard': '/cockpit/pro'
+    '/portefeuille': '/cockpit/client',     // Pro features
+    '/anomalies': '/cockpit/client',        // Pro features  
+    '/dashboard': '/cockpit/client'         // Pro features
   };
 
   if (legacyRedirects[path]) {
