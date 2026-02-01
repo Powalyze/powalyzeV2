@@ -53,8 +53,9 @@ export async function middleware(req: NextRequest) {
   // SYSTÈME 3 ÉTATS — ARCHITECTURE FINALE
   // ========================================
   
-  // ÉTAT 0 : Non connecté → Vitrine uniquement
+  // ÉTAT 0 : Non connecté → Vitrine + Demo publique
   const isPublicPath = path === '/' || 
+                      path === '/demo' ||              // Demo publique SANS connexion
                       path.startsWith('/services') || 
                       path.startsWith('/contact') ||
                       path.startsWith('/auth') || 
@@ -87,7 +88,8 @@ export async function middleware(req: NextRequest) {
           if (isPro) {
             return NextResponse.redirect(new URL('/cockpit/projets', req.url));
           } else {
-            return NextResponse.redirect(new URL('/cockpit/demo', req.url));
+            // État 1 : Connecté sans Pro → cockpit vide avec CTA tarifs
+            // (pas de redirect, on affiche le cockpit vide)
           }
         }
 
@@ -109,16 +111,19 @@ export async function middleware(req: NextRequest) {
         const isProPage = proPages.some(pp => path.startsWith(pp));
 
         if (isProPage && !isPro) {
-          // Utilisateur sans Pro essayant d'accéder à une page Pro → Demo
-          return NextResponse.redirect(new URL('/cockpit/demo', req.url));
+          // Utilisateur sans Pro essayant d'accéder à une page Pro → Cockpit vide
+          return NextResponse.redirect(new URL('/cockpit', req.url));
         }
 
         // ========================================
-        // PROTECTION PAGE DEMO
+        // REDIRECTION DEMO SI NON PRO
         // ========================================
-        if (path.startsWith('/cockpit/demo') && isPro) {
-          // Utilisateur Pro essayant d'accéder au Demo → Projets
-          return NextResponse.redirect(new URL('/cockpit/projets', req.url));
+        // REDIRECTION DEMO SI NON PRO
+        // ========================================
+        if (path === '/cockpit/demo') {
+          // /cockpit/demo est maintenant juste un lien depuis cockpit page
+          // Rediriger vers demo publique
+          return NextResponse.redirect(new URL('/demo', req.url));
         }
 
         // ========================================
@@ -130,16 +135,16 @@ export async function middleware(req: NextRequest) {
             if (isPro) {
               return NextResponse.redirect(new URL('/cockpit/projets', req.url));
             } else {
-              return NextResponse.redirect(new URL('/cockpit/demo', req.url));
+              return NextResponse.redirect(new URL('/cockpit', req.url));
             }
           }
         }
       }
     } catch (error) {
       console.error('Error in middleware:', error);
-      // En cas d'erreur, rediriger vers demo par sécurité
-      if (path.startsWith('/cockpit') && path !== '/cockpit/demo') {
-        return NextResponse.redirect(new URL('/cockpit/demo', req.url));
+      // En cas d'erreur, rediriger vers signup par sécurité
+      if (path.startsWith('/cockpit')) {
+        return NextResponse.redirect(new URL('/signup', req.url));
       }
     }
   }
