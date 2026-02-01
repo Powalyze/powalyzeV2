@@ -69,12 +69,25 @@ async function getOrganizationId() {
       .single();
     
     if (!defaultOrg) {
-      const { data: newOrg } = await supabaseService
+      // Insérer une organisation par défaut (ou utiliser celle qui existe)
+      const { data: newOrg, error: orgError } = await supabaseService
         .from('organizations')
         .insert({ name: 'Mon Organisation' })
         .select('id')
         .single();
-      defaultOrg = newOrg;
+      
+      // Si erreur de duplicate, récupérer la première org existante
+      if (orgError) {
+        console.log('Organization insert error (normal if exists):', orgError);
+        const { data: existingOrg } = await supabaseService
+          .from('organizations')
+          .select('id')
+          .limit(1)
+          .single();
+        defaultOrg = existingOrg;
+      } else {
+        defaultOrg = newOrg;
+      }
     }
     
     // Créer l'entrée user (insert simple, ignore les erreurs de doublon)
@@ -88,8 +101,8 @@ async function getOrganizationId() {
           role: 'client'
         });
       
-      // Ignorer l'erreur si l'utilisateur existe déjà (duplicate key)
-      if (insertError && !insertError.code?.includes('23505')) {
+      // Ignorer l'erreur si l'utilisateur existe déjà (duplicate key code: 23505)
+      if (insertError && insertError.code !== '23505') {
         console.error('Error creating user:', insertError);
       }
       
