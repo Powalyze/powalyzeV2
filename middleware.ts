@@ -51,11 +51,82 @@ export async function middleware(req: NextRequest) {
   // AUTH ACTIVÉ : Accès SaaS réservé aux inscrits
   // ========================================
   const isDemoPath = path.startsWith('/cockpit/demo');
+  const isAuthPath = path.startsWith('/auth') || path.startsWith('/signup') || path.startsWith('/login');
 
-  if (!session && !isDemoPath) {
+  // Éviter les boucles de redirection : ne pas rediriger si déjà sur une page d'auth
+  if (!session && !isDemoPath && !isAuthPath && path.startsWith('/cockpit')) {
     const redirectUrl = new URL('/signup', req.url);
     redirectUrl.searchParams.set('redirect', path);
     return NextResponse.redirect(redirectUrl);
+  }
+
+  // ========================================
+  // SYSTÈME 3-MODES : Redirection automatique par rôle
+  // ========================================
+  if (session && path === '/cockpit') {
+    try {
+      // Récupérer le rôle de l'utilisateur
+      const { data: userData, error } = await supabase
+        .from('users')
+        .select('role, tenant_id')
+        .eq('id', session.user.id)
+        .single();
+
+      if (!error && userData) {
+        const role = userData.role as 'admin' | 'client' | 'demo';
+        const tenantId = userData.tenant_id;
+
+        // Redirection automatique selon le rôle
+        if (role === 'admin') {
+          const adminUrl = new URL('/cockpit/admin', req.url);
+          adminUrl.searchParams.set('userId', session.user.id);
+          return NextResponse.redirect(adminUrl);
+        }
+
+        if (role === 'demo') {
+          return NextResponse.redirect(new URL('/cockpit/demo', req.url));
+        }
+
+        if (role === 'client') {
+          const clientUrl = new URL('/cockpit/client', req.url);
+          clientUrl.searchParams.set('userId', session.user.id);
+          if (tenantId) {
+            clientUrl.searchParams.set('organizationId', tenantId);
+          }
+          return NextResponse.redirect(clientUrl);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching user role:', error);
+    }
+
+    // Fallback : rediriger vers demo si rôle non trouvé
+    return NextResponse.redirect(new URL('/cockpit/demo', req.url));
+  }
+
+  // ========================================
+  // PROTECTION DES ROUTES PAR RÔLE
+  // ========================================
+  if (session) {
+    // Routes admin : vérifier que l'utilisateur est admin
+    if (path.startsWith('/cockpit/admin')) {
+      try {
+        const { data: userData } = await supabase
+          .from('users')
+          .select('role')
+          .eq('id', session.user.id)
+          .single();
+
+        if (userData?.role !== 'admin') {
+          return NextResponse.redirect(new URL('/cockpit/demo', req.url));
+        }
+      } catch (error) {
+        return NextResponse.redirect(new URL('/cockpit/demo', req.url));
+      }
+    }
+
+    // Routes client : pas de vérification ici pour éviter les boucles
+    // La page /cockpit/client gère elle-même les redirections
   }
 
   return res;

@@ -1,0 +1,14 @@
+﻿Organisation Setup - 2026-01-30 10:56:48
+================================================
+
+Organisation ID: eca7351b-b4a5-400b-bd19-6d53c8ed52b5
+Organization Name: Organisation Fabrice
+User ID: c7679d53-7d45-48c0-a901-b36aa1a27ccb
+Role: owner
+
+Status: ✅ Terminé avec succès
+
+Prochaines étapes:
+1. Se déconnecter de https://www.powalyze.com
+2. Se reconnecter
+3. Tester le cockpit

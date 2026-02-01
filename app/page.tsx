@@ -28,12 +28,12 @@ export default function HomePage() {
 function Hero() {
   return (
     <section className="relative min-h-screen w-full overflow-hidden flex items-center">
-      {/* Premium Background Image - Bureau / PMO / Power BI */}
+      {/* Premium Background Image - Bureau / PMO / Power BI - Plus visible */}
       <div className="absolute inset-0 h-full w-full">
         <img
           src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=2072&q=80"
           alt="Equipe en réunion analysant des données"
-          className="h-full w-full object-cover opacity-30 grayscale"
+          className="h-full w-full object-cover opacity-60 grayscale"
         />
       </div>
       
@@ -43,12 +43,12 @@ function Hero() {
         loop
         muted
         playsInline
-        className="absolute inset-0 h-full w-full object-cover opacity-10"
+        className="absolute inset-0 h-full w-full object-cover opacity-5"
         src="/videos/powalyze-manifeste.mp4"
       />
       
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-slate-950/90 via-slate-900/80 to-slate-950/95" />
+      {/* Gradient Overlay - Réduit pour plus de visibilité */}
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-slate-900/60 to-slate-950/80" />
       
       {/* Ambient effects */}
       <div className="absolute inset-0">

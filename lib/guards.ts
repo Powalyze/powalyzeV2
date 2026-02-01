@@ -80,7 +80,7 @@ export async function guardDemo(): Promise<void> {
     
     // Rediriger selon le rôle
     if (role === 'pro' || role === 'admin') {
-      redirect('/cockpit');
+      redirect('/cockpit/pro');
     } else {
       redirect('/');
     }
@@ -132,7 +132,7 @@ export async function guardAdmin(): Promise<void> {
     if (role === 'demo') {
       redirect('/cockpit-demo');
     } else if (role === 'pro') {
-      redirect('/cockpit');
+      redirect('/cockpit/pro');
     } else {
       redirect('/');
     }

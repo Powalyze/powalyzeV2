@@ -1,24 +1,105 @@
 'use server';
 
-import { createClient } from '@supabase/supabase-js';
-import { cookies } from 'next/headers';
+import { createClient } from '@/utils/supabase/server';
+import { createClient as createServiceClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+// Nettoyer le BOM des variables d'environnement
+function cleanEnv(value?: string) {
+  return value?.replace(/^\uFEFF/, '').trim();
+}
 
-function getSupabaseAdmin() {
-  return createClient(supabaseUrl, supabaseServiceKey);
+// Client avec service role pour bypasser RLS
+function getSupabaseService() {
+  return createServiceClient(
+    cleanEnv(process.env.NEXT_PUBLIC_SUPABASE_URL)!,
+    cleanEnv(process.env.SUPABASE_SERVICE_ROLE_KEY)!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    }
+  );
+}
+
+async function getUserSession() {
+  const supabase = await createClient();
+  const { data: { session } } = await supabase.auth.getSession();
+  return session;
 }
 
 async function getUserId() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get('sb-access-token')?.value;
+  const session = await getUserSession();
+  return session?.user?.id || null;
+}
+
+async function getOrganizationId() {
+  const session = await getUserSession();
+  if (!session?.user?.id) return null;
   
-  if (!token) return null;
+  const supabase = await createClient();
   
-  const supabase = getSupabaseAdmin();
-  const { data: { user } } = await supabase.auth.getUser(token);
-  return user?.id || null;
+  // Essayer de trouver l'utilisateur par UUID
+  let { data: userData } = await supabase
+    .from('users')
+    .select('tenant_id')
+    .eq('id', session.user.id)
+    .single();
+  
+  // Si pas trouvé par UUID, essayer par email
+  if (!userData && session.user.email) {
+    const { data: userByEmail } = await supabase
+      .from('users')
+      .select('tenant_id')
+      .eq('email', session.user.email)
+      .single();
+    
+    userData = userByEmail;
+  }
+  
+  // Si toujours pas trouvé, créer l'entrée user avec une organisation
+  if (!userData) {
+    const supabaseService = getSupabaseService();
+    
+    // Récupérer ou créer une organisation par défaut
+    let { data: defaultOrg } = await supabaseService
+      .from('organizations')
+      .select('id')
+      .limit(1)
+      .single();
+    
+    if (!defaultOrg) {
+      const { data: newOrg } = await supabaseService
+        .from('organizations')
+        .insert({ name: 'Mon Organisation' })
+        .select('id')
+        .single();
+      defaultOrg = newOrg;
+    }
+    
+    // Créer l'entrée user (upsert pour éviter les doublons)
+    if (defaultOrg) {
+      const { error: upsertError } = await supabaseService
+        .from('users')
+        .upsert({
+          id: session.user.id,
+          email: session.user.email,
+          tenant_id: defaultOrg.id,
+          role: 'client'
+        }, {
+          onConflict: 'id',
+          ignoreDuplicates: false
+        });
+      
+      if (upsertError) {
+        console.error('Error upserting user:', upsertError);
+      }
+      
+      return defaultOrg.id;
+    }
+  }
+  
+  return userData?.tenant_id || null;
 }
 
 export async function getProjects() {
@@ -28,7 +109,7 @@ export async function getProjects() {
       return { projects: [], error: null };
     }
 
-    const supabase = getSupabaseAdmin();
+    const supabase = await createClient();
     const { data, error } = await supabase
       .from('projects')
       .select('*')
@@ -50,8 +131,14 @@ export async function getProjects() {
 export async function createProject(formData: FormData) {
   try {
     const userId = await getUserId();
+    const organizationId = await getOrganizationId();
+    
     if (!userId) {
       return { success: false, error: 'Non authentifié' };
+    }
+
+    if (!organizationId) {
+      return { success: false, error: 'Organisation non trouvée' };
     }
 
     const name = formData.get('name') as string;
@@ -64,10 +151,11 @@ export async function createProject(formData: FormData) {
       return { success: false, error: 'Nom et responsable requis' };
     }
 
-    const supabase = getSupabaseAdmin();
+    const supabase = getSupabaseService();
     const { data, error } = await supabase
       .from('projects')
       .insert([{
+        organization_id: organizationId,
         user_id: userId,
         name,
         description: description || null,
@@ -100,7 +188,7 @@ export async function deleteProject(projectId: string) {
       return { success: false, error: 'Non authentifié' };
     }
 
-    const supabase = getSupabaseAdmin();
+    const supabase = getSupabaseService();
     const { error } = await supabase
       .from('projects')
       .delete()
@@ -126,7 +214,7 @@ export async function toggleStarProject(projectId: string, starred: boolean) {
       return { success: false, error: 'Non authentifié' };
     }
 
-    const supabase = getSupabaseAdmin();
+    const supabase = getSupabaseService();
     const { error } = await supabase
       .from('projects')
       .update({ starred })

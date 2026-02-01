@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = (await req.json()) as {
       organizationId: string;
-      projectId?: string;
+      projectId: string; // OBLIGATOIRE
       title: string;
       description: string;
       level?: RiskLevel;
@@ -20,6 +20,14 @@ export async function POST(req: NextRequest) {
       impact: number;
       owner?: string;
     };
+
+    // Validation: project_id obligatoire
+    if (!body.projectId) {
+      return NextResponse.json(
+        { error: 'PROJECT_ID_REQUIRED', message: 'project_id is mandatory' },
+        { status: 400 }
+      );
+    }
 
     // Mapper level → category si fourni
     const category = body.category || 
@@ -31,7 +39,7 @@ export async function POST(req: NextRequest) {
       .from('risks')
       .insert({
         organization_id: body.organizationId,
-        project_id: body.projectId ?? null,
+        project_id: body.projectId, // OBLIGATOIRE
         title: body.title,
         description: body.description,
         category: category,

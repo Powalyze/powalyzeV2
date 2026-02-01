@@ -1,0 +1,26 @@
+﻿SUPABASE SCHEMA FIX - Instructions
+===================================
+
+URL SUPABASE SQL EDITOR:
+https://phfeteiholkfiredgero.supabase.co/project/_/sql
+
+FICHIER A COPIER:
+database\schema-complete-rls-fix.sql
+
+ETAPES:
+1. Ouvrir l'URL ci-dessus dans votre navigateur
+2. Copier le contenu du fichier schema-complete-rls-fix.sql
+3. Coller dans l'éditeur SQL
+4. Cliquer sur RUN
+5. Attendre 30-60 secondes
+6. Rafraîchir https://www.powalyze.com/cockpit
+
+CE QUE LE SCHEMA VA FAIRE:
+- Ajouter la colonne organization_id à projects, risks, decisions
+- Créer la table timeline_events (si elle n'existe pas)
+- Créer la table reports (si elle n'existe pas)
+- Activer RLS (Row Level Security) pour multi-tenant
+- Créer 40+ policies de sécurité
+- Ajouter des indexes pour les performances
+
+Date: 2026-01-30 11:02:19
