@@ -138,5 +138,20 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/cockpit/:path*", "/tarifs", "/welcome"]
+  matcher: [
+    "/cockpit/:path*", 
+    "/tarifs", 
+    "/welcome",
+    // Legacy routes pour redirections 301
+    "/pro",
+    "/demo",
+    "/cockpit-demo",
+    "/cockpit-real",
+    "/cockpit-client",
+    "/inscription",
+    "/register",
+    "/portefeuille",
+    "/anomalies",
+    "/dashboard"
+  ]
 };
