@@ -77,23 +77,24 @@ async function getOrganizationId() {
       defaultOrg = newOrg;
     }
     
-    // Créer l'entrée user (upsert pour éviter les doublons)
+    // Créer l'entrée user (insert simple, ignore les erreurs de doublon)
     if (defaultOrg) {
-      const { error: upsertError } = await supabaseService
+      await supabaseService
         .from('users')
-        .upsert({
+        .insert({
           id: session.user.id,
           email: session.user.email,
           tenant_id: defaultOrg.id,
           role: 'client'
-        }, {
-          onConflict: 'id',
-          ignoreDuplicates: false
+        })
+        .select()
+        .single()
+        .then(({ error }) => {
+          // Ignorer l'erreur si l'utilisateur existe déjà
+          if (error && !error.message.includes('duplicate')) {
+            console.error('Error creating user:', error);
+          }
         });
-      
-      if (upsertError) {
-        console.error('Error upserting user:', upsertError);
-      }
       
       return defaultOrg.id;
     }
