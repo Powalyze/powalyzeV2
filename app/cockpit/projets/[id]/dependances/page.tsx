@@ -5,6 +5,8 @@ import { useRouter, useParams } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { Link2, Plus, Trash2, AlertTriangle, ArrowRight } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 interface Dependency {
   id: string;
   project_id: string;

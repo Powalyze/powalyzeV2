@@ -8,14 +8,7 @@ import {
   TrendingUp, TrendingDown, CheckCircle, XCircle, Clock 
 } from 'lucide-react';
 
-interface PortfolioSummary {
-  total_projects: number;
-  green_projects: number;
-  yellow_projects: number;
-  red_projects: number;
-  health_score: number;
-  total_budget: number;
-  total_spent: number;
+export const dynamic = 'force-dynamic';
   budget_consumed_pct: number;
   overallocated_resources: number;
   critical_dependencies: number;

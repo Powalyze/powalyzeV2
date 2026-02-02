@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { Users, AlertTriangle, TrendingUp, Plus, Trash2 } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 interface Resource {
   id: string;
   name: string;
@@ -85,12 +87,12 @@ export default function RessourcesPage() {
         .eq('organization_id', profile.organization_id);
 
       // Calculer charge pour chaque ressource
-      const enriched = resourcesData.map(resource => {
-        const resourceAllocations = allocations?.filter(a => a.resource_id === resource.id) || [];
-        const allocated_fte = resourceAllocations.reduce((sum, a) => sum + a.fte, 0);
+      const enriched = resourcesData.map((resource: any) => {
+        const resourceAllocations = allocations?.filter((a: any) => a.resource_id === resource.id) || [];
+        const allocated_fte = resourceAllocations.reduce((sum: number, a: any) => sum + a.fte, 0);
         const load = (allocated_fte / resource.fte_available) * 100;
 
-        const projects = resourceAllocations.map(a => ({
+        const projects = resourceAllocations.map((a: any) => ({
           id: a.id,
           resource_id: a.resource_id,
           project_id: a.project_id,
