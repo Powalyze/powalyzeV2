@@ -8,7 +8,7 @@ import { Settings, CheckCircle, Zap, GitBranch, Target, Clock } from 'lucide-rea
  * Page Configuration Agile
  * Choix et configuration de la méthodologie Agile
  */
-export default function ConfigAgile Page() {
+export default function ConfigAgilePage() {
   return (
     <Suspense fallback={<LoadingState />}>
       <ConfigAgileContent />
