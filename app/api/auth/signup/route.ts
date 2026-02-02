@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
           last_name: lastName,
           company: company || null
         },
-        emailRedirectTo: `${baseUrl}/auth/confirm`
+        emailRedirectTo: `${baseUrl}/auth/callback`
       }
     });
 

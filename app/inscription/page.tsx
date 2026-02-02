@@ -45,7 +45,7 @@ export default function InscriptionPage() {
             company: formData.company,
             phone: formData.phone,
           },
-          emailRedirectTo: `${window.location.origin}/auth/confirm`,
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       });
 
