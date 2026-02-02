@@ -36,19 +36,31 @@ function ConfirmContent() {
         const type = searchParams?.get('type') || 'signup';
 
         if (!code && !tokenHash) {
+          console.error('No code or token_hash found');
           setStatus('error');
           return;
         }
 
         const supabase = createSupabaseBrowserClient();
-        const { error } = code
-          ? await supabase.auth.exchangeCodeForSession(code)
-          : await supabase.auth.verifyOtp({
-              type: type as 'signup' | 'invite' | 'magiclink' | 'recovery' | 'email_change',
-              token_hash: tokenHash as string
-            });
+        
+        // Utiliser exchangeCodeForSession pour PKCE flow (recommandé)
+        let error = null;
+        if (code) {
+          const result = await supabase.auth.exchangeCodeForSession(code);
+          error = result.error;
+          console.log('exchangeCodeForSession result:', result);
+        } else if (tokenHash) {
+          // Fallback pour ancien système OTP
+          const result = await supabase.auth.verifyOtp({
+            type: type as 'signup' | 'invite' | 'magiclink' | 'recovery' | 'email_change',
+            token_hash: tokenHash as string
+          });
+          error = result.error;
+          console.log('verifyOtp result:', result);
+        }
 
         if (error) {
+          console.error('Auth error:', error);
           setStatus('error');
           return;
         }
@@ -70,8 +82,9 @@ function ConfirmContent() {
         }
 
         setStatus('success');
-        setTimeout(() => router.push('/welcome'), 1200);
-      } catch {
+        setTimeout(() => router.push('/onboarding/forfait'), 1500);
+      } catch (err) {
+        console.error('Exchange error:', err);
         setStatus('error');
       }
     };
@@ -95,9 +108,10 @@ function ConfirmContent() {
         )}
         {status === 'error' && (
           <>
-            <h1 className="text-2xl font-bold mb-3">Lien invalide</h1>
-            <p className="text-slate-400 mb-6">Le lien de confirmation est expiré ou incorrect.</p>
-            <Link href="/signup" className="text-amber-400 hover:text-amber-300">
+            <h1 className="text-2xl font-bold mb-3 text-red-400">❌ Lien invalide</h1>
+            <p className="text-slate-400 mb-4">Le lien de confirmation est expiré ou incorrect.</p>
+            <p className="text-sm text-slate-500 mb-6">Demandez un nouveau lien de confirmation depuis la page d'inscription.</p>
+            <Link href="/inscription" className="inline-block px-6 py-3 bg-[#D4AF37] hover:bg-[#C4A037] text-[#0A0F1C] rounded-lg font-semibold transition">
               Retourner à l’inscription
             </Link>
           </>
