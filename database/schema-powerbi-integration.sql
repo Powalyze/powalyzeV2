@@ -28,12 +28,12 @@ create policy "api_keys_by_org" on api_keys
 
 create policy "api_keys_insert_by_admin" on api_keys
   for insert with check (
-    organization_id = (select organization_id from profiles where id = auth.uid() and role = 'admin')
+    organization_id = (select organization_id from profiles where id = auth.uid() and mode = 'admin')
   );
 
 create policy "api_keys_delete_by_admin" on api_keys
   for delete using (
-    organization_id = (select organization_id from profiles where id = auth.uid() and role = 'admin')
+    organization_id = (select organization_id from profiles where id = auth.uid() and mode = 'admin')
   );
 
 -- ============================================

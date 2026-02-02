@@ -23,7 +23,7 @@ create policy "agile_settings_by_org" on agile_settings
 
 create policy "agile_settings_upsert_by_admin" on agile_settings
   for all using (
-    organization_id = (select organization_id from profiles where id = auth.uid() and role = 'admin')
+    organization_id = (select organization_id from profiles where id = auth.uid() and mode = 'admin')
   );
 
 -- ============================================

@@ -23,7 +23,7 @@ create policy "ai_settings_by_org" on ai_settings
 
 create policy "ai_settings_upsert_by_admin" on ai_settings
   for all using (
-    organization_id = (select organization_id from profiles where id = auth.uid() and role = 'admin')
+    organization_id = (select organization_id from profiles where id = auth.uid() and mode = 'admin')
   );
 
 -- ============================================
@@ -49,7 +49,7 @@ create policy "ai_prompts_by_org" on ai_prompts
 
 create policy "ai_prompts_upsert_by_admin" on ai_prompts
   for all using (
-    organization_id = (select organization_id from profiles where id = auth.uid() and role = 'admin')
+    organization_id = (select organization_id from profiles where id = auth.uid() and mode = 'admin')
   );
 
 -- ============================================
