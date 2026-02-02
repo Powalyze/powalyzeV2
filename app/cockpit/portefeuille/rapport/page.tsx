@@ -46,12 +46,31 @@ export default function RapportPortefeuillePage() {
       setIsDemo(demo);
 
       // Récupérer résumé portefeuille
-      const { data, error } = await supabase
-        .rpc('get_portfolio_summary', { p_organization_id: profile.organization_id });
+      try {
+        const { data, error } = await supabase
+          .rpc('get_portfolio_summary', { p_organization_id: profile.organization_id });
 
-      if (error) {
-        console.error('Error loading portfolio summary:', error);
-        // Fallback en cas d'erreur
+        if (error) {
+          console.error('Error loading portfolio summary:', error);
+          // Fallback en cas d'erreur
+          setSummary({
+            total_projects: 0,
+            green_projects: 0,
+            yellow_projects: 0,
+            red_projects: 0,
+            health_score: 0,
+            total_budget: 0,
+            total_spent: 0,
+            budget_consumed_pct: 0,
+            overallocated_resources: 0,
+            critical_dependencies: 0
+          });
+        } else {
+          setSummary(data);
+        }
+      } catch (err) {
+        console.error('Exception loading portfolio summary:', err);
+        // Fallback
         setSummary({
           total_projects: 0,
           green_projects: 0,
@@ -64,8 +83,6 @@ export default function RapportPortefeuillePage() {
           overallocated_resources: 0,
           critical_dependencies: 0
         });
-      } else {
-        setSummary(data);
       }
     } catch (error) {
       console.error('Error:', error);
