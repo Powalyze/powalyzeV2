@@ -147,11 +147,11 @@ export const MOCK_DECISIONS: Decision[] = [
     decision_date: '2025-11-15',
     status: 'approved',
     owner_id: 'demo-user-1',
-    impacts: {
-      budget: '+50k€',
-      timeline: '+2 mois',
-      resources: '+3 développeurs',
-    },
+    impacts: [
+      { type: 'budget', value: '+50k€' },
+      { type: 'timeline', value: '+2 mois' },
+      { type: 'resources', value: '+3 développeurs' },
+    ],
     created_at: '2025-11-10T00:00:00Z',
   },
   {
@@ -164,11 +164,11 @@ export const MOCK_DECISIONS: Decision[] = [
     decision_date: '2026-01-10',
     status: 'approved',
     owner_id: 'demo-user-2',
-    impacts: {
-      budget: '0€',
-      timeline: 'Report Q2 2026',
-      resources: 'Réaffectation équipe',
-    },
+    impacts: [
+      { type: 'budget', value: '0€' },
+      { type: 'timeline', value: 'Report Q2 2026' },
+      { type: 'resources', value: 'Réaffectation équipe' },
+    ],
     created_at: '2026-01-05T00:00:00Z',
   },
 ];
