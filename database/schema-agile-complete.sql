@@ -2,6 +2,31 @@
 -- SCHEMA AGILE COMPLET — Sprints, Stories, Velocity
 -- ============================================
 
+-- 0. AGILE SETTINGS (Méthodologie)
+-- ============================================
+
+create table if not exists agile_settings (
+  organization_id uuid primary key references organizations(id),
+  methodology text check (methodology in ('scrum','kanban','hybride')) default 'scrum',
+  sprint_duration_weeks int default 2,
+  ceremonies jsonb default '{"daily":true,"review":true,"retro":true}'::jsonb,
+  updated_at timestamptz default now()
+);
+
+-- RLS Agile Settings
+alter table agile_settings enable row level security;
+
+create policy "agile_settings_by_org" on agile_settings
+  for select using (
+    organization_id = (select organization_id from profiles where id = auth.uid())
+  );
+
+create policy "agile_settings_upsert_by_admin" on agile_settings
+  for all using (
+    organization_id = (select organization_id from profiles where id = auth.uid() and role = 'admin')
+  );
+
+-- ============================================
 -- 1. EPICS (Fonctionnalités majeures)
 -- ============================================
 
