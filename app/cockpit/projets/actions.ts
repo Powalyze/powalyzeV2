@@ -44,7 +44,7 @@ async function getOrganizationId() {
     .from('users')
     .select('tenant_id')
     .eq('id', session.user.id)
-    .single();
+    .maybeSingle();
   
   // Si pas trouvé par UUID, essayer par email
   if (!userData && session.user.email) {
@@ -52,7 +52,7 @@ async function getOrganizationId() {
       .from('users')
       .select('tenant_id')
       .eq('email', session.user.email)
-      .single();
+      .maybeSingle();
     
     userData = userByEmail;
   }
@@ -66,7 +66,7 @@ async function getOrganizationId() {
       .from('organizations')
       .select('id')
       .limit(1)
-      .single();
+      .maybeSingle();
     
     if (!defaultOrg) {
       // Insérer une organisation par défaut (ou utiliser celle qui existe)
@@ -178,7 +178,7 @@ export async function createProject(formData: FormData) {
         starred: false
       }])
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error('Error creating project:', error);
