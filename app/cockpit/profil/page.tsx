@@ -76,22 +76,37 @@ export default function ProfilPage() {
       }
 
       const user = userData.user;
-      const { error: updateError } = await supabase
+      // Tenter insert, puis update si existe déjà
+      const { error: insertError } = await supabase
         .from("profiles")
-        .upsert(
-          {
-            id: user.id,
+        .insert({
+          id: user.id,
+          email: profile.email || user.email,
+          first_name: profile.firstName,
+          last_name: profile.lastName,
+          company: profile.company || null,
+          role: profile.role
+        });
+
+      // Si duplicate (23505), faire un update à la place
+      if (insertError?.code === '23505') {
+        const { error: updateError } = await supabase
+          .from("profiles")
+          .update({
             email: profile.email || user.email,
             first_name: profile.firstName,
             last_name: profile.lastName,
             company: profile.company || null,
             role: profile.role
-          },
-          { onConflict: "id" }
-        );
-
-      if (updateError) {
-        setError(updateError.message);
+          })
+          .eq('id', user.id);
+        
+        if (updateError) {
+          setError(updateError.message);
+          return;
+        }
+      } else if (insertError) {
+        setError(insertError.message);
         return;
       }
 

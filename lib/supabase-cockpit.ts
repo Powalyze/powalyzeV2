@@ -211,11 +211,25 @@ export async function saveProjectPrediction(
 ): Promise<void> {
   const supabase = getSupabaseClient();
 
-  const { error } = await supabase
+  // Tenter insert, puis update si existe déjà
+  const { error: insertError } = await supabase
     .from('project_predictions')
-    .upsert(
-      {
-        project_id: projectId,
+    .insert({
+      project_id: projectId,
+      analyzed_at: new Date().toISOString(),
+      confidence: prediction.confidence,
+      summary: prediction.summary,
+      risks: prediction.risks,
+      opportunities: prediction.opportunities,
+      recommended_actions: prediction.recommended_actions,
+      project_snapshot: projectSnapshot,
+    });
+
+  // Si duplicate (23505), faire un update à la place
+  if (insertError?.code === '23505') {
+    const { error: updateError } = await supabase
+      .from('project_predictions')
+      .update({
         analyzed_at: new Date().toISOString(),
         confidence: prediction.confidence,
         summary: prediction.summary,
@@ -223,15 +237,16 @@ export async function saveProjectPrediction(
         opportunities: prediction.opportunities,
         recommended_actions: prediction.recommended_actions,
         project_snapshot: projectSnapshot,
-      },
-      {
-        onConflict: 'project_id',
-      }
-    );
-
-  if (error) {
-    console.error('[saveProjectPrediction] Error:', error);
-    throw error;
+      })
+      .eq('project_id', projectId);
+    
+    if (updateError) {
+      console.error('[saveProjectPrediction] Update error:', updateError);
+      throw updateError;
+    }
+  } else if (insertError) {
+    console.error('[saveProjectPrediction] Insert error:', insertError);
+    throw insertError;
   }
 }
 

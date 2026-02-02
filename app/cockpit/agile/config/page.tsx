@@ -130,19 +130,31 @@ function ConfigAgileContent() {
       if (profileError) throw profileError;
 
       // Upsert settings
-      const { error } = await supabase
-        .from('agile_settings')
-        .upsert(
-          {
-            organization_id: profile.organization_id,
+      // Tenter insert, puis update si existe déjà
+      const { error: insertError } = await supabase
+        .from('agile_configs')
+        .insert({
+          organization_id: profile.organization_id,
+          methodology: settings.methodology,
+          sprint_duration_weeks: settings.sprint_duration_weeks,
+          ceremonies: settings.ceremonies,
+        });
+
+      // Si duplicate (23505), faire un update à la place
+      if (insertError?.code === '23505') {
+        const { error: updateError } = await supabase
+          .from('agile_configs')
+          .update({
             methodology: settings.methodology,
             sprint_duration_weeks: settings.sprint_duration_weeks,
             ceremonies: settings.ceremonies,
-          },
-          { onConflict: 'organization_id' }
-        );
-
-      if (error) throw error;
+          })
+          .eq('organization_id', profile.organization_id);
+        
+        if (updateError) throw updateError;
+      } else if (insertError) {
+        throw insertError;
+      }
 
       alert('✅ Configuration Agile enregistrée');
     } catch (err: any) {
