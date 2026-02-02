@@ -34,7 +34,7 @@ export default function InscriptionPage() {
     setError('');
 
     try {
-      // 1. Créer le compte Supabase
+      // 1. Créer le compte Supabase avec PKCE flow
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
@@ -51,12 +51,20 @@ export default function InscriptionPage() {
 
       if (authError) throw authError;
 
-      if (authData.user) {
+      // Vérifier si l'email doit être confirmé
+      if (authData.user && !authData.session) {
+        // Email confirmation requise
         setSuccess(true);
         // Redirection vers page de vérification email
         setTimeout(() => {
           router.push('/verification?email=' + encodeURIComponent(formData.email));
         }, 2000);
+      } else if (authData.session) {
+        // Session créée directement (email confirmation désactivée)
+        setSuccess(true);
+        setTimeout(() => {
+          router.push('/onboarding/forfait');
+        }, 1500);
       }
     } catch (err: any) {
       setError(err.message || 'Erreur lors de la création du compte');
