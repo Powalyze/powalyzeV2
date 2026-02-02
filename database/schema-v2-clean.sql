@@ -211,6 +211,17 @@ CREATE TABLE IF NOT EXISTS project_resources (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+ALTER TABLE project_resources ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "project_resources_by_project" ON project_resources
+  FOR ALL USING (
+    project_id IN (
+      SELECT p.id FROM projects p
+      INNER JOIN profiles prof ON p.organization_id = prof.organization_id
+      WHERE prof.id = auth.uid()
+    )
+  );
+
 CREATE INDEX IF NOT EXISTS idx_project_resources_project ON project_resources(project_id);
 CREATE INDEX IF NOT EXISTS idx_project_resources_resource ON project_resources(resource_id);
 
@@ -334,6 +345,17 @@ CREATE TABLE IF NOT EXISTS webhook_logs (
   response_body TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+ALTER TABLE webhook_logs ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "webhook_logs_by_webhook" ON webhook_logs
+  FOR ALL USING (
+    webhook_id IN (
+      SELECT w.id FROM webhooks w
+      INNER JOIN profiles prof ON w.organization_id = prof.organization_id
+      WHERE prof.id = auth.uid()
+    )
+  );
 
 CREATE INDEX IF NOT EXISTS idx_webhook_logs_webhook ON webhook_logs(webhook_id);
 CREATE INDEX IF NOT EXISTS idx_webhook_logs_created ON webhook_logs(created_at DESC);
