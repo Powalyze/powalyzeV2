@@ -102,9 +102,9 @@ CREATE POLICY "projects_delete_by_org" ON projects
     )
   );
 
-CREATE INDEX idx_projects_org ON projects(organization_id);
-CREATE INDEX idx_projects_status ON projects(status);
-CREATE INDEX idx_projects_health ON projects(health);
+CREATE INDEX IF NOT EXISTS idx_projects_org ON projects(organization_id);
+CREATE INDEX IF NOT EXISTS idx_projects_status ON projects(status);
+CREATE INDEX IF NOT EXISTS idx_projects_health ON projects(health);
 
 -- ============================================
 -- 4. RISKS (risques projet)
@@ -135,9 +135,9 @@ CREATE POLICY "risks_by_org" ON risks
     )
   );
 
-CREATE INDEX idx_risks_org ON risks(organization_id);
-CREATE INDEX idx_risks_project ON risks(project_id);
-CREATE INDEX idx_risks_level ON risks(level);
+CREATE INDEX IF NOT EXISTS idx_risks_org ON risks(organization_id);
+CREATE INDEX IF NOT EXISTS idx_risks_project ON risks(project_id);
+CREATE INDEX IF NOT EXISTS idx_risks_level ON risks(level);
 
 -- ============================================
 -- 5. DECISIONS (décisions comité)
@@ -167,8 +167,8 @@ CREATE POLICY "decisions_by_org" ON decisions
     )
   );
 
-CREATE INDEX idx_decisions_org ON decisions(organization_id);
-CREATE INDEX idx_decisions_project ON decisions(project_id);
+CREATE INDEX IF NOT EXISTS idx_decisions_org ON decisions(organization_id);
+CREATE INDEX IF NOT EXISTS idx_decisions_project ON decisions(project_id);
 
 -- ============================================
 -- 6. RESOURCES (ressources projet)
@@ -195,7 +195,7 @@ CREATE POLICY "resources_by_org" ON resources
     )
   );
 
-CREATE INDEX idx_resources_org ON resources(organization_id);
+CREATE INDEX IF NOT EXISTS idx_resources_org ON resources(organization_id);
 
 -- ============================================
 -- 7. PROJECT_RESOURCES (allocation ressources)
@@ -211,8 +211,8 @@ CREATE TABLE IF NOT EXISTS project_resources (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_project_resources_project ON project_resources(project_id);
-CREATE INDEX idx_project_resources_resource ON project_resources(resource_id);
+CREATE INDEX IF NOT EXISTS idx_project_resources_project ON project_resources(project_id);
+CREATE INDEX IF NOT EXISTS idx_project_resources_resource ON project_resources(resource_id);
 
 -- ============================================
 -- 8. DEPENDENCIES (dépendances projets)
@@ -237,8 +237,8 @@ CREATE POLICY "dependencies_by_org" ON dependencies
     )
   );
 
-CREATE INDEX idx_dependencies_source ON dependencies(source_project_id);
-CREATE INDEX idx_dependencies_target ON dependencies(target_project_id);
+CREATE INDEX IF NOT EXISTS idx_dependencies_source ON dependencies(source_project_id);
+CREATE INDEX IF NOT EXISTS idx_dependencies_target ON dependencies(target_project_id);
 
 -- ============================================
 -- 9. REPORTS (rapports IA)
@@ -264,8 +264,8 @@ CREATE POLICY "reports_by_org" ON reports
     )
   );
 
-CREATE INDEX idx_reports_org ON reports(organization_id);
-CREATE INDEX idx_reports_type ON reports(type);
+CREATE INDEX IF NOT EXISTS idx_reports_org ON reports(organization_id);
+CREATE INDEX IF NOT EXISTS idx_reports_type ON reports(type);
 
 -- ============================================
 -- 10. API_KEYS (API externe)
@@ -292,8 +292,8 @@ CREATE POLICY "api_keys_by_org" ON api_keys
     )
   );
 
-CREATE INDEX idx_api_keys_org ON api_keys(organization_id);
-CREATE INDEX idx_api_keys_hash ON api_keys(key_hash);
+CREATE INDEX IF NOT EXISTS idx_api_keys_org ON api_keys(organization_id);
+CREATE INDEX IF NOT EXISTS idx_api_keys_hash ON api_keys(key_hash);
 
 -- ============================================
 -- 11. WEBHOOKS (webhooks sortants)
@@ -319,7 +319,7 @@ CREATE POLICY "webhooks_by_org" ON webhooks
     )
   );
 
-CREATE INDEX idx_webhooks_org ON webhooks(organization_id);
+CREATE INDEX IF NOT EXISTS idx_webhooks_org ON webhooks(organization_id);
 
 -- ============================================
 -- 12. WEBHOOK_LOGS (historique webhooks)
@@ -335,8 +335,8 @@ CREATE TABLE IF NOT EXISTS webhook_logs (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_webhook_logs_webhook ON webhook_logs(webhook_id);
-CREATE INDEX idx_webhook_logs_created ON webhook_logs(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_webhook_logs_webhook ON webhook_logs(webhook_id);
+CREATE INDEX IF NOT EXISTS idx_webhook_logs_created ON webhook_logs(created_at DESC);
 
 -- ============================================
 -- TRIGGERS (updated_at automatique)
