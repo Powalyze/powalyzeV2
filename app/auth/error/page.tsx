@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { AlertTriangle } from 'lucide-react';
@@ -8,7 +9,8 @@ import { AlertTriangle } from 'lucide-react';
  * Page erreur Auth - Affichée quand la validation email échoue
  * Causes possibles : code expiré, code invalide, lien réutilisé
  */
-export default function AuthErrorPage() {
+
+function AuthErrorContent() {
   const params = useSearchParams();
   const reason = params.get('reason');
   const message = params.get('message');
@@ -101,5 +103,17 @@ export default function AuthErrorPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AuthErrorPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#0A0F1C] flex items-center justify-center">
+        <div className="text-white">Chargement...</div>
+      </div>
+    }>
+      <AuthErrorContent />
+    </Suspense>
   );
 }
