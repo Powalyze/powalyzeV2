@@ -438,25 +438,6 @@ CREATE TRIGGER trigger_resources_updated_at
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- ============================================
--- NETTOYAGE COMPLET (pour idempotence totale)
--- ============================================
--- Si les tables existent déjà avec des structures différentes,
--- on les supprime d'abord (CASCADE pour gérer les FK)
-
-DROP TABLE IF EXISTS webhook_logs CASCADE;
-DROP TABLE IF EXISTS webhooks CASCADE;
-DROP TABLE IF EXISTS api_keys CASCADE;
-DROP TABLE IF EXISTS reports CASCADE;
-DROP TABLE IF EXISTS dependencies CASCADE;
-DROP TABLE IF EXISTS project_resources CASCADE;
-DROP TABLE IF EXISTS resources CASCADE;
-DROP TABLE IF EXISTS decisions CASCADE;
-DROP TABLE IF EXISTS risks CASCADE;
-DROP TABLE IF EXISTS projects CASCADE;
-DROP TABLE IF EXISTS profiles CASCADE;
-DROP TABLE IF EXISTS organizations CASCADE;
-
--- ============================================
 -- FIN DU SCHÉMA
 -- ============================================
 
