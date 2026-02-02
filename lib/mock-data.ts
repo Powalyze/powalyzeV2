@@ -198,7 +198,7 @@ export const MOCK_RESOURCES: Resource[] = [
     id: 'resource-3',
     organization_id: 'demo-org',
     name: 'Serveurs Azure',
-    type: 'infrastructure',
+    type: 'material',
     capacity: 100,
     unit: 'VM',
     cost_per_unit: 150,
