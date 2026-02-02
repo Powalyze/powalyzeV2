@@ -134,17 +134,13 @@ export async function upgradeToPro() {
   const { data: { user } } = await supabase.auth.getUser();
   
   if (!user) {
-    return { error: 'Non authentifié' };
+    redirect('/login-v2');
   }
   
-  const { error } = await supabase
+  await supabase
     .from('profiles')
     .update({ plan: 'pro' })
     .eq('id', user.id);
-  
-  if (error) {
-    return { error: error.message };
-  }
   
   revalidatePath('/', 'layout');
   redirect('/cockpit/pro');
