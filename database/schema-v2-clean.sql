@@ -12,10 +12,29 @@
 -- ============================================
 
 -- ============================================
+-- NETTOYAGE PRÉALABLE (idempotence totale)
+-- ============================================
+-- Suppression de toutes les tables existantes avec CASCADE
+-- Ordre: tables enfants vers tables parentes
+
+DROP TABLE IF EXISTS webhook_logs CASCADE;
+DROP TABLE IF EXISTS webhooks CASCADE;
+DROP TABLE IF EXISTS api_keys CASCADE;
+DROP TABLE IF EXISTS reports CASCADE;
+DROP TABLE IF EXISTS dependencies CASCADE;
+DROP TABLE IF EXISTS project_resources CASCADE;
+DROP TABLE IF EXISTS resources CASCADE;
+DROP TABLE IF EXISTS decisions CASCADE;
+DROP TABLE IF EXISTS risks CASCADE;
+DROP TABLE IF EXISTS projects CASCADE;
+DROP TABLE IF EXISTS profiles CASCADE;
+DROP TABLE IF EXISTS organizations CASCADE;
+
+-- ============================================
 -- 1. ORGANIZATIONS (tenant isolation)
 -- ============================================
 
-CREATE TABLE IF NOT EXISTS organizations (
+CREATE TABLE organizations (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
   slug TEXT,
@@ -33,7 +52,7 @@ CREATE POLICY "organizations_select" ON organizations
 -- 2. PROFILES (utilisateurs + plan)
 -- ============================================
 
-CREATE TABLE IF NOT EXISTS profiles (
+CREATE TABLE profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   organization_id UUID REFERENCES organizations(id) ON DELETE CASCADE,
   email TEXT NOT NULL,
@@ -59,7 +78,7 @@ CREATE POLICY "profiles_update_own" ON profiles
 -- 3. PROJECTS (cœur du cockpit)
 -- ============================================
 
-CREATE TABLE IF NOT EXISTS projects (
+CREATE TABLE projects (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
@@ -117,7 +136,7 @@ CREATE INDEX IF NOT EXISTS idx_projects_health ON projects(health);
 -- 4. RISKS (risques projet)
 -- ============================================
 
-CREATE TABLE IF NOT EXISTS risks (
+CREATE TABLE risks (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   project_id UUID REFERENCES projects(id) ON DELETE CASCADE,
@@ -151,7 +170,7 @@ CREATE INDEX IF NOT EXISTS idx_risks_level ON risks(level);
 -- 5. DECISIONS (décisions comité)
 -- ============================================
 
-CREATE TABLE IF NOT EXISTS decisions (
+CREATE TABLE decisions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   project_id UUID REFERENCES projects(id) ON DELETE CASCADE,
@@ -183,7 +202,7 @@ CREATE INDEX IF NOT EXISTS idx_decisions_project ON decisions(project_id);
 -- 6. RESOURCES (ressources projet)
 -- ============================================
 
-CREATE TABLE IF NOT EXISTS resources (
+CREATE TABLE resources (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
@@ -211,7 +230,7 @@ CREATE INDEX IF NOT EXISTS idx_resources_org ON resources(organization_id);
 -- 7. PROJECT_RESOURCES (allocation ressources)
 -- ============================================
 
-CREATE TABLE IF NOT EXISTS project_resources (
+CREATE TABLE project_resources (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
   resource_id UUID NOT NULL REFERENCES resources(id) ON DELETE CASCADE,
@@ -240,7 +259,7 @@ CREATE INDEX IF NOT EXISTS idx_project_resources_resource ON project_resources(r
 -- 8. DEPENDENCIES (dépendances projets)
 -- ============================================
 
-CREATE TABLE IF NOT EXISTS dependencies (
+CREATE TABLE dependencies (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   source_project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
@@ -267,7 +286,7 @@ CREATE INDEX IF NOT EXISTS idx_dependencies_target ON dependencies(target_projec
 -- 9. REPORTS (rapports IA)
 -- ============================================
 
-CREATE TABLE IF NOT EXISTS reports (
+CREATE TABLE reports (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   type TEXT NOT NULL CHECK (type IN ('executive', 'project', 'risk', 'resource')),
@@ -295,7 +314,7 @@ CREATE INDEX IF NOT EXISTS idx_reports_type ON reports(type);
 -- 10. API_KEYS (API externe)
 -- ============================================
 
-CREATE TABLE IF NOT EXISTS api_keys (
+CREATE TABLE api_keys (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
@@ -324,7 +343,7 @@ CREATE INDEX IF NOT EXISTS idx_api_keys_hash ON api_keys(key_hash);
 -- 11. WEBHOOKS (webhooks sortants)
 -- ============================================
 
-CREATE TABLE IF NOT EXISTS webhooks (
+CREATE TABLE webhooks (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
@@ -351,7 +370,7 @@ CREATE INDEX IF NOT EXISTS idx_webhooks_org ON webhooks(organization_id);
 -- 12. WEBHOOK_LOGS (historique webhooks)
 -- ============================================
 
-CREATE TABLE IF NOT EXISTS webhook_logs (
+CREATE TABLE webhook_logs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   webhook_id UUID NOT NULL REFERENCES webhooks(id) ON DELETE CASCADE,
   event_type TEXT NOT NULL,
@@ -417,6 +436,25 @@ DROP TRIGGER IF EXISTS trigger_resources_updated_at ON resources;
 CREATE TRIGGER trigger_resources_updated_at
   BEFORE UPDATE ON resources
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+-- ============================================
+-- NETTOYAGE COMPLET (pour idempotence totale)
+-- ============================================
+-- Si les tables existent déjà avec des structures différentes,
+-- on les supprime d'abord (CASCADE pour gérer les FK)
+
+DROP TABLE IF EXISTS webhook_logs CASCADE;
+DROP TABLE IF EXISTS webhooks CASCADE;
+DROP TABLE IF EXISTS api_keys CASCADE;
+DROP TABLE IF EXISTS reports CASCADE;
+DROP TABLE IF EXISTS dependencies CASCADE;
+DROP TABLE IF EXISTS project_resources CASCADE;
+DROP TABLE IF EXISTS resources CASCADE;
+DROP TABLE IF EXISTS decisions CASCADE;
+DROP TABLE IF EXISTS risks CASCADE;
+DROP TABLE IF EXISTS projects CASCADE;
+DROP TABLE IF EXISTS profiles CASCADE;
+DROP TABLE IF EXISTS organizations CASCADE;
 
 -- ============================================
 -- FIN DU SCHÉMA
