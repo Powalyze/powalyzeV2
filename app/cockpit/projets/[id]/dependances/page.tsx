@@ -90,7 +90,7 @@ export default function DependancesPage() {
         .eq('organization_id', profile.organization_id);
 
       if (depsData) {
-        const enriched = depsData.map(d => ({
+        const enriched = depsData.map((d: any) => ({
           id: d.id,
           project_id: d.project_id,
           depends_on_project_id: d.depends_on_project_id,
