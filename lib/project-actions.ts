@@ -11,8 +11,27 @@ import type { Project } from '@/lib/data-v2';
 
 export async function createProjectAction(formData: FormData) {
   try {
+    // Get organization_id first
+    const { createClient } = await import('@/utils/supabase/server');
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return { error: 'Non authentifié' };
+    }
+    
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('organization_id')
+      .eq('id', user.id)
+      .single();
+    
+    if (!profile?.organization_id) {
+      return { error: 'Organisation non trouvée' };
+    }
+    
     await createProject({
-      organization_id: '', // Will be filled by data-v2.ts
+      organization_id: profile.organization_id,
       name: formData.get('name') as string,
       description: formData.get('description') as string || undefined,
       status: formData.get('status') as any,
