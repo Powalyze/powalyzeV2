@@ -1,50 +1,43 @@
 export interface Project {
   id: string;
-  tenant_id: string;
+  organization_id: string; // Renamed from tenant_id
   name: string;
   description?: string;
-  sponsor: string;
-  business_unit: string;
-  budget: number;
-  actual_cost: number;
-  status: 'DRAFT' | 'ACTIVE' | 'ON_HOLD' | 'COMPLETED' | 'CANCELLED';
-  rag_status: 'GREEN' | 'YELLOW' | 'RED';
-  start_date: Date;
-  end_date: Date;
-  completion_percentage: number;
-  delay_probability: number;
+  owner_id?: string; // FK to profiles
+  status: 'active' | 'on-hold' | 'completed' | 'cancelled';
+  health: 'green' | 'yellow' | 'red'; // Renamed from rag_status
+  progress: number; // Renamed from completion_percentage (0-100)
+  budget?: number;
+  deadline?: Date; // Renamed from end_date
+  starred?: boolean;
   created_at: Date;
   updated_at: Date;
 }
 
 export interface Risk {
   id: string;
-  tenant_id: string;
-  project_id: string; // OBLIGATOIRE
+  organization_id: string; // Renamed from tenant_id
+  project_id?: string; // Optional FK to projects
   title: string;
-  description: string;
-  category: 'TECHNICAL' | 'FINANCIAL' | 'ORGANIZATIONAL' | 'EXTERNAL';
-  probability: number;
-  impact: number;
-  score: number;
-  status: 'IDENTIFIED' | 'ASSESSED' | 'MITIGATED' | 'CLOSED';
+  description?: string;
+  level: 'low' | 'medium' | 'high' | 'critical';
+  probability?: number; // 0-100
+  impact?: number; // 0-100
+  status: 'open' | 'monitoring' | 'mitigated' | 'closed';
+  owner_id?: string; // FK to profiles
   mitigation_plan?: string;
-  owner: string;
   created_at: Date;
   updated_at: Date;
 }
 
 export interface Resource {
   id: string;
-  tenant_id: string;
+  organization_id: string; // Renamed from tenant_id
   name: string;
-  role: string;
-  department: string;
-  capacity_hours: number;
-  allocated_hours: number;
-  availability_percentage: number;
-  cost_per_hour: number;
-  skills: string[];
+  type: 'human' | 'material' | 'financial';
+  capacity?: number;
+  unit?: string;
+  cost_per_unit?: number;
   created_at: Date;
   updated_at: Date;
 }
@@ -103,19 +96,17 @@ export interface AIPrediction {
 // Décision rattachée à un projet
 export interface Decision {
   id: string;
-  tenant_id: string;
-  project_id: string; // OBLIGATOIRE
+  organization_id: string; // Renamed from tenant_id
+  project_id?: string; // Optional FK to projects
   title: string;
-  description: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'IMPLEMENTED';
-  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  decision_maker: string;
+  description?: string;
+  committee?: string; // e.g., 'CODIR', 'COMEX'
   decision_date?: Date;
-  rationale?: string;
-  impact?: string;
+  status: 'pending' | 'approved' | 'rejected' | 'deferred';
+  owner_id?: string; // FK to profiles
+  impacts?: any[]; // JSONB field
   created_at: Date;
   updated_at: Date;
-  created_by?: string;
 }
 
 // Action/tâche rattachée à un projet
