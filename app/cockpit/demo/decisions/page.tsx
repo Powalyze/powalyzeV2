@@ -57,7 +57,7 @@ export default function DemoDecisionsPage() {
                   <div>
                     <h3 className="text-lg font-bold text-white">{decision.title}</h3>
                     <p className="text-slate-400 text-sm mt-1">
-                      {decision.committee} • {new Date(decision.decision_date).toLocaleDateString('fr-FR')}
+                      {decision.committee} • {decision.decision_date ? new Date(decision.decision_date).toLocaleDateString('fr-FR') : 'N/A'}
                     </p>
                   </div>
                   <span className={`px-3 py-1 text-xs font-medium rounded ${

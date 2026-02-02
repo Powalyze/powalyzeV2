@@ -86,10 +86,10 @@ export default function DemoRisquesPage() {
                       <div className="flex-1 bg-slate-800 rounded-full h-2">
                         <div
                           className="bg-red-500 h-full rounded-full"
-                          style={{ width: `${risk.probability * 100}%` }}
+                          style={{ width: `${(risk.probability || 0) * 100}%` }}
                         />
                       </div>
-                      <span className="text-white text-sm">{Math.round(risk.probability * 100)}%</span>
+                      <span className="text-white text-sm">{Math.round((risk.probability || 0) * 100)}%</span>
                     </div>
                   </div>
                   <div>
@@ -98,10 +98,10 @@ export default function DemoRisquesPage() {
                       <div className="flex-1 bg-slate-800 rounded-full h-2">
                         <div
                           className="bg-orange-500 h-full rounded-full"
-                          style={{ width: `${risk.impact * 100}%` }}
+                          style={{ width: `${(risk.impact || 0) * 100}%` }}
                         />
                       </div>
-                      <span className="text-white text-sm">{Math.round(risk.impact * 100)}%</span>
+                      <span className="text-white text-sm">{Math.round((risk.impact || 0) * 100)}%</span>
                     </div>
                   </div>
                 </div>
