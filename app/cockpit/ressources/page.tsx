@@ -5,8 +5,6 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { Users, AlertTriangle, TrendingUp, Plus, Trash2 } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
-
 interface Resource {
   id: string;
   name: string;

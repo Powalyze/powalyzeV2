@@ -3,12 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
-import { 
-  FileText, Download, Mail, Copy, AlertTriangle, 
-  TrendingUp, TrendingDown, CheckCircle, XCircle, Clock 
+import {
+  FileText, Download, Mail, Copy, AlertTriangle,
+  TrendingUp, TrendingDown, CheckCircle, XCircle, Clock
 } from 'lucide-react';
-
-export const dynamic = 'force-dynamic';
   budget_consumed_pct: number;
   overallocated_resources: number;
   critical_dependencies: number;
