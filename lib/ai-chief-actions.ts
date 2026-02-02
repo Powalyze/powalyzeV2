@@ -122,11 +122,11 @@ Priorise les actions à fort impact business et quantifie chaque impact.
  */
 export function analyzePortfolio(projects: Project[], risks: Risk[]) {
   const projectsAnalyzed = projects.length;
-  const risksDetected = risks.filter((r) => r.status === "IDENTIFIED" || r.status === "ASSESSED").length;
+  const risksDetected = risks.filter((r) => r.status === "open" || r.status === "monitoring").length;
   
   // Calcul des opportunités : projets actifs avec marge d'optimisation
   const opportunitiesIdentified = projects.filter(
-    (p) => p.status === "ACTIVE"
+    (p) => p.status === "active"
   ).length;
 
   return {
