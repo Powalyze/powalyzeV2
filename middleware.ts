@@ -1,172 +1,88 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { createServerClient } from "@supabase/ssr";
+// ============================================================
+// POWALYZE V2 — MIDDLEWARE DEMO/PRO (BACKUP)
+// Instructions : Renommer ce fichier en middleware.ts pour activer
+// ============================================================
 
-export async function middleware(req: NextRequest) {
-  const res = NextResponse.next();
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { createClient } from '@/utils/supabase/server';
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return req.cookies.get(name)?.value;
-        },
-        set(name: string, value: string, options: any) {
-          res.cookies.set({ name, value, ...options });
-        },
-        remove(name: string, options: any) {
-          res.cookies.set({ name, value: "", ...options });
-        }
-      }
-    }
-  );
+const PUBLIC_ROUTES = [
+  '/',
+  '/login',
+  '/login-v2',
+  '/signup',
+  '/signup-v2',
+  '/pricing',
+  '/about',
+  '/contact',
+  '/vitrine',
+  '/features',
+  '/demo',
+  '/api/webhooks',
+  '/api/auth'
+];
 
-  const {
-    data: { session }
-  } = await supabase.auth.getSession();
+const DEMO_ROUTES = ['/cockpit/demo'];
+const PRO_ROUTES = ['/cockpit/pro'];
 
-  const path = req.nextUrl.pathname;
-
-  // ========================================
-  // REDIRECTIONS LEGACY ROUTES (301 permanent)
-  // ========================================
-  const legacyRedirects: Record<string, string> = {
-    '/demo': '/signup?demo=true',
-    '/pro': '/cockpit/projets',             // Pro → projets (pas /cockpit/client)
-    '/cockpit-demo': '/cockpit/demo',
-    '/cockpit-real': '/cockpit',
-    '/cockpit-client': '/cockpit/projets',  // Client → projets
-    '/inscription': '/signup',
-    '/register': '/signup',
-    '/portefeuille': '/cockpit/projets',
-    '/anomalies': '/cockpit/projets',
-    '/dashboard': '/cockpit/projets'
-  };
-
-  if (legacyRedirects[path]) {
-    return NextResponse.redirect(new URL(legacyRedirects[path], req.url), { status: 301 });
-  }
-
-  // ========================================
-  // SYSTÈME 3 ÉTATS — ARCHITECTURE FINALE
-  // ========================================
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
   
-  // ÉTAT 0 : Non connecté → Vitrine + Demo publique
-  const isPublicPath = path === '/' || 
-                      path === '/demo' ||              // Demo publique SANS connexion
-                      path.startsWith('/services') || 
-                      path.startsWith('/contact') ||
-                      path.startsWith('/auth') || 
-                      path.startsWith('/signup') || 
-                      path.startsWith('/login');
-
-  if (!session && !isPublicPath) {
-    // Non connecté essayant d'accéder à une page interne → signup
-    const redirectUrl = new URL('/signup', req.url);
-    redirectUrl.searchParams.set('redirect', path);
-    return NextResponse.redirect(redirectUrl);
+  // ✅ 1. Autoriser les routes publiques et assets statiques
+  if (
+    PUBLIC_ROUTES.some(route => pathname.startsWith(route)) ||
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/static') ||
+    pathname.includes('.')
+  ) {
+    return NextResponse.next();
   }
-
-  // Si connecté, récupérer les infos utilisateur
-  if (session) {
-    try {
-      const { data: userData, error } = await supabase
-        .from('users')
-        .select('role, tenant_id, pro_active')
-        .eq('id', session.user.id)
-        .single();
-
-      if (!error && userData) {
-        const isPro = userData.pro_active === true;
-
-        // ========================================
-        // ROUTAGE AUTOMATIQUE /cockpit
-        // ========================================
-        if (path === '/cockpit') {
-          if (isPro) {
-            return NextResponse.redirect(new URL('/cockpit/projets', req.url));
-          } else {
-            // État 1 : Connecté sans Pro → cockpit vide avec CTA tarifs
-            // (pas de redirect, on affiche le cockpit vide)
-          }
-        }
-
-        // ========================================
-        // PROTECTION PAGE TARIFS
-        // ========================================
-        if (path === '/cockpit/tarifs') {
-          if (isPro) {
-            // Pro actif → pas besoin de voir les tarifs
-            return NextResponse.redirect(new URL('/cockpit/projets', req.url));
-          }
-          // Sinon, laisse passer (utilisateur connecté sans Pro)
-        }
-
-        // ========================================
-        // PROTECTION PAGES PRO (projets, risques, décisions, etc.)
-        // ========================================
-        const proPages = ['/cockpit/projets', '/cockpit/risques', '/cockpit/decisions', '/cockpit/rapports'];
-        const isProPage = proPages.some(pp => path.startsWith(pp));
-
-        if (isProPage && !isPro) {
-          // Utilisateur sans Pro essayant d'accéder à une page Pro → Cockpit vide
-          return NextResponse.redirect(new URL('/cockpit', req.url));
-        }
-
-        // ========================================
-        // REDIRECTION DEMO SI NON PRO
-        // ========================================
-        // REDIRECTION DEMO SI NON PRO
-        // ========================================
-        if (path === '/cockpit/demo') {
-          // /cockpit/demo est maintenant juste un lien depuis cockpit page
-          // Rediriger vers demo publique
-          return NextResponse.redirect(new URL('/demo', req.url));
-        }
-
-        // ========================================
-        // PROTECTION ROUTES ADMIN
-        // ========================================
-        if (path.startsWith('/cockpit/admin')) {
-          if (userData.role !== 'admin') {
-            // Non-admin essayant d'accéder à l'admin
-            if (isPro) {
-              return NextResponse.redirect(new URL('/cockpit/projets', req.url));
-            } else {
-              return NextResponse.redirect(new URL('/cockpit', req.url));
-            }
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Error in middleware:', error);
-      // En cas d'erreur, rediriger vers signup par sécurité
-      if (path.startsWith('/cockpit')) {
-        return NextResponse.redirect(new URL('/signup', req.url));
-      }
+  
+  // ✅ 2. Vérifier l'authentification
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) {
+    const loginUrl = new URL('/login-v2', request.url);
+    loginUrl.searchParams.set('redirect', pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+  
+  // ✅ 3. Récupérer le plan utilisateur
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('plan')
+    .eq('id', user.id)
+    .single();
+  
+  const plan = profile?.plan || 'demo';
+  
+  // ✅ 4. Redirection automatique sur /cockpit
+  if (pathname === '/cockpit') {
+    if (plan === 'demo') {
+      return NextResponse.redirect(new URL('/cockpit/demo', request.url));
+    } else {
+      return NextResponse.redirect(new URL('/cockpit/pro', request.url));
     }
   }
-
-  return res;
+  
+  // ✅ 5. Protéger les routes Pro des utilisateurs Demo
+  if (pathname.startsWith('/cockpit/pro')) {
+    if (plan === 'demo') {
+      return NextResponse.redirect(new URL('/cockpit/demo', request.url));
+    }
+    return NextResponse.next();
+  }
+  
+  // ✅ 6. Autoriser les routes Demo
+  if (pathname.startsWith('/cockpit/demo')) {
+    return NextResponse.next();
+  }
+  
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    "/cockpit/:path*", 
-    "/tarifs", 
-    "/welcome",
-    // Legacy routes pour redirections 301
-    "/pro",
-    "/demo",
-    "/cockpit-demo",
-    "/cockpit-real",
-    "/cockpit-client",
-    "/inscription",
-    "/register",
-    "/portefeuille",
-    "/anomalies",
-    "/dashboard"
-  ]
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 };
