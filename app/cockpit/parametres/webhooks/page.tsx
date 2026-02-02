@@ -1,5 +1,8 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+export const runtime = 'edge'
+
 import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { Button } from '@/components/ui/Button'
@@ -307,7 +310,7 @@ export default function WebhooksPage() {
                         className="rounded"
                       />
                       <span className="text-sm">{event.label}</span>
-                      <Badge variant="outline" className="text-xs">{event.category}</Badge>
+                      <Badge variant="info" className="text-xs">{event.category}</Badge>
                     </label>
                   ))}
                 </div>
@@ -354,9 +357,9 @@ export default function WebhooksPage() {
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-lg font-semibold">{webhook.name}</h3>
                       {webhook.is_active ? (
-                        <Badge variant="default" className="bg-green-500">Active</Badge>
+                        <Badge variant="success" className="bg-green-500">Active</Badge>
                       ) : (
-                        <Badge variant="secondary">Inactive</Badge>
+                        <Badge variant="neutral">Inactive</Badge>
                       )}
                     </div>
                     
@@ -368,7 +371,7 @@ export default function WebhooksPage() {
 
                     <div className="flex flex-wrap gap-1 mb-3">
                       {webhook.events.map((event: string) => (
-                        <Badge key={event} variant="outline" className="text-xs">
+                        <Badge key={event} variant="info" className="text-xs">
                           {AVAILABLE_EVENTS.find(e => e.name === event)?.label || event}
                         </Badge>
                       ))}

@@ -1,5 +1,8 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+export const runtime = 'edge'
+
 import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { Button } from '@/components/ui/Button'
@@ -315,9 +318,9 @@ export default function APIKeysPage() {
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-lg font-semibold">{key.name}</h3>
                       {key.is_active ? (
-                        <Badge variant="default" className="bg-green-500">Active</Badge>
+                        <Badge variant="success" className="bg-green-500">Active</Badge>
                       ) : (
-                        <Badge variant="secondary">Inactive</Badge>
+                        <Badge variant="neutral">Inactive</Badge>
                       )}
                     </div>
                     
@@ -326,7 +329,7 @@ export default function APIKeysPage() {
                         {key.token_hash.substring(0, 16)}...
                       </code>
                       {key.permissions.map((perm: string) => (
-                        <Badge key={perm} variant="outline" className="capitalize">
+                        <Badge key={perm} variant="info" className="capitalize">
                           {perm}
                         </Badge>
                       ))}
