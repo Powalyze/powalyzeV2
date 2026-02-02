@@ -73,17 +73,17 @@ async function getOrganizationId() {
       const { data: newOrg, error: orgError } = await supabaseService
         .from('organizations')
         .insert({ name: 'Mon Organisation' })
-        .select('id')
-        .single();
+        .select()
+        .maybeSingle();
       
-      // Si erreur de duplicate, récupérer la première org existante
-      if (orgError) {
+      // Si erreur, récupérer la première org existante
+      if (orgError || !newOrg) {
         console.log('Organization insert error (normal if exists):', orgError);
         const { data: existingOrg } = await supabaseService
           .from('organizations')
           .select('id')
           .limit(1)
-          .single();
+          .maybeSingle();
         defaultOrg = existingOrg;
       } else {
         defaultOrg = newOrg;
