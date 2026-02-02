@@ -7,6 +7,15 @@ import {
   FileText, Download, Mail, Copy, AlertTriangle,
   TrendingUp, TrendingDown, CheckCircle, XCircle, Clock
 } from 'lucide-react';
+
+interface PortfolioSummary {
+  total_projects: number;
+  green_projects: number;
+  yellow_projects: number;
+  red_projects: number;
+  health_score: number;
+  total_budget: number;
+  total_spent: number;
   budget_consumed_pct: number;
   overallocated_resources: number;
   critical_dependencies: number;
