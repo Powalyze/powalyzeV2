@@ -98,6 +98,8 @@ function AISettingsContent() {
 
       if (profileError) throw profileError;
 
+      // Utiliser upsert avec PRIMARY KEY (organization_id)
+      // Supabase détecte automatiquement la PK, pas besoin de onConflict
       const { error: upsertError } = await supabase
         .from('ai_settings')
         .upsert({
@@ -106,6 +108,9 @@ function AISettingsContent() {
           model: settings.model,
           tone: settings.tone,
           updated_at: new Date().toISOString(),
+        }, {
+          onConflict: 'organization_id',
+          ignoreDuplicates: false
         });
 
       if (upsertError) throw upsertError;

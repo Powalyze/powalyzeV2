@@ -110,9 +110,13 @@ function AIPromptsContent() {
         updated_at: new Date().toISOString(),
       }));
 
+      // Spécifier onConflict sur la PRIMARY KEY composite
       const { error: upsertError } = await supabase
         .from('ai_prompts')
-        .upsert(promptsToUpsert);
+        .upsert(promptsToUpsert, {
+          onConflict: 'organization_id,type',
+          ignoreDuplicates: false
+        });
 
       if (upsertError) throw upsertError;
 
