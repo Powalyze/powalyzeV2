@@ -5,9 +5,9 @@ import { createClient } from '@/utils/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Card } from '@/components/ui/card'
+import { Card } from '@/components/ui/Card'
 import { Webhook, Trash2, Plus, AlertCircle, CheckCircle, XCircle, Activity } from 'lucide-react'
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from '@/components/ui/ToastProvider'
 
 const AVAILABLE_EVENTS = [
   { name: 'project.created', category: 'project', label: 'Projet créé' },
@@ -34,7 +34,7 @@ export default function WebhooksPage() {
     url: '',
     events: [] as string[]
   })
-  const { toast } = useToast()
+  const { showToast } = useToast()
 
   const supabase = createClient()
 
@@ -89,11 +89,7 @@ export default function WebhooksPage() {
       setWebhookStats(stats)
     } catch (err: any) {
       console.error('Error fetching webhooks:', err)
-      toast({
-        title: 'Erreur',
-        description: 'Impossible de charger les webhooks',
-        variant: 'destructive'
-      })
+      showToast('error', 'Erreur', 'Impossible de charger les webhooks')
     } finally {
       setLoading(false)
     }
@@ -101,20 +97,12 @@ export default function WebhooksPage() {
 
   async function createWebhook() {
     if (!newWebhook.name.trim() || !newWebhook.url.trim() || newWebhook.events.length === 0) {
-      toast({
-        title: 'Erreur',
-        description: 'Tous les champs sont requis',
-        variant: 'destructive'
-      })
+      showToast('error', 'Erreur', 'Tous les champs sont requis')
       return
     }
 
     if (!newWebhook.url.startsWith('http://') && !newWebhook.url.startsWith('https://')) {
-      toast({
-        title: 'Erreur',
-        description: 'L\'URL doit commencer par http:// ou https://',
-        variant: 'destructive'
-      })
+      showToast('error', 'Erreur', 'L\'URL doit commencer par http:// ou https://')
       return
     }
 
@@ -153,17 +141,10 @@ export default function WebhooksPage() {
       setShowCreateModal(false)
       fetchWebhooks()
 
-      toast({
-        title: 'Webhook créé',
-        description: 'Le webhook a été créé avec succès'
-      })
+      showToast('success', 'Webhook créé', 'Le webhook a été créé avec succès')
     } catch (err: any) {
       console.error('Error creating webhook:', err)
-      toast({
-        title: 'Erreur',
-        description: err.message || 'Impossible de créer le webhook',
-        variant: 'destructive'
-      })
+      showToast('error', 'Erreur', err.message || 'Impossible de créer le webhook')
     }
   }
 
@@ -181,17 +162,10 @@ export default function WebhooksPage() {
       if (error) throw error
 
       fetchWebhooks()
-      toast({
-        title: 'Webhook supprimé',
-        description: 'Le webhook a été supprimé avec succès'
-      })
+      showToast('success', 'Webhook supprimé', 'Le webhook a été supprimé avec succès')
     } catch (err: any) {
       console.error('Error deleting webhook:', err)
-      toast({
-        title: 'Erreur',
-        description: err.message || 'Impossible de supprimer le webhook',
-        variant: 'destructive'
-      })
+      showToast('error', 'Erreur', err.message || 'Impossible de supprimer le webhook')
     }
   }
 
@@ -205,17 +179,10 @@ export default function WebhooksPage() {
       if (error) throw error
 
       fetchWebhooks()
-      toast({
-        title: isActive ? 'Webhook désactivé' : 'Webhook activé',
-        description: 'Le statut du webhook a été mis à jour'
-      })
+      showToast('success', isActive ? 'Webhook désactivé' : 'Webhook activé', 'Le statut du webhook a été mis à jour')
     } catch (err: any) {
       console.error('Error toggling webhook:', err)
-      toast({
-        title: 'Erreur',
-        description: err.message || 'Impossible de modifier le webhook',
-        variant: 'destructive'
-      })
+      showToast('error', 'Erreur', err.message || 'Impossible de modifier le webhook')
     }
   }
 

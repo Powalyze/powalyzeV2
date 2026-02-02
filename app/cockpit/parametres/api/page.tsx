@@ -5,9 +5,9 @@ import { createClient } from '@/utils/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Card } from '@/components/ui/card'
+import { Card } from '@/components/ui/Card'
 import { Key, Copy, Eye, EyeOff, Trash2, Plus, AlertCircle } from 'lucide-react'
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from '@/components/ui/ToastProvider'
 
 export default function APIKeysPage() {
   const [apiKeys, setApiKeys] = useState<any[]>([])
@@ -17,7 +17,7 @@ export default function APIKeysPage() {
   const [newKeyName, setNewKeyName] = useState('')
   const [newKeyPermissions, setNewKeyPermissions] = useState<string[]>(['read'])
   const [generatedToken, setGeneratedToken] = useState<string | null>(null)
-  const { toast } = useToast()
+  const { showToast } = useToast()
 
   const supabase = createClient()
 
@@ -63,11 +63,7 @@ export default function APIKeysPage() {
       setApiKeys(data || [])
     } catch (err: any) {
       console.error('Error fetching API keys:', err)
-      toast({
-        title: 'Erreur',
-        description: 'Impossible de charger les clés API',
-        variant: 'destructive'
-      })
+      showToast('error', 'Erreur', 'Impossible de charger les clés API')
     } finally {
       setLoading(false)
     }
@@ -75,11 +71,7 @@ export default function APIKeysPage() {
 
   async function createApiKey() {
     if (!newKeyName.trim()) {
-      toast({
-        title: 'Erreur',
-        description: 'Le nom de la clé est requis',
-        variant: 'destructive'
-      })
+      showToast('error', 'Erreur', 'Le nom de la clé est requis')
       return
     }
 
@@ -118,18 +110,10 @@ export default function APIKeysPage() {
       setNewKeyPermissions(['read'])
       fetchApiKeys()
 
-      toast({
-        title: 'Clé API créée',
-        description: 'Copiez votre clé maintenant, elle ne sera plus affichée.',
-        duration: 10000
-      })
+      showToast('success', 'Clé API créée', 'Copiez votre clé maintenant, elle ne sera plus affichée.', 10000)
     } catch (err: any) {
       console.error('Error creating API key:', err)
-      toast({
-        title: 'Erreur',
-        description: err.message || 'Impossible de créer la clé API',
-        variant: 'destructive'
-      })
+      showToast('error', 'Erreur', err.message || 'Impossible de créer la clé API')
     }
   }
 
@@ -155,27 +139,16 @@ export default function APIKeysPage() {
       if (error) throw error
 
       fetchApiKeys()
-      toast({
-        title: 'Clé supprimée',
-        description: 'La clé API a été supprimée avec succès'
-      })
+      showToast('success', 'Clé supprimée', 'La clé API a été supprimée avec succès')
     } catch (err: any) {
       console.error('Error deleting API key:', err)
-      toast({
-        title: 'Erreur',
-        description: err.message || 'Impossible de supprimer la clé API',
-        variant: 'destructive'
-      })
+      showToast('error', 'Erreur', err.message || 'Impossible de supprimer la clé API')
     }
   }
 
   function copyToClipboard(text: string) {
     navigator.clipboard.writeText(text)
-    toast({
-      title: 'Copié',
-      description: 'Clé API copiée dans le presse-papiers',
-      duration: 2000
-    })
+    showToast('success', 'Copié', 'Clé API copiée dans le presse-papiers', 2000)
   }
 
   if (isDemo) {
