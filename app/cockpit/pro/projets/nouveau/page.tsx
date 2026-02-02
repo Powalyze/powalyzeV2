@@ -5,13 +5,11 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { createProject } from '@/lib/data-v2';
+import { createProjectAction } from '@/lib/project-actions';
 
 export default function NewProjectPage() {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
@@ -21,25 +19,13 @@ export default function NewProjectPage() {
     setError(null);
     
     const formData = new FormData(e.currentTarget);
+    const result = await createProjectAction(formData);
     
-    try {
-      await createProject({
-        organization_id: '', // Will be filled by data-v2.ts
-        name: formData.get('name') as string,
-        description: formData.get('description') as string,
-        status: formData.get('status') as any,
-        health: formData.get('health') as any,
-        progress: Number(formData.get('progress')),
-        budget: formData.get('budget') ? Number(formData.get('budget')) : undefined,
-        deadline: formData.get('deadline') as string || undefined,
-        starred: false,
-      });
-      
-      router.push('/cockpit/pro/projets');
-    } catch (err: any) {
-      setError(err.message || 'Erreur lors de la création du projet');
+    if (result?.error) {
+      setError(result.error);
       setLoading(false);
     }
+    // Si pas d'erreur, la redirection se fait automatiquement
   }
   
   return (
