@@ -34,26 +34,21 @@ function ForfaitContent() {
         throw new Error('Utilisateur non connecté');
       }
 
-      // Mise à jour du plan dans la table users
+      // MODE PRO PERMANENT: Tous les comptes sont Pro par défaut
+      // Mise à jour du plan dans la table profiles (pas users)
       const { error: updateError } = await supabase
-        .from('users')
+        .from('profiles')
         .update({
-          plan: plan,
-          pro_active: plan === 'pro', // Activer Pro si paiement confirmé
+          plan: 'pro',
+          pro_active: true,
+          mode: 'admin'
         })
         .eq('id', user.id);
 
       if (updateError) throw updateError;
 
-      // Redirection selon le plan
-      if (plan === 'demo') {
-        router.push('/cockpit/demo');
-      } else if (plan === 'pro') {
-        // TODO: Intégrer Stripe pour paiement
-        router.push('/cockpit/projets');
-      } else if (plan === 'enterprise') {
-        router.push('/contact?type=enterprise');
-      }
+      // Redirection vers cockpit Pro (mode permanent)
+      router.push('/cockpit/projets');
     } catch (err: any) {
       console.error('Erreur:', err);
       alert(err.message || 'Erreur lors de la sélection du forfait');

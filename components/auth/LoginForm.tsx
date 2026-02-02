@@ -44,32 +44,9 @@ export default function LoginForm() {
         return;
       }
 
-      // 2. Get user profile to determine redirect
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('mode, plan')
-        .eq('id', data.user.id)
-        .maybeSingle();
-
-      // 3. Redirect based on mode and plan
-      if (profileError) {
-        console.error('Profile fetch error:', profileError);
-        // Default redirect if no profile
-        router.push('/cockpit');
-        return;
-      }
-
-      const mode = profileData?.mode || 'admin';
-      const plan = profileData?.plan || 'demo';
-      
-      // Redirect based on mode or plan
-      if (mode === 'admin' && plan === 'demo') {
-        router.push('/cockpit/demo');
-      } else if (mode === 'admin' || plan === 'pro') {
-        router.push('/cockpit');
-      } else {
-        router.push('/cockpit/client');
-      }
+      // 2. MODE PRO PERMANENT: Redirection directe vers cockpit projets
+      // Tous les comptes sont en mode Pro par défaut (plan='pro', mode='admin')
+      router.push('/cockpit/projets');
       
     } catch (err: any) {
       setError(err.message || 'Erreur inconnue');
