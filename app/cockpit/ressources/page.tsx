@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/utils/supabase/client';
 import { Users, AlertTriangle, TrendingUp, Plus, Trash2 } from 'lucide-react';
 
 interface Resource {
@@ -30,7 +30,7 @@ interface ResourceWithLoad extends Resource {
 
 export default function RessourcesPage() {
   const router = useRouter();
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
   const [resources, setResources] = useState<ResourceWithLoad[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDemo, setIsDemo] = useState(true);

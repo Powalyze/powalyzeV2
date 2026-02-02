@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/utils/supabase/client';
 import { 
   FileText, Download, Mail, Copy, AlertTriangle, 
   TrendingUp, TrendingDown, CheckCircle, XCircle, Clock 
@@ -23,7 +23,7 @@ interface PortfolioSummary {
 
 export default function RapportPortefeuillePage() {
   const router = useRouter();
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
   const [summary, setSummary] = useState<PortfolioSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);

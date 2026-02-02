@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/utils/supabase/client';
 import { Link2, Plus, Trash2, AlertTriangle, ArrowRight } from 'lucide-react';
 
 interface Dependency {
@@ -30,7 +30,7 @@ export default function DependancesPage() {
   const router = useRouter();
   const params = useParams();
   const projectId = params?.id as string;
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
 
   const [dependencies, setDependencies] = useState<Dependency[]>([]);
   const [availableProjects, setAvailableProjects] = useState<Project[]>([]);
