@@ -44,22 +44,30 @@ export default function LoginForm() {
         return;
       }
 
-      // 2. Get user role to determine redirect (use users.role instead of profiles.mode)
-      const { data: userData } = await supabase
-        .from('users')
-        .select('role')
+      // 2. Get user profile to determine redirect
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('mode, plan')
         .eq('id', data.user.id)
-        .single();
+        .maybeSingle();
 
-      // 3. Redirect based on role
-      const role = userData?.role as 'admin' | 'client' | 'demo' | null;
+      // 3. Redirect based on mode and plan
+      if (profileError) {
+        console.error('Profile fetch error:', profileError);
+        // Default redirect if no profile
+        router.push('/cockpit');
+        return;
+      }
+
+      const mode = profileData?.mode || 'admin';
+      const plan = profileData?.plan || 'demo';
       
-      if (role === 'admin') {
-        router.push('/cockpit/admin');
-      } else if (role === 'demo') {
+      // Redirect based on mode or plan
+      if (mode === 'admin' && plan === 'demo') {
         router.push('/cockpit/demo');
+      } else if (mode === 'admin' || plan === 'pro') {
+        router.push('/cockpit');
       } else {
-        // Default: client cockpit
         router.push('/cockpit/client');
       }
       
