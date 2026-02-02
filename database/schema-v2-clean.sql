@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS organizations (
 
 ALTER TABLE organizations ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "organizations_select" ON organizations;
 CREATE POLICY "organizations_select" ON organizations
   FOR SELECT USING (true); -- Tout le monde peut voir (sera filtré par profiles)
 
@@ -46,9 +47,11 @@ CREATE TABLE IF NOT EXISTS profiles (
 
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "profiles_select_own" ON profiles;
 CREATE POLICY "profiles_select_own" ON profiles
   FOR SELECT USING (auth.uid() = id);
 
+DROP POLICY IF EXISTS "profiles_update_own" ON profiles;
 CREATE POLICY "profiles_update_own" ON profiles
   FOR UPDATE USING (auth.uid() = id);
 
@@ -74,6 +77,7 @@ CREATE TABLE IF NOT EXISTS projects (
 
 ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "projects_by_org" ON projects;
 CREATE POLICY "projects_by_org" ON projects
   FOR SELECT USING (
     organization_id IN (
@@ -81,6 +85,7 @@ CREATE POLICY "projects_by_org" ON projects
     )
   );
 
+DROP POLICY IF EXISTS "projects_insert_by_org" ON projects;
 CREATE POLICY "projects_insert_by_org" ON projects
   FOR INSERT WITH CHECK (
     organization_id IN (
@@ -88,6 +93,7 @@ CREATE POLICY "projects_insert_by_org" ON projects
     )
   );
 
+DROP POLICY IF EXISTS "projects_update_by_org" ON projects;
 CREATE POLICY "projects_update_by_org" ON projects
   FOR UPDATE USING (
     organization_id IN (
@@ -95,6 +101,7 @@ CREATE POLICY "projects_update_by_org" ON projects
     )
   );
 
+DROP POLICY IF EXISTS "projects_delete_by_org" ON projects;
 CREATE POLICY "projects_delete_by_org" ON projects
   FOR DELETE USING (
     organization_id IN (
@@ -128,6 +135,7 @@ CREATE TABLE IF NOT EXISTS risks (
 
 ALTER TABLE risks ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "risks_by_org" ON risks;
 CREATE POLICY "risks_by_org" ON risks
   FOR ALL USING (
     organization_id IN (
@@ -160,6 +168,7 @@ CREATE TABLE IF NOT EXISTS decisions (
 
 ALTER TABLE decisions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "decisions_by_org" ON decisions;
 CREATE POLICY "decisions_by_org" ON decisions
   FOR ALL USING (
     organization_id IN (
@@ -188,6 +197,7 @@ CREATE TABLE IF NOT EXISTS resources (
 
 ALTER TABLE resources ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "resources_by_org" ON resources;
 CREATE POLICY "resources_by_org" ON resources
   FOR ALL USING (
     organization_id IN (
@@ -213,6 +223,7 @@ CREATE TABLE IF NOT EXISTS project_resources (
 
 ALTER TABLE project_resources ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "project_resources_by_project" ON project_resources;
 CREATE POLICY "project_resources_by_project" ON project_resources
   FOR ALL USING (
     project_id IN (
@@ -241,6 +252,7 @@ CREATE TABLE IF NOT EXISTS dependencies (
 
 ALTER TABLE dependencies ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "dependencies_by_org" ON dependencies;
 CREATE POLICY "dependencies_by_org" ON dependencies
   FOR ALL USING (
     organization_id IN (
@@ -268,6 +280,7 @@ CREATE TABLE IF NOT EXISTS reports (
 
 ALTER TABLE reports ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "reports_by_org" ON reports;
 CREATE POLICY "reports_by_org" ON reports
   FOR ALL USING (
     organization_id IN (
@@ -296,6 +309,7 @@ CREATE TABLE IF NOT EXISTS api_keys (
 
 ALTER TABLE api_keys ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "api_keys_by_org" ON api_keys;
 CREATE POLICY "api_keys_by_org" ON api_keys
   FOR ALL USING (
     organization_id IN (
@@ -323,6 +337,7 @@ CREATE TABLE IF NOT EXISTS webhooks (
 
 ALTER TABLE webhooks ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "webhooks_by_org" ON webhooks;
 CREATE POLICY "webhooks_by_org" ON webhooks
   FOR ALL USING (
     organization_id IN (
@@ -348,6 +363,7 @@ CREATE TABLE IF NOT EXISTS webhook_logs (
 
 ALTER TABLE webhook_logs ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "webhook_logs_by_webhook" ON webhook_logs;
 CREATE POLICY "webhook_logs_by_webhook" ON webhook_logs
   FOR ALL USING (
     webhook_id IN (
