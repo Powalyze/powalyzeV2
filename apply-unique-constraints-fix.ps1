@@ -7,28 +7,6 @@
 Write-Host "🔧 FIX: Application des contraintes UNIQUE manquantes" -ForegroundColor Cyan
 Write-Host ""
 
-# Vérifier que les variables d'environnement existent
-$supabaseUrl = $env:NEXT_PUBLIC_SUPABASE_URL
-$supabaseKey = $env:SUPABASE_SERVICE_ROLE_KEY
-
-if (-not $supabaseUrl -or -not $supabaseKey) {
-    Write-Host "❌ ERREUR: Variables d'environnement manquantes" -ForegroundColor Red
-    Write-Host ""
-    Write-Host "Assurez-vous que .env.local contient:" -ForegroundColor Yellow
-    Write-Host "  NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co"
-    Write-Host "  SUPABASE_SERVICE_ROLE_KEY=xxx"
-    Write-Host ""
-    exit 1
-}
-
-# Extraire le project ref de l'URL Supabase
-$projectRef = ($supabaseUrl -replace 'https://', '' -replace '.supabase.co', '')
-
-Write-Host "📊 Configuration:" -ForegroundColor Yellow
-Write-Host "  Project: $projectRef"
-Write-Host "  URL: $supabaseUrl"
-Write-Host ""
-
 # Lire le fichier SQL
 $sqlFile = "database/schema-fix-unique-constraints.sql"
 if (-not (Test-Path $sqlFile)) {
@@ -41,46 +19,40 @@ $sqlContent = Get-Content $sqlFile -Raw
 Write-Host "📄 Fichier SQL chargé: $sqlFile" -ForegroundColor Green
 Write-Host ""
 
-# Construire l'URL de l'API Supabase
-$apiUrl = "$supabaseUrl/rest/v1/rpc/exec_sql"
-
-# Note: Supabase ne permet pas d'exécuter du SQL arbitraire via l'API REST
-# Il faut utiliser soit:
-# 1. Le dashboard Supabase (SQL Editor)
-# 2. Un client PostgreSQL (psql)
-
-Write-Host "⚠️  INFORMATION IMPORTANTE" -ForegroundColor Yellow
+Write-Host "⚠️  INSTRUCTIONS D'APPLICATION" -ForegroundColor Yellow
 Write-Host ""
-Write-Host "L'API REST Supabase ne permet pas d'exécuter du SQL arbitraire." -ForegroundColor Yellow
-Write-Host "Vous devez appliquer le schéma manuellement via:" -ForegroundColor Yellow
+Write-Host "ÉTAPE 1 - Ouvrir le SQL Editor Supabase:" -ForegroundColor Cyan
+Write-Host "  1. Aller sur https://supabase.com/dashboard"
+Write-Host "  2. Sélectionner votre projet Powalyze"
+Write-Host "  3. Cliquer sur 'SQL Editor' dans la barre latérale"
+Write-Host "  4. Cliquer 'New Query'"
 Write-Host ""
-Write-Host "OPTION 1 (Recommandée) - Dashboard Supabase:" -ForegroundColor Cyan
-Write-Host "  1. Ouvrir https://supabase.com/dashboard/project/$projectRef/sql/new"
-Write-Host "  2. Copier le contenu de $sqlFile"
-Write-Host "  3. Cliquer 'Run'"
+Write-Host "ÉTAPE 2 - Copier/coller le SQL ci-dessous:" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "OPTION 2 - Client psql:" -ForegroundColor Cyan
-Write-Host "  psql `"postgresql://postgres:[YOUR-PASSWORD]@db.$projectRef.supabase.co:5432/postgres`" -f $sqlFile"
-Write-Host ""
-
-# Ouvrir automatiquement le dashboard Supabase
-$dashboardUrl = "https://supabase.com/dashboard/project/$projectRef/sql/new"
-Write-Host "🌐 Ouverture du SQL Editor dans votre navigateur..." -ForegroundColor Green
-Write-Host ""
-Start-Process $dashboardUrl
 
 # Afficher le SQL dans la console pour copier/coller facile
-Write-Host "📋 Contenu SQL à copier/coller:" -ForegroundColor Cyan
+Write-Host "📋 SQL À COPIER (appuyez sur Ctrl+C pour arrêter l'affichage):" -ForegroundColor Cyan
 Write-Host "======================================" -ForegroundColor DarkGray
 Write-Host $sqlContent -ForegroundColor White
 Write-Host "======================================" -ForegroundColor DarkGray
 Write-Host ""
 
+Write-Host "ÉTAPE 3 - Exécuter:" -ForegroundColor Cyan
+Write-Host "  1. Coller le SQL dans l'éditeur Supabase"
+Write-Host "  2. Cliquer 'Run' (ou F5)"
+Write-Host "  3. Vérifier que le message de succès apparaît"
+Write-Host ""
+
+Write-Host "ÉTAPE 4 - Vérifier que ça a fonctionné:" -ForegroundColor Cyan
+Write-Host "  Dans le même SQL Editor, exécutez:"
+Write-Host ""
+Write-Host "  SELECT * FROM project_predictions LIMIT 1;" -ForegroundColor White
+Write-Host ""
+Write-Host "  Si aucune erreur → ✅ Fix réussi !" -ForegroundColor Green
+Write-Host ""
+
 Write-Host "✅ Script terminé" -ForegroundColor Green
 Write-Host ""
-Write-Host "Prochaines étapes:" -ForegroundColor Yellow
-Write-Host "  1. Coller le SQL dans l'éditeur ouvert"
-Write-Host "  2. Cliquer 'Run'"
-Write-Host "  3. Vérifier que la table project_predictions est créée"
-Write-Host "  4. Tester la création d'un projet dans l'application"
+Write-Host "📖 Pour plus de détails, consultez:" -ForegroundColor Yellow
+Write-Host "   database/FIX-UNIQUE-CONSTRAINTS.md"
 Write-Host ""
