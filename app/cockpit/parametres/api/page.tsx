@@ -211,7 +211,7 @@ export default function APIKeysPage() {
                     className="font-mono text-sm"
                   />
                   <Button
-                    size="icon"
+                    size="sm"
                     variant="outline"
                     onClick={() => copyToClipboard(generatedToken)}
                   >
@@ -345,7 +345,7 @@ export default function APIKeysPage() {
 
                   <Button
                     variant="ghost"
-                    size="icon"
+                    size="sm"
                     onClick={() => deleteApiKey(key.id)}
                     className="text-red-500 hover:text-red-600"
                   >

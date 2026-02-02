@@ -392,7 +392,7 @@ export default function WebhooksPage() {
                     </Button>
                     <Button
                       variant="ghost"
-                      size="icon"
+                      size="sm"
                       onClick={() => deleteWebhook(webhook.id)}
                       className="text-red-500 hover:text-red-600"
                     >
