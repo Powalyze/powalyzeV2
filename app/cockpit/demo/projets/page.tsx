@@ -1,139 +1,211 @@
 // ============================================================
-// POWALYZE V2 — DEMO PROJETS PAGE
+// POWALYZE COCKPIT V3 — DEMO PROJETS PAGE
 // ============================================================
 
-import { FolderKanban, Plus, Lock } from 'lucide-react';
+import { getDemoData } from '@/lib/demo-data';
+import { FolderKanban, AlertTriangle, CheckCircle2, Clock, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
-import { MOCK_PROJECTS } from '@/lib/mock-data';
 
 export default function DemoProjetsPage() {
-  const projects = MOCK_PROJECTS;
-  const activeProjects = projects.filter(p => p.status === 'active');
+  const data = getDemoData();
+  const { projects, risks, decisions } = data;
+  
+  // Calculs pour les statistiques
+  const healthyProjects = projects.filter(p => p.rag_status === 'GREEN').length;
+  const avgProgress = Math.round(projects.reduce((acc, p) => acc + (p.progress || 0), 0) / projects.length);
   
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-white">Projets</h1>
-          <p className="text-slate-400 mt-1">Données de démonstration</p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8">
+      <div className="max-w-7xl mx-auto space-y-8">
+        
+        {/* Header avec badge Demo */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-white mb-2">Portfolio de Projets</h1>
+            <p className="text-slate-400">Vue complète de vos initiatives stratégiques</p>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="bg-blue-500/20 text-blue-400 px-4 py-2 rounded-lg font-semibold flex items-center gap-2">
+              🎭 MODE DÉMO
+            </span>
+            <Link
+              href="/cockpit/pro"
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2 rounded-lg font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all"
+            >
+              Passer en mode Pro →
+            </Link>
+          </div>
         </div>
-        <Link
-          href="/upgrade"
-          className="flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 px-4 py-2 rounded-lg font-medium"
-        >
-          <Lock className="w-4 h-4" />
-          Créer un projet (Pro)
-        </Link>
-      </div>
-      
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-slate-900 rounded-lg p-4 border border-slate-800">
-          <p className="text-slate-400 text-sm">Total</p>
-          <p className="text-2xl font-bold text-white">{projects.length}</p>
+        
+        {/* Statistiques clés */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-white/20 transition-all">
+            <div className="flex items-center justify-between mb-4">
+              <div className="bg-blue-500/20 p-3 rounded-lg">
+                <FolderKanban className="w-6 h-6 text-blue-400" />
+              </div>
+            </div>
+            <p className="text-slate-400 text-sm mb-1">Total Projets</p>
+            <p className="text-4xl font-bold text-white">{projects.length}</p>
+          </div>
+          
+          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-white/20 transition-all">
+            <div className="flex items-center justify-between mb-4">
+              <div className="bg-green-500/20 p-3 rounded-lg">
+                <CheckCircle2 className="w-6 h-6 text-green-400" />
+              </div>
+            </div>
+            <p className="text-slate-400 text-sm mb-1">En bonne santé</p>
+            <p className="text-4xl font-bold text-green-400">{healthyProjects}</p>
+            <p className="text-slate-500 text-xs mt-2">
+              {Math.round((healthyProjects / projects.length) * 100)}% du portfolio
+            </p>
+          </div>
+          
+          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-white/20 transition-all">
+            <div className="flex items-center justify-between mb-4">
+              <div className="bg-purple-500/20 p-3 rounded-lg">
+                <TrendingUp className="w-6 h-6 text-purple-400" />
+              </div>
+            </div>
+            <p className="text-slate-400 text-sm mb-1">Progression moyenne</p>
+            <p className="text-4xl font-bold text-white">{avgProgress}%</p>
+          </div>
+          
+          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-white/20 transition-all">
+            <div className="flex items-center justify-between mb-4">
+              <div className="bg-amber-500/20 p-3 rounded-lg">
+                <AlertTriangle className="w-6 h-6 text-amber-400" />
+              </div>
+            </div>
+            <p className="text-slate-400 text-sm mb-1">Risques actifs</p>
+            <p className="text-4xl font-bold text-amber-400">{risks.length}</p>
+          </div>
         </div>
-        <div className="bg-slate-900 rounded-lg p-4 border border-slate-800">
-          <p className="text-slate-400 text-sm">Actifs</p>
-          <p className="text-2xl font-bold text-green-500">{activeProjects.length}</p>
-        </div>
-        <div className="bg-slate-900 rounded-lg p-4 border border-slate-800">
-          <p className="text-slate-400 text-sm">Santé Verte</p>
-          <p className="text-2xl font-bold text-green-500">
-            {projects.filter(p => p.health === 'green').length}
-          </p>
-        </div>
-        <div className="bg-slate-900 rounded-lg p-4 border border-slate-800">
-          <p className="text-slate-400 text-sm">Attention</p>
-          <p className="text-2xl font-bold text-red-500">
-            {projects.filter(p => p.health === 'red').length}
-          </p>
-        </div>
-      </div>
-      
-      {/* Projects List */}
-      <div className="bg-slate-900 rounded-lg border border-slate-800 overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-slate-800 border-b border-slate-700">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase">Projet</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase">Statut</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase">Santé</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase">Progression</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase">Budget</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase">Échéance</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-800">
-            {projects.map(project => (
-              <tr key={project.id} className="hover:bg-slate-800/50">
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <FolderKanban className="w-5 h-5 text-amber-500 flex-shrink-0" />
-                    <div>
-                      <p className="text-white font-medium">{project.name}</p>
-                      <p className="text-slate-400 text-sm">{project.description}</p>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <span className={`inline-flex px-2 py-1 text-xs font-medium rounded ${
-                    project.status === 'active' ? 'bg-blue-500/20 text-blue-400' :
-                    project.status === 'completed' ? 'bg-green-500/20 text-green-400' :
-                    project.status === 'on-hold' ? 'bg-yellow-500/20 text-yellow-400' :
-                    'bg-red-500/20 text-red-400'
-                  }`}>
-                    {project.status === 'active' ? 'Actif' :
-                     project.status === 'completed' ? 'Terminé' :
-                     project.status === 'on-hold' ? 'En pause' : 'Annulé'}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-3 h-3 rounded-full ${
-                      project.health === 'green' ? 'bg-green-500' :
-                      project.health === 'yellow' ? 'bg-yellow-500' :
-                      'bg-red-500'
+        
+        {/* Liste des projets */}
+        <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 overflow-hidden">
+          <div className="p-6 border-b border-white/10">
+            <h2 className="text-xl font-bold text-white">Tous les Projets</h2>
+          </div>
+          
+          <div className="divide-y divide-white/5">
+            {projects.map((project) => {
+              const projectRisks = risks.filter(r => r.project_id === project.id);
+              const projectDecisions = decisions.filter(d => d.project_id === project.id);
+              const criticalRisks = projectRisks.filter(r => r.level === 'critical' || r.level === 'high');
+              
+              return (
+                <Link
+                  key={project.id}
+                  href={`/cockpit/demo/projets/${project.id}`}
+                  className="block p-6 hover:bg-white/5 transition-all group"
+                >
+                  <div className="flex items-start gap-6">
+                    {/* Indicateur de santé */}
+                    <div className={`w-4 h-4 rounded-full mt-1 flex-shrink-0 ${
+                      project.rag_status === 'GREEN' ? 'bg-green-500 shadow-lg shadow-green-500/50' :
+                      project.rag_status === 'YELLOW' ? 'bg-yellow-500 shadow-lg shadow-yellow-500/50' :
+                      'bg-red-500 shadow-lg shadow-red-500/50'
                     }`} />
-                    <span className="text-slate-300 text-sm capitalize">{project.health}</span>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex-1 bg-slate-800 rounded-full h-2 overflow-hidden">
-                      <div
-                        className="bg-amber-500 h-full"
-                        style={{ width: `${project.progress}%` }}
-                      />
+                    
+                    {/* Contenu principal */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <h3 className="text-xl font-bold text-white group-hover:text-indigo-400 transition-colors">
+                            {project.name}
+                          </h3>
+                          <p className="text-slate-400 text-sm mt-1 line-clamp-2">
+                            {project.description}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-3xl font-bold text-white">
+                            {project.progress}%
+                          </div>
+                          <div className="text-slate-500 text-xs mt-1">progression</div>
+                        </div>
+                      </div>
+                      
+                      {/* Barre de progression */}
+                      <div className="mb-4">
+                        <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all"
+                            style={{ width: `${project.progress}%` }}
+                          />
+                        </div>
+                      </div>
+                      
+                      {/* Métadonnées */}
+                      <div className="flex items-center gap-6 text-sm">
+                        {project.budget && (
+                          <div className="flex items-center gap-2 text-slate-400">
+                            <span className="font-semibold">💰</span>
+                            <span>{(project.budget / 1000000).toFixed(1)}M €</span>
+                          </div>
+                        )}
+                        
+                        {project.deadline && (
+                          <div className="flex items-center gap-2 text-slate-400">
+                            <Clock className="w-4 h-4" />
+                            <span>{new Date(project.deadline).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' })}</span>
+                          </div>
+                        )}
+                        
+                        {projectRisks.length > 0 && (
+                          <div className={`flex items-center gap-2 ${criticalRisks.length > 0 ? 'text-red-400' : 'text-amber-400'}`}>
+                            <AlertTriangle className="w-4 h-4" />
+                            <span>{projectRisks.length} risque{projectRisks.length > 1 ? 's' : ''}</span>
+                            {criticalRisks.length > 0 && (
+                              <span className="bg-red-500/20 text-red-400 px-2 py-0.5 rounded text-xs font-semibold">
+                                {criticalRisks.length} critique{criticalRisks.length > 1 ? 's' : ''}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        
+                        {projectDecisions.length > 0 && (
+                          <div className="flex items-center gap-2 text-indigo-400">
+                            <CheckCircle2 className="w-4 h-4" />
+                            <span>{projectDecisions.length} décision{projectDecisions.length > 1 ? 's' : ''}</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <span className="text-white text-sm font-medium w-12 text-right">
-                      {project.progress}%
-                    </span>
                   </div>
-                </td>
-                <td className="px-6 py-4">
-                  <p className="text-white">{project.budget?.toLocaleString('fr-FR')} €</p>
-                </td>
-                <td className="px-6 py-4">
-                  <p className="text-slate-300">{project.deadline}</p>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      
-      {/* Upgrade CTA */}
-      <div className="bg-blue-500/10 border border-blue-500 rounded-lg p-6">
-        <h3 className="text-lg font-bold text-blue-400 mb-2">
-          💡 Mode Démo - Données fictives
-        </h3>
-        <p className="text-blue-300 text-sm mb-4">
-          Ces projets sont des exemples. Pour gérer vos vrais projets, 
-          <Link href="/upgrade" className="underline font-medium ml-1">
-            passez en Mode Pro
-          </Link>.
-        </p>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+        
+        {/* CTA mode Pro */}
+        <div className="bg-gradient-to-r from-indigo-600/20 via-purple-600/20 to-pink-600/20 border border-indigo-500/30 rounded-xl p-8 text-center">
+          <h3 className="text-2xl font-bold text-white mb-3">
+            Prêt à gérer vos propres projets ?
+          </h3>
+          <p className="text-slate-300 mb-6 max-w-2xl mx-auto">
+            Passez en mode Pro pour créer vos projets, suivre vos risques en temps réel, 
+            et générer des rapports exécutifs avec l'intelligence artificielle.
+          </p>
+          <div className="flex items-center justify-center gap-4">
+            <Link
+              href="/cockpit/pro"
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-3 rounded-lg font-bold hover:shadow-xl hover:shadow-purple-500/50 transition-all text-lg"
+            >
+              Activer le mode Pro →
+            </Link>
+            <Link
+              href="/cockpit/demo"
+              className="border border-white/20 text-white px-8 py-3 rounded-lg font-semibold hover:bg-white/5 transition-all"
+            >
+              ← Retour au dashboard
+            </Link>
+          </div>
+        </div>
+        
       </div>
     </div>
   );
