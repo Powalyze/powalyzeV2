@@ -154,12 +154,11 @@ export async function createProject(formData: FormData) {
 
     const name = formData.get('name') as string;
     const description = formData.get('description') as string;
-    const owner = formData.get('owner') as string;
     const deadline = formData.get('deadline') as string;
-    const status = formData.get('status') as string || 'pending';
+    const status = formData.get('status') as string || 'active';
 
-    if (!name || !owner) {
-      return { success: false, error: 'Nom et responsable requis' };
+    if (!name) {
+      return { success: false, error: 'Nom requis' };
     }
 
     const supabase = getSupabaseService();
@@ -167,10 +166,9 @@ export async function createProject(formData: FormData) {
       .from('projects')
       .insert([{
         organization_id: organizationId,
-        user_id: userId,
         name,
         description: description || null,
-        owner,
+        owner_id: userId, // FK to profiles
         deadline: deadline || null,
         status,
         health: 'green',
