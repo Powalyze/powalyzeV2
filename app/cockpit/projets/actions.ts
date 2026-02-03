@@ -145,11 +145,14 @@ export async function createProject(formData: FormData) {
     const organizationId = await getOrganizationId();
     
     if (!userId) {
-      return { success: false, error: 'Non authentifié' };
+      return { success: false, error: 'Non authentifié. Veuillez vous reconnecter.' };
     }
 
     if (!organizationId) {
-      return { success: false, error: 'Organisation non trouvée' };
+      return { 
+        success: false, 
+        error: 'Organisation introuvable. Votre compte n\'est pas configuré correctement. Contactez le support.' 
+      };
     }
 
     const name = formData.get('name') as string;
