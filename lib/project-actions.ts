@@ -48,10 +48,14 @@ export async function createProjectAction(formData: FormData) {
     const continueWizard = formData.get('continue_wizard') === 'on';
     if (continueWizard && project?.id) {
       redirect(`/cockpit/pro/projets/${project.id}/wizard`);
-    } else {
-      redirect('/cockpit/pro/projets');
     }
+    
+    redirect('/cockpit/pro/projets');
   } catch (err: any) {
+    // Don't catch redirect errors
+    if (err?.message?.includes('NEXT_REDIRECT')) {
+      throw err;
+    }
     return { error: err.message || 'Erreur lors de la création du projet' };
   }
 }
@@ -70,18 +74,20 @@ export async function updateProjectAction(id: string, formData: FormData) {
     
     revalidatePath('/cockpit/pro/projets');
     revalidatePath(`/cockpit/pro/projets/${id}`);
-    redirect(`/cockpit/pro/projets/${id}`);
   } catch (err: any) {
     return { error: err.message || 'Erreur lors de la mise à jour du projet' };
   }
+  
+  redirect(`/cockpit/pro/projets/${id}`);
 }
 
 export async function deleteProjectAction(id: string) {
   try {
     await deleteProject(id);
     revalidatePath('/cockpit/pro/projets');
-    redirect('/cockpit/pro/projets');
   } catch (err: any) {
     return { error: err.message || 'Erreur lors de la suppression du projet' };
   }
+  
+  redirect('/cockpit/pro/projets');
 }
