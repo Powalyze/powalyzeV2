@@ -284,7 +284,6 @@ export default function NewProjectPage() {
                 <input
                   type="checkbox"
                   name="continue_wizard"
-                  value="true"
                   className="w-5 h-5 rounded border-white/20 bg-slate-800/50 text-indigo-600 focus:ring-2 focus:ring-indigo-500"
                 />
                 <span className="text-white font-medium">

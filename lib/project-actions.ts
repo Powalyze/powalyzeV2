@@ -32,6 +32,7 @@ export async function createProjectAction(formData: FormData) {
     
     const project = await createProject({
       organization_id: profile.organization_id,
+      owner_id: user.id,
       name: formData.get('name') as string,
       description: formData.get('description') as string || undefined,
       status: formData.get('status') as any,
