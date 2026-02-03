@@ -548,3 +548,44 @@ export async function deleteDependency(id: string): Promise<boolean> {
   
   return true;
 }
+
+// ============================================================
+// REPORTS CRUD
+// ============================================================
+
+export async function getAllReports(): Promise<Report[]> {
+  const supabase = await getSupabase();
+  const organizationId = await getOrganizationId();
+  
+  if (!organizationId) return [];
+  
+  const { data, error } = await supabase
+    .from('reports')
+    .select('*')
+    .eq('organization_id', organizationId)
+    .order('generated_at', { ascending: false });
+  
+  if (error) {
+    console.error('[getAllReports] Error:', error);
+    return [];
+  }
+  
+  return data || [];
+}
+
+export async function createReport(report: Omit<Report, 'id' | 'generated_at'>): Promise<Report | null> {
+  const supabase = await getSupabase();
+  
+  const { data, error } = await supabase
+    .from('reports')
+    .insert(report)
+    .select()
+    .single();
+  
+  if (error) {
+    console.error('[createReport] Error:', error);
+    throw new Error(error.message);
+  }
+  
+  return data;
+}
