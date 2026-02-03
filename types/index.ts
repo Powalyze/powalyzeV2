@@ -183,3 +183,53 @@ export interface Report {
   updated_at?: Date;
   created_by?: string;
 }
+
+// ============================================
+// NOUVELLES TABLES COCKPIT V3
+// ============================================
+
+export interface Scenario {
+  id: string;
+  organization_id: string;
+  project_id: string;
+  type: 'optimistic' | 'central' | 'pessimistic';
+  name: string;
+  description?: string;
+  probability: number; // 0-100
+  delivery_date?: Date;
+  final_budget?: number;
+  business_impacts: string[];
+  actions: string[];
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface ProjectObjective {
+  id: string;
+  project_id: string;
+  title: string;
+  description?: string;
+  measurable?: string; // KPI
+  deadline?: Date;
+  status: 'pending' | 'in-progress' | 'completed' | 'cancelled';
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface AIGeneration {
+  id: string;
+  organization_id: string;
+  user_id?: string;
+  entity_type: 'project' | 'risk' | 'decision' | 'report' | 'scenario' | 'objective' | 'portfolio';
+  entity_id?: string;
+  generation_type: string;
+  prompt_used?: string;
+  model?: string;
+  input_data: any;
+  output_data: any;
+  tokens_used?: number;
+  latency_ms?: number;
+  success: boolean;
+  error_message?: string;
+  created_at: Date;
+}

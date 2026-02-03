@@ -1,28 +1,40 @@
-'use client';
+import { redirect } from 'next/navigation';
+import { createClient } from '@/utils/supabase/server';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { CockpitShell } from "@/components/cockpit/CockpitShell";
-import { Loader2 } from "lucide-react";
-
-export default function CockpitIndexPage() {
-  const router = useRouter();
-
-  useEffect(() => {
-    // Redirection automatique vers le cockpit Pro
-    router.push('/cockpit/projets');
-  }, [router]);
-
-  return (
-    <CockpitShell>
-      <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
-        <div className="text-center space-y-4">
-          <Loader2 size={48} className="text-amber-400 animate-spin mx-auto" />
-          <p className="text-lg text-slate-400">
-            Chargement de votre cockpit...
-          </p>
-        </div>
-      </div>
-    </CockpitShell>
-  );
+export default async function CockpitPage() {
+  const supabase = await createClient();
+  
+  // Vérifier si l'utilisateur est connecté
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) {
+    redirect('/login');
+  }
+  
+  // Récupérer le profile pour avoir l'organization_id
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('organization_id')
+    .eq('id', user.id)
+    .single();
+  
+  if (!profile?.organization_id) {
+    // Pas d'organisation → Onboarding
+    redirect('/cockpit/pro/onboarding');
+  }
+  
+  // Compter les projets de l'organisation
+  const { count } = await supabase
+    .from('projects')
+    .select('id', { count: 'exact', head: true })
+    .eq('organization_id', profile.organization_id);
+  
+  if (count === 0) {
+    // Aucun projet → Onboarding
+    redirect('/cockpit/pro/onboarding');
+  }
+  
+  // A des projets → Dashboard pro
+  redirect('/cockpit/pro');
 }
+

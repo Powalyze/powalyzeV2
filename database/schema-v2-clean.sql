@@ -21,6 +21,9 @@ DROP TABLE IF EXISTS webhook_logs CASCADE;
 DROP TABLE IF EXISTS webhooks CASCADE;
 DROP TABLE IF EXISTS api_keys CASCADE;
 DROP TABLE IF EXISTS reports CASCADE;
+DROP TABLE IF EXISTS ai_generations CASCADE;
+DROP TABLE IF EXISTS project_objectives CASCADE;
+DROP TABLE IF EXISTS scenarios CASCADE;
 DROP TABLE IF EXISTS dependencies CASCADE;
 DROP TABLE IF EXISTS project_resources CASCADE;
 DROP TABLE IF EXISTS resources CASCADE;
@@ -436,6 +439,117 @@ DROP TRIGGER IF EXISTS trigger_resources_updated_at ON resources;
 CREATE TRIGGER trigger_resources_updated_at
   BEFORE UPDATE ON resources
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+-- ============================================
+-- 13. SCENARIOS (scénarios projet)
+-- ============================================
+
+CREATE TABLE scenarios (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+  project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  type TEXT NOT NULL CHECK (type IN ('optimistic', 'central', 'pessimistic')),
+  name TEXT NOT NULL,
+  description TEXT,
+  probability INTEGER CHECK (probability >= 0 AND probability <= 100),
+  delivery_date DATE,
+  final_budget DECIMAL(15, 2),
+  business_impacts JSONB DEFAULT '[]'::jsonb,
+  actions JSONB DEFAULT '[]'::jsonb,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE scenarios ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "scenarios_by_org" ON scenarios;
+CREATE POLICY "scenarios_by_org" ON scenarios
+  FOR ALL USING (
+    organization_id IN (
+      SELECT organization_id FROM profiles WHERE id = auth.uid()
+    )
+  );
+
+CREATE INDEX IF NOT EXISTS idx_scenarios_org ON scenarios(organization_id);
+CREATE INDEX IF NOT EXISTS idx_scenarios_project ON scenarios(project_id);
+CREATE INDEX IF NOT EXISTS idx_scenarios_type ON scenarios(type);
+
+DROP TRIGGER IF EXISTS trigger_scenarios_updated_at ON scenarios;
+CREATE TRIGGER trigger_scenarios_updated_at
+  BEFORE UPDATE ON scenarios
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+-- ============================================
+-- 14. PROJECT_OBJECTIVES (objectifs projet)
+-- ============================================
+
+CREATE TABLE project_objectives (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  description TEXT,
+  measurable TEXT,
+  deadline DATE,
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'in-progress', 'completed', 'cancelled')),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE project_objectives ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "objectives_by_project" ON project_objectives;
+CREATE POLICY "objectives_by_project" ON project_objectives
+  FOR ALL USING (
+    project_id IN (
+      SELECT p.id FROM projects p
+      INNER JOIN profiles prof ON p.organization_id = prof.organization_id
+      WHERE prof.id = auth.uid()
+    )
+  );
+
+CREATE INDEX IF NOT EXISTS idx_objectives_project ON project_objectives(project_id);
+CREATE INDEX IF NOT EXISTS idx_objectives_status ON project_objectives(status);
+
+DROP TRIGGER IF EXISTS trigger_objectives_updated_at ON project_objectives;
+CREATE TRIGGER trigger_objectives_updated_at
+  BEFORE UPDATE ON project_objectives
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+-- ============================================
+-- 15. AI_GENERATIONS (traçabilité IA)
+-- ============================================
+
+CREATE TABLE ai_generations (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
+  entity_type TEXT NOT NULL CHECK (entity_type IN ('project', 'risk', 'decision', 'report', 'scenario', 'objective', 'portfolio')),
+  entity_id UUID,
+  generation_type TEXT NOT NULL,
+  prompt_used TEXT,
+  model TEXT,
+  input_data JSONB DEFAULT '{}'::jsonb,
+  output_data JSONB DEFAULT '{}'::jsonb,
+  tokens_used INTEGER,
+  latency_ms INTEGER,
+  success BOOLEAN DEFAULT true,
+  error_message TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE ai_generations ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "ai_generations_by_org" ON ai_generations;
+CREATE POLICY "ai_generations_by_org" ON ai_generations
+  FOR ALL USING (
+    organization_id IN (
+      SELECT organization_id FROM profiles WHERE id = auth.uid()
+    )
+  );
+
+CREATE INDEX IF NOT EXISTS idx_ai_generations_org ON ai_generations(organization_id);
+CREATE INDEX IF NOT EXISTS idx_ai_generations_entity ON ai_generations(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_ai_generations_created ON ai_generations(created_at DESC);
 
 -- ============================================
 -- FIN DU SCHÉMA
