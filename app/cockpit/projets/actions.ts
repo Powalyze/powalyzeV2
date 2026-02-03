@@ -155,7 +155,11 @@ export async function createProject(formData: FormData) {
     const name = formData.get('name') as string;
     const description = formData.get('description') as string;
     const deadline = formData.get('deadline') as string;
-    const status = formData.get('status') as string || 'active';
+    const statusRaw = formData.get('status') as string;
+    
+    // Valider et nettoyer le status
+    const validStatuses = ['active', 'on-hold', 'completed', 'cancelled'];
+    const status = validStatuses.includes(statusRaw) ? statusRaw : 'active';
 
     if (!name) {
       return { success: false, error: 'Nom requis' };
