@@ -27,11 +27,9 @@ export default function NewProjectPage() {
     if (result?.error) {
       setError(result.error);
       setLoading(false);
-    } else {
-      // Si pas d'erreur, redirection vers le dashboard
-      // TODO Phase 3: Implémenter wizard si continue_wizard = true
-      router.push('/cockpit/pro');
     }
+    // La redirection est gérée par la server action
+    // (vers le wizard si continue_wizard = true, sinon vers /cockpit/pro/projets)
   }
   
   // Fonction pour enrichir avec l'IA (Phase 4)

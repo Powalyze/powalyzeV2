@@ -102,7 +102,7 @@ export default function ProjectWizardPage({ params }: WizardProps) {
     setGenerating(true);
     try {
       let endpoint = '';
-      let payload = {
+      let payload: any = {
         projectId: params.id,
         projectName: project?.name,
         projectDescription: project?.description,

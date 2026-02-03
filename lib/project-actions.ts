@@ -30,7 +30,7 @@ export async function createProjectAction(formData: FormData) {
       return { error: 'Organisation non trouvée' };
     }
     
-    await createProject({
+    const project = await createProject({
       organization_id: profile.organization_id,
       name: formData.get('name') as string,
       description: formData.get('description') as string || undefined,
@@ -43,7 +43,14 @@ export async function createProjectAction(formData: FormData) {
     });
     
     revalidatePath('/cockpit/pro/projets');
-    redirect('/cockpit/pro/projets');
+    
+    // Check if wizard should be started
+    const continueWizard = formData.get('continue_wizard') === 'on';
+    if (continueWizard && project?.id) {
+      redirect(`/cockpit/pro/projets/${project.id}/wizard`);
+    } else {
+      redirect('/cockpit/pro/projets');
+    }
   } catch (err: any) {
     return { error: err.message || 'Erreur lors de la création du projet' };
   }
