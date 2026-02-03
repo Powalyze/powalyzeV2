@@ -11,7 +11,7 @@ export function getDemoData() {
       id: 'demo-project-1',
       organization_id: 'demo-org',
       name: 'Transformation Cloud',
-      description: 'Migration complète de notre infrastructure vers AWS pour améliorer la scalabilité, réduire les coûts opérationnels de 30% et accélérer le time-to-market des nouvelles fonctionnalités. Ce projet stratégique implique la migration de 150+ applications, la refonte de l'architecture réseau et la formation de 200 collaborateurs.',
+      description: 'Migration complete de notre infrastructure vers AWS pour ameliorer la scalabilite, reduire les couts operationnels de 30% et accelerer le time-to-market des nouvelles fonctionnalites. Ce projet strategique implique la migration de 150+ applications, la refonte de architecture reseau et la formation de 200 collaborateurs.',
       owner_id: 'demo-user-1',
       status: 'active',
       health: 'yellow',
