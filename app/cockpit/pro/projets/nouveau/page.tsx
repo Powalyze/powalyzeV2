@@ -200,12 +200,12 @@ export default function NewProjectPage() {
                 <select
                   id="health"
                   name="health"
-                  defaultValue="GREEN"
+                  defaultValue="green"
                   className="w-full px-4 py-3 bg-slate-800/50 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                 >
-                  <option value="GREEN">🟢 Vert (on track)</option>
-                  <option value="YELLOW">🟡 Jaune (attention)</option>
-                  <option value="RED">🔴 Rouge (critique)</option>
+                  <option value="green">🟢 Vert (on track)</option>
+                  <option value="yellow">🟡 Jaune (attention)</option>
+                  <option value="red">🔴 Rouge (critique)</option>
                 </select>
               </div>
             </div>
