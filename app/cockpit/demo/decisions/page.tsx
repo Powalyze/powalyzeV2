@@ -1,4 +1,4 @@
-// ============================================================
+﻿// ============================================================
 // POWALYZE COCKPIT V3 — DEMO DECISIONS PAGE
 // ============================================================
 
@@ -14,8 +14,8 @@ export default function DemoDecisionsPage() {
   const pendingDecisions = decisions.filter(d => d.status === 'pending');
   const approvedDecisions = decisions.filter(d => d.status === 'approved');
   const urgentDecisions = pendingDecisions.filter(d => {
-    if (!d.date) return false;
-    const decisionDate = new Date(d.date);
+    if (!d.decision_date) return false;
+    const decisionDate = new Date(d.decision_date);
     const weekFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     return decisionDate < weekFromNow;
   });
@@ -175,7 +175,7 @@ export default function DemoDecisionsPage() {
             <div className="p-4 space-y-3">
               {decisionsByStatus.pending.map((decision) => {
                 const project = projects.find(p => p.id === decision.project_id);
-                const isUrgent = decision.date && new Date(decision.date) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+                const isUrgent = decision.decision_date && new Date(decision.decision_date) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
                 
                 return (
                   <div
@@ -205,10 +205,10 @@ export default function DemoDecisionsPage() {
                       {decision.committee && (
                         <span>{decision.committee}</span>
                       )}
-                      {decision.date && (
+                      {decision.decision_date && (
                         <span>
                           <Calendar className="w-3 h-3 inline mr-1" />
-                          {new Date(decision.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
+                          {new Date(decision.decision_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
                         </span>
                       )}
                     </div>
@@ -258,9 +258,9 @@ export default function DemoDecisionsPage() {
                       {decision.committee && (
                         <span>{decision.committee}</span>
                       )}
-                      {decision.date && (
+                      {decision.decision_date && (
                         <span>
-                          {new Date(decision.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
+                          {new Date(decision.decision_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
                         </span>
                       )}
                     </div>

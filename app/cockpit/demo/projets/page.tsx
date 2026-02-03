@@ -1,4 +1,4 @@
-// ============================================================
+﻿// ============================================================
 // POWALYZE COCKPIT V3 — DEMO PROJETS PAGE
 // ============================================================
 
@@ -11,7 +11,7 @@ export default function DemoProjetsPage() {
   const { projects, risks, decisions } = data;
   
   // Calculs pour les statistiques
-  const healthyProjects = projects.filter(p => p.rag_status === 'GREEN').length;
+  const healthyProjects = projects.filter(p => p.health === 'green').length;
   const avgProgress = Math.round(projects.reduce((acc, p) => acc + (p.progress || 0), 0) / projects.length);
   
   return (
@@ -104,8 +104,8 @@ export default function DemoProjetsPage() {
                   <div className="flex items-start gap-6">
                     {/* Indicateur de santé */}
                     <div className={`w-4 h-4 rounded-full mt-1 flex-shrink-0 ${
-                      project.rag_status === 'GREEN' ? 'bg-green-500 shadow-lg shadow-green-500/50' :
-                      project.rag_status === 'YELLOW' ? 'bg-yellow-500 shadow-lg shadow-yellow-500/50' :
+                      project.health === 'green' ? 'bg-green-500 shadow-lg shadow-green-500/50' :
+                      project.health === 'yellow' ? 'bg-yellow-500 shadow-lg shadow-yellow-500/50' :
                       'bg-red-500 shadow-lg shadow-red-500/50'
                     }`} />
                     

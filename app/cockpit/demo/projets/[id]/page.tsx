@@ -57,8 +57,8 @@ export default function DemoProjetDetailPage({ params }: Props) {
             <div>
               <div className="flex items-center gap-4 mb-3">
                 <div className={`w-4 h-4 rounded-full ${
-                  project.rag_status === 'GREEN' ? 'bg-green-500 shadow-lg shadow-green-500/50' :
-                  project.rag_status === 'YELLOW' ? 'bg-yellow-500 shadow-lg shadow-yellow-500/50' :
+                  project.health === 'green' ? 'bg-green-500 shadow-lg shadow-green-500/50' :
+                  project.health === 'yellow' ? 'bg-yellow-500 shadow-lg shadow-yellow-500/50' :
                   'bg-red-500 shadow-lg shadow-red-500/50'
                 }`} />
                 <h1 className="text-4xl font-bold text-white">{project.name}</h1>
@@ -155,11 +155,11 @@ export default function DemoProjetDetailPage({ params }: Props) {
             <p className="text-slate-200 text-lg leading-relaxed">
               Le projet <strong>{project.name}</strong> affiche une progression de <strong>{project.progress}%</strong> avec 
               un statut de santé <strong className={
-                project.rag_status === 'GREEN' ? 'text-green-400' :
-                project.rag_status === 'YELLOW' ? 'text-yellow-400' :
+                project.health === 'green' ? 'text-green-400' :
+                project.health === 'yellow' ? 'text-yellow-400' :
                 'text-red-400'
               }>
-                {project.rag_status === 'GREEN' ? 'VERT' : project.rag_status === 'YELLOW' ? 'JAUNE' : 'ROUGE'}
+                {project.health === 'green' ? 'VERT' : project.health === 'yellow' ? 'JAUNE' : 'ROUGE'}
               </strong>.
               
               {criticalRisks.length > 0 && (
@@ -193,7 +193,7 @@ export default function DemoProjetDetailPage({ params }: Props) {
               {pendingDecisions.length > 0 && (
                 <li className="flex items-start gap-2">
                   <span className="text-amber-400 mt-1">•</span>
-                  <span>Organiser une session de décision COMEX avant {pendingDecisions[0].date ? new Date(pendingDecisions[0].date).toLocaleDateString('fr-FR') : 'fin de mois'}</span>
+                  <span>Organiser une session de décision COMEX avant {pendingDecisions[0].decision_date ? new Date(pendingDecisions[0].decision_date).toLocaleDateString('fr-FR') : 'fin de mois'}</span>
                 </li>
               )}
               <li className="flex items-start gap-2">
@@ -288,7 +288,7 @@ export default function DemoProjetDetailPage({ params }: Props) {
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex-1">
-                        {decision.status === 'pending' && decision.date && new Date(decision.date) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) && (
+                        {decision.status === 'pending' && decision.decision_date && new Date(decision.decision_date) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) && (
                           <span className="inline-block bg-red-500/20 text-red-400 text-xs font-bold px-2 py-0.5 rounded mb-2">
                             🔥 URGENT
                           </span>
@@ -315,10 +315,10 @@ export default function DemoProjetDetailPage({ params }: Props) {
                       {decision.committee && (
                         <div>Comité: <span className="text-white font-semibold">{decision.committee}</span></div>
                       )}
-                      {decision.date && (
+                      {decision.decision_date && (
                         <div>
                           <Clock className="w-3 h-3 inline mr-1" />
-                          <span className="text-white">{new Date(decision.date).toLocaleDateString('fr-FR')}</span>
+                          <span className="text-white">{new Date(decision.decision_date).toLocaleDateString('fr-FR')}</span>
                         </div>
                       )}
                     </div>

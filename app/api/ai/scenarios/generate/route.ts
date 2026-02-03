@@ -8,8 +8,10 @@ import { createClient } from '@/utils/supabase/server';
 import OpenAI from 'openai';
 import { MOCK_SCENARIOS, simulateAPIDelay, calculateMockTokens } from '@/lib/ai-mock-data';
 
+export const dynamic = 'force-dynamic';
+
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY || 'sk-fake-key',
 });
 
 const USE_MOCK = !process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY.startsWith('sk-fake');

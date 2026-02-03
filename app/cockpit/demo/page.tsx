@@ -1,4 +1,4 @@
-import { getDemoData } from '@/lib/demo-data';
+﻿import { getDemoData } from '@/lib/demo-data';
 import Link from 'next/link';
 
 export default function DemoPage() {
