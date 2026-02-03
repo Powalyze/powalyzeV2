@@ -6,10 +6,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import OpenAI from 'openai';
+import { MOCK_SCENARIOS, simulateAPIDelay, calculateMockTokens } from '@/lib/ai-mock-data';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+
+const USE_MOCK = !process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY.startsWith('sk-fake');
 
 const SCENARIOS_GENERATION_PROMPT = `Tu es un expert en prévisions de projet et analyse prédictive.
 
@@ -166,28 +169,40 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // 6. Appeler OpenAI
+    // 6. Appeler OpenAI OU utiliser mock
     const startTime = Date.now();
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4-turbo-preview',
-      messages: [
-        { role: 'system', content: SCENARIOS_GENERATION_PROMPT },
-        { role: 'user', content: userPrompt }
-      ],
-      response_format: { type: 'json_object' },
-      temperature: 0.8,
-    });
+    let scenarios: any[];
+    let tokensUsed = 0;
 
-    const latency = Date.now() - startTime;
-    const response = completion.choices[0].message.content;
-    
-    if (!response) {
-      throw new Error('Empty response from OpenAI');
+    if (USE_MOCK) {
+      // MODE MOCK : Simuler délai et utiliser données mockées
+      await simulateAPIDelay(6000, 10000);
+      scenarios = MOCK_SCENARIOS;
+      tokensUsed = calculateMockTokens(userPrompt.length, JSON.stringify(scenarios).length);
+    } else {
+      // MODE PRODUCTION : Appel réel OpenAI
+      const completion = await openai.chat.completions.create({
+        model: 'gpt-4-turbo-preview',
+        messages: [
+          { role: 'system', content: SCENARIOS_GENERATION_PROMPT },
+          { role: 'user', content: userPrompt }
+        ],
+        response_format: { type: 'json_object' },
+        temperature: 0.8,
+      });
+
+      const response = completion.choices[0].message.content;
+      
+      if (!response) {
+        throw new Error('Empty response from OpenAI');
+      }
+
+      const parsedResponse = JSON.parse(response);
+      scenarios = parsedResponse.scenarios || [];
+      tokensUsed = completion.usage?.total_tokens || 0;
     }
 
-    // 7. Parser la réponse
-    const parsedResponse = JSON.parse(response);
-    const scenarios = parsedResponse.scenarios || [];
+    const latency = Date.now() - startTime;
 
     if (scenarios.length !== 3) {
       throw new Error('Expected exactly 3 scenarios (optimistic, central, pessimistic)');
@@ -223,7 +238,7 @@ export async function POST(request: NextRequest) {
       generation_type: 'predictive_scenarios',
       input_data: { projectName, projectDescription, budget, deadline, risks, decisions },
       output_data: scenarios,
-      tokens_used: completion.usage?.total_tokens || 0,
+      tokens_used: tokensUsed,
       latency_ms: latency,
       success: true,
     });
@@ -234,8 +249,9 @@ export async function POST(request: NextRequest) {
       scenarios: insertedScenarios,
       meta: {
         count: insertedScenarios?.length || 0,
-        tokens: completion.usage?.total_tokens || 0,
+        tokens: tokensUsed,
         latency_ms: latency,
+        mode: USE_MOCK ? 'mock' : 'production',
       },
     });
 

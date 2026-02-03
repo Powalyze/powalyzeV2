@@ -6,10 +6,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import OpenAI from 'openai';
+import { MOCK_OBJECTIVES, simulateAPIDelay, calculateMockTokens } from '@/lib/ai-mock-data';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+
+const USE_MOCK = !process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY.startsWith('sk-fake');
 
 const OBJECTIVES_GENERATION_PROMPT = `Tu es un expert en définition d'objectifs SMART et gestion par objectifs (MBO).
 
@@ -131,28 +134,40 @@ export async function POST(request: NextRequest) {
       userPrompt += `\n\nContexte: Le projet doit être livré dans ${daysRemaining} jours. Les objectifs doivent avoir des deadlines échelonnées entre aujourd'hui et la fin du projet.`;
     }
 
-    // 6. Appeler OpenAI
+    // 6. Appeler OpenAI OU utiliser mock
     const startTime = Date.now();
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4-turbo-preview',
-      messages: [
-        { role: 'system', content: OBJECTIVES_GENERATION_PROMPT },
-        { role: 'user', content: userPrompt }
-      ],
-      response_format: { type: 'json_object' },
-      temperature: 0.7,
-    });
+    let objectives: any[];
+    let tokensUsed = 0;
 
-    const latency = Date.now() - startTime;
-    const response = completion.choices[0].message.content;
-    
-    if (!response) {
-      throw new Error('Empty response from OpenAI');
+    if (USE_MOCK) {
+      // MODE MOCK : Simuler délai et utiliser données mockées
+      await simulateAPIDelay(5000, 8000);
+      objectives = MOCK_OBJECTIVES;
+      tokensUsed = calculateMockTokens(userPrompt.length, JSON.stringify(objectives).length);
+    } else {
+      // MODE PRODUCTION : Appel réel OpenAI
+      const completion = await openai.chat.completions.create({
+        model: 'gpt-4-turbo-preview',
+        messages: [
+          { role: 'system', content: OBJECTIVES_GENERATION_PROMPT },
+          { role: 'user', content: userPrompt }
+        ],
+        response_format: { type: 'json_object' },
+        temperature: 0.7,
+      });
+
+      const response = completion.choices[0].message.content;
+      
+      if (!response) {
+        throw new Error('Empty response from OpenAI');
+      }
+
+      const parsedResponse = JSON.parse(response);
+      objectives = parsedResponse.objectives || [];
+      tokensUsed = completion.usage?.total_tokens || 0;
     }
 
-    // 7. Parser la réponse
-    const parsedResponse = JSON.parse(response);
-    const objectives = parsedResponse.objectives || [];
+    const latency = Date.now() - startTime;
 
     // 8. Insérer les objectifs dans la base
     const objectivesToInsert = objectives.map((objective: any) => ({
@@ -185,7 +200,7 @@ export async function POST(request: NextRequest) {
       generation_type: 'smart_objectives',
       input_data: { projectName, projectDescription, budget, deadline },
       output_data: objectives,
-      tokens_used: completion.usage?.total_tokens || 0,
+      tokens_used: tokensUsed,
       latency_ms: latency,
       success: true,
     });
@@ -196,8 +211,9 @@ export async function POST(request: NextRequest) {
       objectives: insertedObjectives,
       meta: {
         count: insertedObjectives?.length || 0,
-        tokens: completion.usage?.total_tokens || 0,
+        tokens: tokensUsed,
         latency_ms: latency,
+        mode: USE_MOCK ? 'mock' : 'production',
       },
     });
 

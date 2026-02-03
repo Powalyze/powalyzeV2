@@ -6,10 +6,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import OpenAI from 'openai';
+import { MOCK_RISKS, simulateAPIDelay, calculateMockTokens } from '@/lib/ai-mock-data';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+
+// Détection mode mock
+const USE_MOCK = !process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY.startsWith('sk-fake');
 
 const RISKS_GENERATION_PROMPT = `Tu es un expert en gestion de projet et analyse des risques.
 
@@ -113,28 +117,40 @@ export async function POST(request: NextRequest) {
       userPrompt += `\n\nÉchéance: ${new Date(deadline).toLocaleDateString('fr-FR')}`;
     }
 
-    // 6. Appeler OpenAI
+    // 6. Appeler OpenAI OU utiliser mock
     const startTime = Date.now();
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4-turbo-preview',
-      messages: [
-        { role: 'system', content: RISKS_GENERATION_PROMPT },
-        { role: 'user', content: userPrompt }
-      ],
-      response_format: { type: 'json_object' },
-      temperature: 0.7,
-    });
+    let risks: any[];
+    let tokensUsed = 0;
 
-    const latency = Date.now() - startTime;
-    const response = completion.choices[0].message.content;
-    
-    if (!response) {
-      throw new Error('Empty response from OpenAI');
+    if (USE_MOCK) {
+      // MODE MOCK : Simuler délai et utiliser données mockées
+      await simulateAPIDelay(4000, 7000);
+      risks = MOCK_RISKS.slice(0, 4); // Retourner 4 risques mockés
+      tokensUsed = calculateMockTokens(userPrompt.length, JSON.stringify(risks).length);
+    } else {
+      // MODE PRODUCTION : Appel réel OpenAI
+      const completion = await openai.chat.completions.create({
+        model: 'gpt-4-turbo-preview',
+        messages: [
+          { role: 'system', content: RISKS_GENERATION_PROMPT },
+          { role: 'user', content: userPrompt }
+        ],
+        response_format: { type: 'json_object' },
+        temperature: 0.7,
+      });
+
+      const response = completion.choices[0].message.content;
+      
+      if (!response) {
+        throw new Error('Empty response from OpenAI');
+      }
+
+      const parsedResponse = JSON.parse(response);
+      risks = Array.isArray(parsedResponse) ? parsedResponse : parsedResponse.risks || [];
+      tokensUsed = completion.usage?.total_tokens || 0;
     }
 
-    // 7. Parser la réponse
-    const parsedResponse = JSON.parse(response);
-    const risks = Array.isArray(parsedResponse) ? parsedResponse : parsedResponse.risks || [];
+    const latency = Date.now() - startTime;
 
     // 8. Insérer les risques dans la base
     const risksToInsert = risks.map((risk: any) => ({
@@ -168,7 +184,7 @@ export async function POST(request: NextRequest) {
       generation_type: 'risks_identification',
       input_data: { projectName, projectDescription, budget, deadline },
       output_data: risks,
-      tokens_used: completion.usage?.total_tokens || 0,
+      tokens_used: tokensUsed,
       latency_ms: latency,
       success: true,
     });
@@ -179,8 +195,9 @@ export async function POST(request: NextRequest) {
       risks: insertedRisks,
       meta: {
         count: insertedRisks?.length || 0,
-        tokens: completion.usage?.total_tokens || 0,
+        tokens: tokensUsed,
         latency_ms: latency,
+        mode: USE_MOCK ? 'mock' : 'production',
       },
     });
 
