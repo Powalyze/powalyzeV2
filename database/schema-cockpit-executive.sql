@@ -4,29 +4,20 @@
 -- Date: 2026-02-04
 -- Objectif: Tables pour cockpit exécutif avec
 --           connecteurs, IA narrative et automatisation
+-- Compatible avec architecture Powalyze (organization_id)
 -- ============================================
 
--- Projects (enhanced)
-CREATE TABLE IF NOT EXISTS projects (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name TEXT NOT NULL,
-  owner TEXT,
-  status TEXT CHECK (status IN ('planned','in_progress','on_hold','done','cancelled')),
-  start_date DATE,
-  end_date DATE,
-  strategic_alignment_score NUMERIC(5,2),
-  risk_level TEXT,
-  budget_planned NUMERIC,
-  budget_spent NUMERIC,
-  capacity_needed NUMERIC,
-  capacity_allocated NUMERIC,
-  bu TEXT,
-  country TEXT,
-  tags TEXT[],
-  tenant_id UUID NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- Projects (enhanced) - Ajoute colonnes manquantes à la table existante
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS strategic_alignment_score NUMERIC(5,2);
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS budget_planned NUMERIC;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS budget_spent NUMERIC;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS capacity_needed NUMERIC;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS capacity_allocated NUMERIC;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS bu TEXT;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS country TEXT;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS tags TEXT[];
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS external_id TEXT;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS external_source TEXT;
 
 -- Capacities
 CREATE TABLE IF NOT EXISTS capacities (
@@ -37,7 +28,8 @@ CREATE TABLE IF NOT EXISTS capacities (
   capacity_available NUMERIC,
   capacity_used NUMERIC,
   saturation_risk NUMERIC,
-  tenant_id UUID NOT NULL,
+  name TEXT,
+  organization_id UUID NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -52,7 +44,8 @@ CREATE TABLE IF NOT EXISTS risks (
   severity NUMERIC(5,2),
   owner TEXT,
   status TEXT,
-  tenant_id UUID NOT NULL,
+  mitigation TEXT,
+  organization_id UUID NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -66,7 +59,7 @@ CREATE TABLE IF NOT EXISTS decisions (
   due_date DATE,
   impact_area TEXT,
   priority TEXT CHECK (priority IN ('low','medium','high','critical')),
-  tenant_id UUID NOT NULL,
+  organization_id UUID NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -81,7 +74,7 @@ CREATE TABLE IF NOT EXISTS initiatives (
   linked_projects UUID[],
   expected_impact TEXT,
   horizon TEXT,
-  tenant_id UUID NOT NULL,
+  organization_id UUID NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -96,7 +89,7 @@ CREATE TABLE IF NOT EXISTS anomalies (
   detected_at TIMESTAMPTZ DEFAULT NOW(),
   resolved BOOLEAN DEFAULT FALSE,
   resolution TEXT,
-  tenant_id UUID NOT NULL
+  organization_id UUID NOT NULL
 );
 
 -- Budgets
@@ -108,7 +101,7 @@ CREATE TABLE IF NOT EXISTS budgets (
   actual NUMERIC,
   variance NUMERIC,
   variance_reason TEXT,
-  tenant_id UUID NOT NULL,
+  organization_id UUID NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -120,7 +113,7 @@ CREATE TABLE IF NOT EXISTS timeline (
   label TEXT,
   date DATE,
   type TEXT,
-  tenant_id UUID NOT NULL,
+  organization_id UUID NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -133,9 +126,10 @@ CREATE TABLE IF NOT EXISTS connectors (
   status TEXT CHECK (status IN ('active','error','pending','inactive')),
   last_sync TIMESTAMPTZ,
   sync_frequency TEXT, -- 'hourly', 'daily', 'weekly', 'monthly'
-  tenant_id UUID NOT NULL,
+  organization_id UUID NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(name, organization_id)
 );
 
 -- Reports (automatisation)
@@ -143,39 +137,43 @@ CREATE TABLE IF NOT EXISTS reports (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title TEXT NOT NULL,
   content JSONB,
-  generated_at TIMESTAMPTZ DEFAULT NOW(),
+  status TEXT,
+  recipients TEXT[],
+  created_at TIMESTAMPTZ DEFAULT NOW(),
   period DATE,
   type TEXT, -- 'monthly', 'executive', 'custom'
   sent BOOLEAN DEFAULT FALSE,
-  tenant_id UUID NOT NULL
+  organization_id UUID NOT NULL
 );
 
 -- Executive Overview (VIEW)
 CREATE OR REPLACE VIEW executive_overview AS
 SELECT
-  p.tenant_id,
+  p.organization_id AS tenant_id,
   COUNT(*) FILTER (WHERE p.status IN ('planned','in_progress')) AS projects_active,
   AVG(p.strategic_alignment_score) AS strategic_alignment,
   SUM(p.budget_spent) AS budget_spent_total,
   SUM(p.budget_planned) AS budget_planned_total,
-  (SUM(p.budget_spent) - SUM(p.budget_planned)) AS budget_variance_total,
-  (SELECT COUNT(*) FROM decisions d WHERE d.tenant_id = p.tenant_id AND d.status = 'pending') AS decisions_pending,
-  (SELECT COUNT(*) FROM risks r WHERE r.tenant_id = p.tenant_id AND r.severity > 70) AS risks_critical,
-  (SELECT COUNT(*) FROM anomalies a WHERE a.tenant_id = p.tenant_id AND a.resolved = FALSE) AS anomalies_unresolved,
+  (SUM(p.budget_spent) - SUM(p.budget_planned)) AS budget_variance,
+  (SELECT COUNT(*) FROM decisions d WHERE d.organization_id = p.organization_id AND d.status = 'pending') AS decisions_pending,
+  (SELECT COUNT(*) FROM risks r WHERE r.organization_id = p.organization_id AND r.severity > 70) AS risks_critical,
+  (SELECT COUNT(*) FROM anomalies a WHERE a.organization_id = p.organization_id AND a.resolved = FALSE) AS anomalies_unresolved,
   NOW() AS generated_at
 FROM projects p
-GROUP BY p.tenant_id;
+GROUP BY p.organization_id;
 
 -- Indexes for performance
-CREATE INDEX IF NOT EXISTS idx_projects_tenant ON projects(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_projects_organization ON projects(organization_id);
 CREATE INDEX IF NOT EXISTS idx_projects_status ON projects(status);
-CREATE INDEX IF NOT EXISTS idx_decisions_tenant ON decisions(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_projects_external ON projects(external_id, organization_id);
+CREATE INDEX IF NOT EXISTS idx_decisions_organization ON decisions(organization_id);
 CREATE INDEX IF NOT EXISTS idx_decisions_status ON decisions(status);
-CREATE INDEX IF NOT EXISTS idx_risks_tenant ON risks(tenant_id);
-CREATE INDEX IF NOT EXISTS idx_anomalies_tenant ON anomalies(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_risks_organization ON risks(organization_id);
+CREATE INDEX IF NOT EXISTS idx_anomalies_organization ON anomalies(organization_id);
 CREATE INDEX IF NOT EXISTS idx_anomalies_resolved ON anomalies(resolved);
-CREATE INDEX IF NOT EXISTS idx_connectors_tenant ON connectors(tenant_id);
-CREATE INDEX IF NOT EXISTS idx_reports_tenant ON reports(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_connectors_organization ON connectors(organization_id);
+CREATE INDEX IF NOT EXISTS idx_reports_organization ON reports(organization_id);
+CREATE INDEX IF NOT EXISTS idx_capacities_organization ON capacities(organization_id);
 
 -- Trigger updated_at
 CREATE OR REPLACE FUNCTION update_updated_at_column()
