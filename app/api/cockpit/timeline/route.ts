@@ -15,8 +15,7 @@ export async function GET(req: Request) {
 
   const { data, error } = await supabase
       .from('cockpit_timeline')
-    .eq('tenant_id', tenantId)
-    .order('date', { ascending: true });
+      .select('*')
 
   if (error) {
     console.error('[Cockpit Timeline] Error:', error);
