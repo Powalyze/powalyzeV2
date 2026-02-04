@@ -23,7 +23,7 @@ export async function seedDemoData(userId: string) {
 
   // 1. Projets
   await supabaseAdmin.from('projects').insert(
-    projectsData.map(p => ({ ...p, user_id: userId }))
+    projectsData.map(p => ({ ...p, owner_id: userId }))
   );
   console.log('[seedDemoData] ✅ Projects seeded');
 
