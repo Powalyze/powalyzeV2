@@ -7,10 +7,12 @@ import { Card, CardHeader, CardContent } from '@/components/ui/Card';
 import { Plus, Filter } from 'lucide-react';
 import { BackButton } from '@/components/BackButton';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { useTranslations } from '@/lib/useTranslations';
 
 export default function DecisionsPage() {
   const [decisions, setDecisions] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslations();
 
   return (
     <CockpitShell>
@@ -19,7 +21,7 @@ export default function DecisionsPage() {
           <div>
             <BackButton />
             <div className="flex items-center gap-4 mt-2">
-              <h1 className="text-3xl font-bold">Décisions Stratégiques</h1>
+              <h1 className="text-3xl font-bold">{t.nav.decisions || 'Décisions Stratégiques'}</h1>
               <LanguageSwitcher />
             </div>
             <p className="text-muted-foreground">
@@ -28,14 +30,14 @@ export default function DecisionsPage() {
           </div>
           <Button>
             <Plus className="h-4 w-4 mr-2" />
-            Nouvelle Décision
+            {t.common.new || 'Nouveau'} {t.nav.decisions || 'Décision'}
           </Button>
         </div>
 
         <div className="flex gap-4">
           <Button variant="outline" size="sm">
             <Filter className="h-4 w-4 mr-2" />
-            Filtrer
+            {t.common.filter || 'Filtrer'}
           </Button>
         </div>
 
@@ -43,7 +45,7 @@ export default function DecisionsPage() {
           {loading ? (
             <Card>
               <CardContent className="p-8 text-center text-muted-foreground">
-                Chargement...
+                {t.common.loading || 'Chargement...'}
               </CardContent>
             </Card>
           ) : decisions.length === 0 ? (

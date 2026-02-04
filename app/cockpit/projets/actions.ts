@@ -156,11 +156,18 @@ export async function createProject(formData: FormData) {
     const description = formData.get('description') as string;
     const owner = formData.get('owner') as string;
     const deadline = formData.get('deadline') as string;
-    const status = formData.get('status') as string || 'pending';
+    const status = formData.get('status') as string;
+    const bu = formData.get('bu') as string;
+    const country = formData.get('country') as string;
+    const budget_planned = formData.get('budget_planned') as string;
 
     if (!name || !owner) {
       return { success: false, error: 'Nom et responsable requis' };
     }
+
+    // VALIDATION: status doit être 'active', 'on_hold', ou 'closed'
+    const validStatuses = ['active', 'on_hold', 'closed'];
+    const finalStatus = status && validStatuses.includes(status) ? status : 'active';
 
     const supabase = getSupabaseService();
     const { data, error } = await supabase
@@ -172,10 +179,17 @@ export async function createProject(formData: FormData) {
         description: description || null,
         owner,
         deadline: deadline || null,
-        status,
+        status: finalStatus, // TOUJOURS une valeur valide
         health: 'green',
         progress: 0,
-        starred: false
+        starred: false,
+        bu: bu || 'IT',
+        country: country || 'France',
+        budget_planned: budget_planned ? parseFloat(budget_planned) : 100000,
+        budget_spent: 0,
+        capacity_needed: 10,
+        capacity_allocated: 0,
+        strategic_alignment_score: 50
       }])
       .select()
       .maybeSingle();
