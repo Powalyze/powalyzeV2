@@ -55,7 +55,8 @@ export async function GET(req: Request) {
   }
 
   let query = supabase
-      .from('cockpit_decisions')
+    .from('cockpit_decisions')
+    .select('*')
     .eq('tenant_id', tenantId);
 
   if (status) {
