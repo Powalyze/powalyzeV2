@@ -8,6 +8,7 @@
 -- ============================================
 
 -- Projects (enhanced) - Ajoute colonnes manquantes à la table existante
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS owner TEXT;
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS strategic_alignment_score NUMERIC(5,2);
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS budget_planned NUMERIC;
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS budget_spent NUMERIC;
@@ -55,6 +56,7 @@ CREATE TABLE IF NOT EXISTS cockpit_decisions (
   title TEXT NOT NULL,
   description TEXT,
   owner TEXT,
+  project_id UUID REFERENCES projects(id) ON DELETE SET NULL,
   status TEXT CHECK (status IN ('pending','validated','rejected','obsolete')),
   due_date DATE,
   impact_area TEXT,

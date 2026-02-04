@@ -14,8 +14,7 @@ export async function GET(req: Request) {
   }
 
   const { data, error } = await supabase
-    .from('executive_overview')
-    .select('*')
+      .from('cockpit_executive_overview')
     .eq('tenant_id', tenantId)
     .single();
 

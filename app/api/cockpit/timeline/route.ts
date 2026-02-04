@@ -14,8 +14,7 @@ export async function GET(req: Request) {
   }
 
   const { data, error } = await supabase
-    .from('timeline')
-    .select('*')
+      .from('cockpit_timeline')
     .eq('tenant_id', tenantId)
     .order('date', { ascending: true });
 
