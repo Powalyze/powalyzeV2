@@ -15,8 +15,7 @@ export async function GET(req: Request) {
 
   const { data, error } = await supabase
       .from('cockpit_executive_overview')
-    .eq('tenant_id', tenantId)
-    .single();
+      .select('*')
 
   if (error) {
     console.error('[Cockpit Overview] Error:', error);
