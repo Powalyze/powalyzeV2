@@ -34,7 +34,7 @@ export async function seedDemoData(userId: string, supabase: any) {
   // Seed demo data with organization_id
   if (projects.length) {
     await supabase.from("projects").insert(
-      projects.map((p: any) => ({ ...p, organization_id: orgId }))
+      projects.map((p: any) => ({ ...p, organization_id: orgId, status: 'active' }))
     );
     console.log('[seedDemoData] ✅ Projects seeded');
   }
