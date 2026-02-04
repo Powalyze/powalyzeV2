@@ -25,14 +25,14 @@ export function LanguageSwitcher() {
     <div className="flex items-center gap-2">
       <Globe className="h-4 w-4 text-muted-foreground" />
       <Button
-        variant={currentLocale === 'fr' ? 'default' : 'outline'}
+        variant={currentLocale === 'fr' ? 'primary' : 'outline'}
         size="sm"
         onClick={() => switchLanguage('fr')}
       >
         FR
       </Button>
       <Button
-        variant={currentLocale === 'en' ? 'default' : 'outline'}
+        variant={currentLocale === 'en' ? 'primary' : 'outline'}
         size="sm"
         onClick={() => switchLanguage('en')}
       >
