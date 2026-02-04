@@ -19,8 +19,8 @@ ALTER TABLE projects ADD COLUMN IF NOT EXISTS tags TEXT[];
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS external_id TEXT;
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS external_source TEXT;
 
--- Capacities
-CREATE TABLE IF NOT EXISTS capacities (
+-- Cockpit Capacities
+CREATE TABLE IF NOT EXISTS cockpit_capacities (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   team TEXT,
   skill TEXT,
@@ -33,8 +33,8 @@ CREATE TABLE IF NOT EXISTS capacities (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Risks
-CREATE TABLE IF NOT EXISTS risks (
+-- Cockpit Risks
+CREATE TABLE IF NOT EXISTS cockpit_risks (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   project_id UUID REFERENCES projects(id) ON DELETE CASCADE,
   title TEXT,
@@ -49,8 +49,8 @@ CREATE TABLE IF NOT EXISTS risks (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Decisions
-CREATE TABLE IF NOT EXISTS decisions (
+-- Cockpit Decisions
+CREATE TABLE IF NOT EXISTS cockpit_decisions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title TEXT NOT NULL,
   description TEXT,
@@ -64,8 +64,8 @@ CREATE TABLE IF NOT EXISTS decisions (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Initiatives
-CREATE TABLE IF NOT EXISTS initiatives (
+-- Cockpit Initiatives
+CREATE TABLE IF NOT EXISTS cockpit_initiatives (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
   type TEXT,
@@ -78,8 +78,8 @@ CREATE TABLE IF NOT EXISTS initiatives (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Anomalies
-CREATE TABLE IF NOT EXISTS anomalies (
+-- Cockpit Anomalies
+CREATE TABLE IF NOT EXISTS cockpit_anomalies (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   source TEXT,
   entity_type TEXT,
@@ -92,8 +92,8 @@ CREATE TABLE IF NOT EXISTS anomalies (
   organization_id UUID NOT NULL
 );
 
--- Budgets
-CREATE TABLE IF NOT EXISTS budgets (
+-- Cockpit Budgets
+CREATE TABLE IF NOT EXISTS cockpit_budgets (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   scope TEXT,
   period DATE,
@@ -105,8 +105,8 @@ CREATE TABLE IF NOT EXISTS budgets (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Timeline
-CREATE TABLE IF NOT EXISTS timeline (
+-- Cockpit Timeline
+CREATE TABLE IF NOT EXISTS cockpit_timeline (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   entity_type TEXT,
   entity_id UUID,
@@ -117,8 +117,8 @@ CREATE TABLE IF NOT EXISTS timeline (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Connectors
-CREATE TABLE IF NOT EXISTS connectors (
+-- Cockpit Connectors
+CREATE TABLE IF NOT EXISTS cockpit_connectors (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
   type TEXT NOT NULL, -- 'file', 'api', 'crm', 'erp', 'jira', 'monday'
@@ -132,8 +132,8 @@ CREATE TABLE IF NOT EXISTS connectors (
   UNIQUE(name, organization_id)
 );
 
--- Reports (automatisation)
-CREATE TABLE IF NOT EXISTS reports (
+-- Cockpit Reports (automatisation)
+CREATE TABLE IF NOT EXISTS cockpit_reports (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title TEXT NOT NULL,
   content JSONB,
@@ -146,8 +146,8 @@ CREATE TABLE IF NOT EXISTS reports (
   organization_id UUID NOT NULL
 );
 
--- Executive Overview (VIEW)
-CREATE OR REPLACE VIEW executive_overview AS
+-- Cockpit Executive Overview (VIEW)
+CREATE OR REPLACE VIEW cockpit_executive_overview AS
 SELECT
   p.organization_id AS tenant_id,
   COUNT(*) FILTER (WHERE p.status IN ('planned','in_progress')) AS projects_active,
@@ -155,9 +155,9 @@ SELECT
   SUM(p.budget_spent) AS budget_spent_total,
   SUM(p.budget_planned) AS budget_planned_total,
   (SUM(p.budget_spent) - SUM(p.budget_planned)) AS budget_variance,
-  (SELECT COUNT(*) FROM decisions d WHERE d.organization_id = p.organization_id AND d.status = 'pending') AS decisions_pending,
-  (SELECT COUNT(*) FROM risks r WHERE r.organization_id = p.organization_id AND r.severity > 70) AS risks_critical,
-  (SELECT COUNT(*) FROM anomalies a WHERE a.organization_id = p.organization_id AND a.resolved = FALSE) AS anomalies_unresolved,
+  (SELECT COUNT(*) FROM cockpit_decisions d WHERE d.organization_id = p.organization_id AND d.status = 'pending') AS decisions_pending,
+  (SELECT COUNT(*) FROM cockpit_risks r WHERE r.organization_id = p.organization_id AND r.severity > 70) AS risks_critical,
+  (SELECT COUNT(*) FROM cockpit_anomalies a WHERE a.organization_id = p.organization_id AND a.resolved = FALSE) AS anomalies_unresolved,
   NOW() AS generated_at
 FROM projects p
 GROUP BY p.organization_id;
@@ -166,14 +166,14 @@ GROUP BY p.organization_id;
 CREATE INDEX IF NOT EXISTS idx_projects_organization ON projects(organization_id);
 CREATE INDEX IF NOT EXISTS idx_projects_status ON projects(status);
 CREATE INDEX IF NOT EXISTS idx_projects_external ON projects(external_id, organization_id);
-CREATE INDEX IF NOT EXISTS idx_decisions_organization ON decisions(organization_id);
-CREATE INDEX IF NOT EXISTS idx_decisions_status ON decisions(status);
-CREATE INDEX IF NOT EXISTS idx_risks_organization ON risks(organization_id);
-CREATE INDEX IF NOT EXISTS idx_anomalies_organization ON anomalies(organization_id);
-CREATE INDEX IF NOT EXISTS idx_anomalies_resolved ON anomalies(resolved);
-CREATE INDEX IF NOT EXISTS idx_connectors_organization ON connectors(organization_id);
-CREATE INDEX IF NOT EXISTS idx_reports_organization ON reports(organization_id);
-CREATE INDEX IF NOT EXISTS idx_capacities_organization ON capacities(organization_id);
+CREATE INDEX IF NOT EXISTS idx_cockpit_decisions_org ON cockpit_decisions(organization_id);
+CREATE INDEX IF NOT EXISTS idx_cockpit_decisions_status ON cockpit_decisions(status);
+CREATE INDEX IF NOT EXISTS idx_cockpit_risks_org ON cockpit_risks(organization_id);
+CREATE INDEX IF NOT EXISTS idx_cockpit_anomalies_org ON cockpit_anomalies(organization_id);
+CREATE INDEX IF NOT EXISTS idx_cockpit_anomalies_resolved ON cockpit_anomalies(resolved);
+CREATE INDEX IF NOT EXISTS idx_cockpit_connectors_org ON cockpit_connectors(organization_id);
+CREATE INDEX IF NOT EXISTS idx_cockpit_reports_org ON cockpit_reports(organization_id);
+CREATE INDEX IF NOT EXISTS idx_cockpit_capacities_org ON cockpit_capacities(organization_id);
 
 -- Trigger updated_at
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -190,14 +190,14 @@ CREATE TRIGGER update_projects_updated_at
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
 
-DROP TRIGGER IF EXISTS update_decisions_updated_at ON decisions;
-CREATE TRIGGER update_decisions_updated_at
-  BEFORE UPDATE ON decisions
+DROP TRIGGER IF EXISTS update_cockpit_decisions_updated_at ON cockpit_decisions;
+CREATE TRIGGER update_cockpit_decisions_updated_at
+  BEFORE UPDATE ON cockpit_decisions
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
 
-DROP TRIGGER IF EXISTS update_connectors_updated_at ON connectors;
-CREATE TRIGGER update_connectors_updated_at
-  BEFORE UPDATE ON connectors
+DROP TRIGGER IF EXISTS update_cockpit_connectors_updated_at ON cockpit_connectors;
+CREATE TRIGGER update_cockpit_connectors_updated_at
+  BEFORE UPDATE ON cockpit_connectors
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
