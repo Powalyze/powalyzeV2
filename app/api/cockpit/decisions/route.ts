@@ -8,6 +8,7 @@ const supabase = createClient(
 
 export async function POST(req: Request) {
   const tenantId = req.headers.get('x-tenant-id');
+  const userId = req.headers.get('x-user-id'); // Optionnel
 
   if (!tenantId) {
     return NextResponse.json({ error: 'Missing tenant ID' }, { status: 400 });
@@ -15,7 +16,18 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { title, description, project_id, priority, due_date, owner, impact_area } = body;
+    const { 
+      title, 
+      description, 
+      project_id, 
+      priority, 
+      due_date, 
+      owner, 
+      responsible,
+      impact_area,
+      impact,
+      urgency
+    } = body;
 
     const { data, error } = await supabase
       .from('cockpit_decisions')
@@ -26,9 +38,14 @@ export async function POST(req: Request) {
         priority: priority || 'medium',
         due_date,
         owner,
+        responsible: responsible || owner,
         impact_area: impact_area || 'project',
+        impact: impact || 'medium',
+        urgency: urgency || 'medium',
         status: 'pending',
         tenant_id: tenantId,
+        created_by: userId, // Peut être null
+        organization_id: tenantId,
       })
       .select()
       .single();

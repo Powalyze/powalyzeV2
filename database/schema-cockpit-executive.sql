@@ -1,14 +1,16 @@
 -- ============================================
--- SCHEMA COCKPIT EXECUTIVE - VERSION INITIALE
+-- SCHEMA COCKPIT EXECUTIVE - VERSION FINALE
 -- ============================================
 -- Date: 2026-02-04
 -- Objectif: Tables pour cockpit exécutif avec
 --           connecteurs, IA narrative et automatisation
 -- Compatible avec architecture Powalyze (organization_id)
+-- TOUTES LES COLONNES INCLUSES
 -- ============================================
 
 -- Projects (enhanced) - Ajoute colonnes manquantes à la table existante
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS owner TEXT;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS user_id UUID;
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS strategic_alignment_score NUMERIC(5,2);
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS budget_planned NUMERIC;
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS budget_spent NUMERIC;
@@ -56,12 +58,17 @@ CREATE TABLE IF NOT EXISTS cockpit_decisions (
   title TEXT NOT NULL,
   description TEXT,
   owner TEXT,
+  responsible TEXT,
   project_id UUID REFERENCES projects(id) ON DELETE SET NULL,
   status TEXT CHECK (status IN ('pending','validated','rejected','obsolete')),
   due_date DATE,
   impact_area TEXT,
+  impact TEXT CHECK (impact IN ('low','medium','high','critical')),
+  urgency TEXT CHECK (urgency IN ('low','medium','high','critical')),
   priority TEXT CHECK (priority IN ('low','medium','high','critical')),
   organization_id UUID NOT NULL,
+  created_by UUID,
+  updated_by UUID,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -167,15 +174,23 @@ GROUP BY p.organization_id;
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_projects_organization ON projects(organization_id);
 CREATE INDEX IF NOT EXISTS idx_projects_status ON projects(status);
+CREATE INDEX IF NOT EXISTS idx_projects_user_id ON projects(user_id);
+CREATE INDEX IF NOT EXISTS idx_projects_bu ON projects(bu);
+CREATE INDEX IF NOT EXISTS idx_projects_country ON projects(country);
 CREATE INDEX IF NOT EXISTS idx_projects_external ON projects(external_id, organization_id);
 CREATE INDEX IF NOT EXISTS idx_cockpit_decisions_org ON cockpit_decisions(organization_id);
 CREATE INDEX IF NOT EXISTS idx_cockpit_decisions_status ON cockpit_decisions(status);
+CREATE INDEX IF NOT EXISTS idx_cockpit_decisions_project_id ON cockpit_decisions(project_id);
+CREATE INDEX IF NOT EXISTS idx_cockpit_decisions_impact ON cockpit_decisions(impact);
+CREATE INDEX IF NOT EXISTS idx_cockpit_decisions_urgency ON cockpit_decisions(urgency);
+CREATE INDEX IF NOT EXISTS idx_cockpit_decisions_created_by ON cockpit_decisions(created_by);
 CREATE INDEX IF NOT EXISTS idx_cockpit_risks_org ON cockpit_risks(organization_id);
 CREATE INDEX IF NOT EXISTS idx_cockpit_anomalies_org ON cockpit_anomalies(organization_id);
 CREATE INDEX IF NOT EXISTS idx_cockpit_anomalies_resolved ON cockpit_anomalies(resolved);
 CREATE INDEX IF NOT EXISTS idx_cockpit_connectors_org ON cockpit_connectors(organization_id);
 CREATE INDEX IF NOT EXISTS idx_cockpit_reports_org ON cockpit_reports(organization_id);
 CREATE INDEX IF NOT EXISTS idx_cockpit_capacities_org ON cockpit_capacities(organization_id);
+CREATE INDEX IF NOT EXISTS idx_cockpit_timeline_entity ON cockpit_timeline(entity_type, entity_id);
 
 -- Trigger updated_at
 CREATE OR REPLACE FUNCTION update_updated_at_column()
