@@ -1,8 +1,9 @@
 "use client";
 
 import { CockpitShell } from "@/components/cockpit/CockpitShell";
+import { BackButton } from "@/components/BackButton";
 import { useState, useRef, useEffect } from "react";
-import { Brain, Send, Sparkles, MessageSquare, Zap, Shield, Globe, TrendingUp, Upload, FileText, X } from "lucide-react";
+import { Brain, Send, Upload, FileText, X, CheckCircle, Shield, TrendingUp, MessageSquare, Zap, Globe } from "lucide-react";
 
 type Message = {
   id: string;
@@ -18,7 +19,7 @@ export default function IACopilotePage() {
     {
       id: "1",
       role: "assistant",
-      content: "Bonjour ! Je suis votre IA Copilote Powalyze. Je peux vous aider à analyser votre portefeuille, prendre des décisions, détecter des risques, générer des rapports et bien plus. Comment puis-je vous aider aujourd'hui ?",
+      content: "Bonjour ! Je suis votre IA Copilote Powalyze. Je peux analyser vos fichiers CSV/Excel, générer des rapports, et vous aider dans vos décisions. Importez un fichier pour commencer.",
       timestamp: new Date()
     }
   ]);
@@ -27,7 +28,9 @@ export default function IACopilotePage() {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<PreviewRow[]>([]);
   const [showPreview, setShowPreview] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -66,12 +69,15 @@ export default function IACopilotePage() {
   async function handleCreateReport() {
     if (!file) return;
     
+    setUploading(true);
     const formData = new FormData();
     formData.append('file', file);
     
     try {
+      const token = localStorage.getItem('token');
       const res = await fetch('/api/connectors/file', {
         method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
       const data = await res.json();
@@ -163,16 +169,23 @@ export default function IACopilotePage() {
             )}
           </div>
 
-          {/* Capabilities */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <CapabilityChip icon={<Brain size={16} />} label="Analyse globale" />
-            <CapabilityChip icon={<Sparkles size={16} />} label="Suggestions" />
-            <CapabilityChip icon={<Shield size={16} />} label="Détection risques" />
-            <CapabilityChip icon={<TrendingUp size={16} />} label="Prédictions" />
-            <CapabilityChip icon={<MessageSquare size={16} />} label="Rapports auto" />
-            <CapabilityChip icon={<Zap size={16} />} label="Décisions IA" />
-            <CapabilityChip icon={<Globe size={16} />} label="Multilingue" />
-            <CapabilityChip icon={<Brain size={16} />} label="Coaching" />
+          {/* Import Fichier */}
+          <div className="flex items-center gap-3">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".csv,.xlsx,.xls"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="px-4 py-2 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 rounded-lg flex items-center gap-2 text-purple-400"
+            >
+              <Upload size={18} />
+              Importer un fichier
+            </button>
+            {file && <span className="text-sm text-slate-400">{file.name}</span>}
           </div>
         </div>
 
