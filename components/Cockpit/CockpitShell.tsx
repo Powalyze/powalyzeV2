@@ -25,7 +25,7 @@ interface CockpitShellProps {
   hideFooter?: boolean;
 }
 
-export function CockpitShell({ children, hideFooter = false }: CockpitShellProps) {
+export function CockpitShell({ children, hideFooter = true }: CockpitShellProps) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
