@@ -8,8 +8,9 @@ const supabase = createClient(
 
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const tenantId = req.headers.get('x-tenant-id');
 
   if (!tenantId) {
@@ -20,7 +21,7 @@ export async function GET(
     const { data, error } = await supabase
       .from('cockpit_decisions')
       .select('*, project:projects(id, name)')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('tenant_id', tenantId)
       .single();
 
@@ -42,8 +43,9 @@ export async function GET(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const tenantId = req.headers.get('x-tenant-id');
 
   if (!tenantId) {
@@ -56,7 +58,7 @@ export async function PATCH(
     const { data, error } = await supabase
       .from('cockpit_decisions')
       .update(body)
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('tenant_id', tenantId)
       .select()
       .single();
