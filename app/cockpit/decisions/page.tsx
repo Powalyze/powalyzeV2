@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardContent } from '@/components/ui/Card';
 import { Plus, Filter } from 'lucide-react';
 import { BackButton } from '@/components/BackButton';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 export default function DecisionsPage() {
   const [decisions, setDecisions] = useState<any[]>([]);
@@ -17,7 +18,10 @@ export default function DecisionsPage() {
         <div className="flex items-center justify-between">
           <div>
             <BackButton />
-            <h1 className="text-3xl font-bold mt-2">Décisions Stratégiques</h1>
+            <div className="flex items-center gap-4 mt-2">
+              <h1 className="text-3xl font-bold">Décisions Stratégiques</h1>
+              <LanguageSwitcher />
+            </div>
             <p className="text-muted-foreground">
               Gérez les décisions clés de votre portefeuille
             </p>

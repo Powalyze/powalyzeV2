@@ -1,0 +1,72 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "import": "Import",
+    "add": "Add",
+    "new": "New"
+  },
+  "cockpit": {
+    "title": "Executive Cockpit",
+    "subtitle": "Portfolio Overview",
+    "projects": "Projects",
+    "risks": "Risks",
+    "decisions": "Decisions",
+    "team": "Team",
+    "data": "Data",
+    "settings": "Settings",
+    "profile": "Profile",
+    "logout": "Logout",
+    "welcome": "Welcome"
+  },
+  "projects": {
+    "title": "Projects",
+    "new": "New Project",
+    "status": {
+      "active": "Active",
+      "on_hold": "On Hold",
+      "closed": "Closed"
+    },
+    "budget": "Budget",
+    "progress": "Progress",
+    "owner": "Owner",
+    "description": "Description",
+    "startDate": "Start Date",
+    "endDate": "End Date"
+  },
+  "risks": {
+    "title": "Risks",
+    "new": "New Risk",
+    "severity": "Severity",
+    "probability": "Probability",
+    "impact": "Impact",
+    "status": "Status",
+    "mitigation": "Mitigation"
+  },
+  "decisions": {
+    "title": "Strategic Decisions",
+    "new": "New Decision",
+    "noDecisions": "No decisions recorded. Create your first decision.",
+    "impact": "Impact",
+    "urgency": "Urgency",
+    "responsible": "Responsible"
+  },
+  "nav": {
+    "home": "Home",
+    "features": "Features",
+    "expertise": "Expertise",
+    "resources": "Resources",
+    "pricing": "Pricing",
+    "contact": "Contact",
+    "login": "Login",
+    "signup": "Sign Up"
+  }
+}
