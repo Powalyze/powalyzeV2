@@ -17,8 +17,7 @@ export async function GET(req: Request) {
 
   let query = supabase
       .from('cockpit_anomalies')
-    .eq('tenant_id', tenantId);
-
+      .select('*')
   if (resolved !== null) {
     query = query.eq('resolved', resolved === 'true');
   }
