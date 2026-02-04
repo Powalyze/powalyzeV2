@@ -2,7 +2,7 @@
 
 import { CockpitShell } from "@/components/cockpit/CockpitShell";
 import { useState, useRef, useEffect } from "react";
-import { Brain, Send, Sparkles, MessageSquare, Zap, Shield, Globe, TrendingUp } from "lucide-react";
+import { Brain, Send, Sparkles, MessageSquare, Zap, Shield, Globe, TrendingUp, Upload, FileText, X } from "lucide-react";
 
 type Message = {
   id: string;
@@ -10,6 +10,8 @@ type Message = {
   content: string;
   timestamp: Date;
 };
+
+type PreviewRow = Record<string, string>;
 
 export default function IACopilotePage() {
   const [messages, setMessages] = useState<Message[]>([
@@ -22,6 +24,9 @@ export default function IACopilotePage() {
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<PreviewRow[]>([]);
+  const [showPreview, setShowPreview] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -31,6 +36,64 @@ export default function IACopilotePage() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  function parseCSV(text: string): PreviewRow[] {
+    const lines = text.split('\n').filter(l => l.trim().length > 0);
+    if (lines.length === 0) return [];
+    
+    const [headerLine, ...dataLines] = lines;
+    const headers = headerLine.split(/[;,\t]/).map(h => h.trim());
+    
+    return dataLines.slice(0, 20).map(line => {
+      const values = line.split(/[;,\t]/);
+      const row: PreviewRow = {};
+      headers.forEach((h, i) => (row[h] = values[i]?.trim() || ''));
+      return row;
+    });
+  }
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    
+    setFile(f);
+    const text = await f.text();
+    const rows = parseCSV(text);
+    setPreview(rows);
+    setShowPreview(true);
+  }
+
+  async function handleCreateReport() {
+    if (!file) return;
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    try {
+      const res = await fetch('/api/connectors/file', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+      
+      if (res.ok) {
+        const msg: Message = {
+          id: Date.now().toString(),
+          role: "assistant",
+          content: `✅ Fichier importé avec succès !\n\n${data.imported} lignes ont été ajoutées à votre portefeuille.\n\nVous pouvez maintenant analyser ces données dans le cockpit executive.`,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, msg]);
+        setShowPreview(false);
+        setFile(null);
+        setPreview([]);
+      } else {
+        alert(`Erreur: ${data.error}`);
+      }
+    } catch (error) {
+      alert('Erreur lors de l\'import du fichier');
+    }
+  }
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -60,7 +123,7 @@ export default function IACopilotePage() {
   };
 
   return (
-    <CockpitShell>
+    <CockpitShell hideFooter={true}>
       <div className="h-[calc(100vh-4rem)] flex flex-col max-w-7xl mx-auto">
         {/* Header */}
         <div className="p-6 md:p-8 border-b border-slate-800">
@@ -75,6 +138,31 @@ export default function IACopilotePage() {
             </div>
           </div>
 
+          {/* File Upload Section */}
+          <div className="mb-6 p-4 rounded-xl bg-slate-900/50 border border-slate-800">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Upload className="text-amber-400" size={20} />
+                <h3 className="font-semibold">Import de fichier</h3>
+              </div>
+              <label className="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold cursor-pointer transition-all text-sm">
+                Choisir un fichier
+                <input
+                  type="file"
+                  accept=".csv,.xls,.xlsx"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+              </label>
+            </div>
+            {file && (
+              <div className="flex items-center gap-2 text-sm text-slate-400">
+                <FileText size={14} />
+                {file.name} ({(file.size / 1024).toFixed(1)} KB)
+              </div>
+            )}
+          </div>
+
           {/* Capabilities */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <CapabilityChip icon={<Brain size={16} />} label="Analyse globale" />
@@ -87,6 +175,59 @@ export default function IACopilotePage() {
             <CapabilityChip icon={<Brain size={16} />} label="Coaching" />
           </div>
         </div>
+
+        {/* File Preview Modal */}
+        {showPreview && preview.length > 0 && (
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-slate-900 border border-slate-800 rounded-xl max-w-6xl w-full max-h-[80vh] overflow-auto">
+              <div className="sticky top-0 bg-slate-900 border-b border-slate-800 p-4 flex items-center justify-between">
+                <h2 className="text-xl font-bold">Prévisualisation - {preview.length} lignes</h2>
+                <button
+                  onClick={() => setShowPreview(false)}
+                  className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              
+              <div className="p-4 overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-slate-800">
+                      {Object.keys(preview[0]).map(key => (
+                        <th key={key} className="text-left p-2 text-slate-400 font-medium">{key}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {preview.map((row, i) => (
+                      <tr key={i} className="border-b border-slate-800/50 hover:bg-slate-800/30">
+                        {Object.values(row).map((val, j) => (
+                          <td key={j} className="p-2 text-slate-300">{val}</td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="sticky bottom-0 bg-slate-900 border-t border-slate-800 p-4 flex items-center gap-3">
+                <button
+                  onClick={() => setShowPreview(false)}
+                  className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition-all"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={handleCreateReport}
+                  className="px-6 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold transition-all"
+                >
+                  Créer un rapport avec ces données
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Chat Messages */}
         <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6">

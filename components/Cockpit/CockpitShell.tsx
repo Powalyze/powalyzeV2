@@ -22,9 +22,10 @@ import {
 
 interface CockpitShellProps {
   children: ReactNode;
+  hideFooter?: boolean;
 }
 
-export function CockpitShell({ children }: CockpitShellProps) {
+export function CockpitShell({ children, hideFooter = false }: CockpitShellProps) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -206,6 +207,13 @@ export function CockpitShell({ children }: CockpitShellProps) {
       >
         {children}
       </main>
+
+      {/* Footer conditionnel */}
+      {!hideFooter && (
+        <footer className="border-t border-slate-800 bg-slate-950 py-4 text-center text-sm text-slate-500">
+          Powalyze © {new Date().getFullYear()} - Cockpit Executive
+        </footer>
+      )}
     </div>
   );
 }

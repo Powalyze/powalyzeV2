@@ -1,327 +1,419 @@
-"use client";
+'use client';
 
-import { CockpitShell } from "@/components/cockpit/CockpitShell";
-import { ModalsHub } from "@/components/cockpit/ModalsHub";
-import { useState } from "react";
-import { Brain, Plus, Search, Filter, AlertCircle, CheckCircle2, Clock, MessageSquare, ThumbsUp, ThumbsDown, Eye } from "lucide-react";
-import { useToast } from "@/components/ui/ToastProvider";
-import { ActionMenu } from "@/components/ui/ActionMenu";
-import { StatusBadge } from "@/components/ui/StatusBadge";
+import { useState, useEffect } from 'react';
+import { Search, Filter, Brain, Plus, ThumbsUp, ThumbsDown, MessageSquare, Eye, Edit2, Copy, Trash2 } from 'lucide-react';
+import { useToast } from '@/components/ui/ToastProvider';
+import { useCockpit } from '@/components/providers/CockpitProvider';
+import { CockpitShell } from '@/components/cockpit/CockpitShell';
+import { ActionMenu } from '@/components/ui/ActionMenu';
+import { StatusBadge } from '@/components/ui/StatusBadge';
 
-type DecisionStatus = "draft" | "pending" | "validated" | "rejected";
-type DecisionImpact = "low" | "medium" | "high" | "critical";
+type DecisionStatus = 'draft' | 'pending' | 'validated' | 'rejected';
+type DecisionImpact = 'low' | 'medium' | 'high' | 'critical';
+type DecisionUrgency = 'low' | 'medium' | 'high' | 'critical';
 
-export default function DecisionsPage() {
-  const [selectedImpact, setSelectedImpact] = useState<string>("all");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showFiltersPanel, setShowFiltersPanel] = useState(false);
-  const [showNewDecisionModal, setShowNewDecisionModal] = useState(false);
-  const [showAIRecommendations, setShowAIRecommendations] = useState(false);
-  const { showToast } = useToast();
-  
-  // Projets demo
-  const demoProjects = [
-    { id: "1", name: "Cloud Migration" },
-    { id: "2", name: "ERP Refonte" },
-    { id: "3", name: "Mobile App v2" }
-  ];
-
-  // Handlers
-  const handleNewDecision = () => {
-    setShowNewDecisionModal(true);
-  };
-
-  const handleViewAIRecommendations = () => {
-    setShowAIRecommendations(true);
-    showToast('info', 'Recommandations IA', 'Analyse en cours des décisions à prendre...');
-  };
-
-  const handleReformulate = () => {
-    showToast('info', 'Reformulation IA', 'L\'IA va reformuler votre décision pour plus de clarté');
-  };
-
-  const handleAutoPrioritize = () => {
-    showToast('success', 'Priorisation', 'Décisions réorganisées selon l\'urgence et l\'impact');
-  };
-
-  const handleValidateDecision = (title: string) => {
-    showToast('success', 'Décision validée', `"${title}" a été approuvée`);
-  };
-
-  const handleRejectDecision = (title: string) => {
-    if (confirm(`Rejeter la décision "${title}" ?`)) {
-      showToast('warning', 'Décision rejetée', `"${title}" a été refusée`);
-    }
-  };
-
-  const handleComment = (title: string) => {
-    showToast('info', 'Commentaire', `Ajout de commentaire pour "${title}"`);
-  };
-
-  const handleViewDetails = (title: string) => {
-    showToast('info', 'Détails', `Ouverture de "${title}"`);
-  };
-
-  return (
-    <CockpitShell>
-      <div className="p-6 md:p-8 max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex items-start justify-between mb-6">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">Décisions</h1>
-            <p className="text-slate-400">Registre de décisions avec IA narrative</p>
-          </div>
-          <button 
-            onClick={handleNewDecision}
-            className="px-6 py-3 rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 font-semibold transition-all flex items-center gap-2"
-          >
-            <Plus size={20} />
-            <span>Nouvelle décision</span>
-          </button>
-        </div>
-
-        {/* AI Insights */}
-        <div className="mb-6 p-6 rounded-xl bg-gradient-to-br from-amber-500/10 via-sky-500/5 to-purple-500/10 border border-amber-500/30">
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center flex-shrink-0">
-              <Brain className="text-amber-400" size={24} />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-lg font-bold mb-2">IA Copilote • Décisions à prendre</h3>
-              <p className="text-slate-300 text-sm mb-3">
-                <strong className="text-amber-400">3 décisions urgentes</strong> requièrent votre attention. Je recommande de valider 
-                <strong className="text-white"> la réallocation budget ERP → Mobile</strong> (impact financier positif, 
-                économie de 120K€) et de <strong className="text-white">reporter le Sprint 12 de 3 jours</strong> pour sécuriser la qualité des livrables. 
-                La décision de recrutement pourrait attendre la fin du mois selon les prévisions de charge.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <button 
-                  onClick={handleViewAIRecommendations}
-                  className="px-3 py-1.5 text-sm rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 hover:text-amber-200 transition-colors"
-                >
-                  Voir décisions recommandées
-                </button>
-                <button 
-                  onClick={handleReformulate}
-                  className="px-3 py-1.5 text-sm rounded-lg bg-slate-800/50 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white transition-colors"
-                >
-                  Reformuler une décision
-                </button>
-                <button 
-                  onClick={handleAutoPrioritize}
-                  className="px-3 py-1.5 text-sm rounded-lg bg-slate-800/50 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white transition-colors"
-                >
-                  Prioriser automatiquement
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Toolbar */}
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
-          {/* Impact Filter */}
-          <div className="flex gap-2 p-1 bg-slate-900 rounded-lg border border-slate-800">
-            <button
-              onClick={() => setSelectedImpact("all")}
-              className={`px-4 py-2 rounded-lg transition-colors text-sm ${
-                selectedImpact === "all"
-                  ? "bg-amber-500 text-slate-950 font-semibold"
-                  : "text-slate-400 hover:text-white"
-              }`}
-            >
-              Toutes
-            </button>
-            <button
-              onClick={() => setSelectedImpact("critical")}
-              className={`px-4 py-2 rounded-lg transition-colors text-sm ${
-                selectedImpact === "critical"
-                  ? "bg-amber-500 text-slate-950 font-semibold"
-                  : "text-slate-400 hover:text-white"
-              }`}
-            >
-              Critiques
-            </button>
-            <button
-              onClick={() => setSelectedImpact("high")}
-              className={`px-4 py-2 rounded-lg transition-colors text-sm ${
-                selectedImpact === "high"
-                  ? "bg-amber-500 text-slate-950 font-semibold"
-                  : "text-slate-400 hover:text-white"
-              }`}
-            >
-              Importantes
-            </button>
-          </div>
-
-          {/* Search & Filters */}
-          <div className="flex gap-2 flex-1">
-            <div className="flex-1 relative">
-              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Rechercher une décision..."
-                className="w-full pl-10 pr-4 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-amber-500"
-              />
-            </div>
-            <button className="px-4 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-400 hover:text-white hover:border-slate-700 transition-colors flex items-center gap-2">
-              <Filter size={18} />
-              <span className="hidden sm:inline">Filtres</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Decisions Grid */}
-        <div className="space-y-4">
-          <DecisionCard
-            title="Réallocation budget ERP → Mobile App"
-            description="Transférer 120K€ du budget ERP vers Mobile App pour tenir les délais Q1"
-            status="pending"
-            impact="high"
-            urgency="high"
-            owner="Marie Leroux"
-            date="Il y a 2 heures"
-            aiInsight="Impact financier positif. Économie de 120K€ sur les risques ERP. Mobile App critique pour le business."
-          />
-          <DecisionCard
-            title="Report Sprint 12 de 3 jours"
-            description="Reporter le sprint pour finaliser les tests de sécurité"
-            status="pending"
-            impact="medium"
-            urgency="high"
-            owner="Thomas Bernard"
-            date="Hier"
-            aiInsight="Recommandé. La qualité doit primer sur la vélocité. Les tests de sécurité sont critiques."
-          />
-          <DecisionCard
-            title="Recrutement 2 devs seniors front-end"
-            description="Renforcer l'équipe Mobile App avec 2 seniors React Native"
-            status="validated"
-            impact="high"
-            urgency="medium"
-            owner="Sophie Martin"
-            date="Il y a 3 jours"
-            aiInsight="Validée. Compétences critiques identifiées. Budget confirmé."
-          />
-          <DecisionCard
-            title="Migration Cloud Q2 → Q3"
-            description="Reporter la migration cloud au T3 pour sécuriser la préparation"
-            status="draft"
-            impact="critical"
-            urgency="low"
-            owner="Pierre Durand"
-            date="Il y a 5 jours"
-            aiInsight="À analyser. Impact sur la roadmap produit. Dépendances avec 4 autres projets."
-          />
-        </div>
-      </div>
-      
-      <ModalsHub projects={demoProjects} />
-    </CockpitShell>
-  );
-}
-
-function DecisionCard({
-  title,
-  description,
-  status,
-  impact,
-  urgency,
-  owner,
-  date,
-  aiInsight
-}: {
+interface Decision {
+  id: string;
   title: string;
   description: string;
   status: DecisionStatus;
   impact: DecisionImpact;
-  urgency: string;
+  urgency: DecisionUrgency;
   owner: string;
   date: string;
   aiInsight: string;
-}) {
-  const statusConfig = {
-    draft: { label: "Brouillon", color: "bg-slate-500/10 text-slate-400 border-slate-500/30" },
-    pending: { label: "En attente", color: "bg-amber-500/10 text-amber-400 border-amber-500/30" },
-    validated: { label: "Validée", color: "bg-green-500/10 text-green-400 border-green-500/30" },
-    rejected: { label: "Refusée", color: "bg-red-500/10 text-red-400 border-red-500/30" }
+  project: string;
+}
+
+export default function DecisionsPage() {
+  const { showToast } = useToast();
+  const { getItems, addItem, updateItem, deleteItem, refreshCount } = useCockpit();
+  
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showNewModal, setShowNewModal] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [pendingReject, setPendingReject] = useState<{ id: string; title: string } | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    impact: 'medium' as DecisionImpact,
+    urgency: 'medium' as DecisionUrgency,
+    owner: '',
+    project: ''
+  });
+
+  // Load decisions from store une seule fois
+  useEffect(() => {
+    if (!isInitialized) {
+      const stored = getItems('decisions');
+      if (stored.length === 0) {
+        // Initialize with demo data (une seule fois)
+        const demoDecisions: Decision[] = [
+          {
+            id: '1',
+            title: 'Migration vers Azure Cloud',
+            description: 'Décision stratégique de migrer l\'infrastructure',
+            status: 'validated',
+            impact: 'critical',
+            urgency: 'high',
+            owner: 'CTO',
+            date: 'Il y a 2h',
+            aiInsight: 'Impact financier positif estimé à +25%',
+            project: 'Cloud Migration'
+          },
+          {
+            id: '2',
+            title: 'Adoption méthodologie Agile',
+            description: 'Passage des équipes à Agile/Scrum',
+            status: 'pending',
+            impact: 'high',
+            urgency: 'medium',
+            owner: 'PMO',
+            date: 'Il y a 5h',
+            aiInsight: 'Amélioration vélocité attendue +30%',
+            project: 'Transformation'
+          }
+        ];
+        demoDecisions.forEach(d => addItem('decisions', d));
+      }
+      setIsInitialized(true);
+    }
+  }, [isInitialized, getItems, addItem]);
+
+  // Utiliser directement getItems au lieu d'un state local
+  // refreshCount force le re-calcul quand les données changent
+  const decisions = refreshCount >= 0 ? getItems('decisions') : [];
+
+  const handleCreate = () => {
+    if (!formData.title.trim()) {
+      showToast('error', 'Erreur', 'Le titre est obligatoire');
+      return;
+    }
+
+    const newDecision: Decision = {
+      ...formData,
+      id: Date.now().toString(),
+      status: 'draft',
+      date: "À l'instant",
+      aiInsight: "Nouvelle décision en attente d'analyse IA"
+    };
+
+    addItem('decisions', newDecision);
+    setFormData({ title: '', description: '', impact: 'medium', urgency: 'medium', owner: '', project: '' });
+    setShowNewModal(false);
+    showToast('success', '✅ Décision créée', `"${newDecision.title}" a été enregistrée`);
   };
 
-  const impactConfig = {
-    low: { label: "Faible", color: "bg-slate-600" },
-    medium: { label: "Moyen", color: "bg-blue-500" },
-    high: { label: "Fort", color: "bg-amber-500" },
-    critical: { label: "Critique", color: "bg-red-500" }
+  const handleValidate = (id: string, title: string) => {
+    updateItem('decisions', id, { status: 'validated' });
+    showToast('success', 'Décision validée', `"${title}" approuvée`);
   };
+
+  const handleReject = (id: string, title: string) => {
+    setPendingReject({ id, title });
+    setShowRejectModal(true);
+  };
+
+  const confirmReject = () => {
+    if (pendingReject) {
+      updateItem('decisions', pendingReject.id, { status: 'rejected' });
+      showToast('warning', 'Décision rejetée', `"${pendingReject.title}" refusée`);
+      setShowRejectModal(false);
+      setPendingReject(null);
+    }
+  };
+
+  const handleDelete = (id: string, title: string) => {
+    if (confirm(`Supprimer "${title}" ?`)) {
+      deleteItem('decisions', id);
+      showToast('success', 'Supprimée', `"${title}" supprimée`);
+    }
+  };
+
+  const handleDuplicate = (decision: Decision) => {
+    const duplicate = {
+      ...decision,
+      id: undefined,
+      title: `${decision.title} (copie)`,
+      status: 'draft' as DecisionStatus,
+      date: "À l'instant"
+    };
+    addItem('decisions', duplicate);
+    showToast('success', 'Dupliquée', 'Décision copiée');
+  };
+
+  // Filtrer les décisions
+  const filtered = decisions.filter(d =>
+    d.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    d.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
-    <div className="p-6 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition-all">
-      <div className="flex flex-col lg:flex-row gap-6">
-        {/* Main Content */}
-        <div className="flex-1">
-          <div className="flex items-start justify-between mb-3">
-            <h3 className="text-xl font-bold flex-1">{title}</h3>
-            <div className="flex gap-2">
-              <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${statusConfig[status].color}`}>
-                {statusConfig[status].label}
-              </span>
-            </div>
+    <CockpitShell>
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">Décisions</h1>
+            <p className="text-slate-400">Registre des décisions stratégiques avec IA</p>
           </div>
-          <p className="text-slate-400 mb-4">{description}</p>
-
-          {/* Metadata */}
-          <div className="flex flex-wrap gap-4 text-sm mb-4">
-            <div className="flex items-center gap-2">
-              <span className="text-slate-500">Impact:</span>
-              <span className={`px-2 py-1 rounded ${impactConfig[impact].color} text-white text-xs font-semibold`}>
-                {impactConfig[impact].label}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-slate-500">Urgence:</span>
-              <span className="text-slate-300 font-semibold">{urgency === "high" ? "Haute" : urgency === "medium" ? "Moyenne" : "Faible"}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-slate-500">Responsable:</span>
-              <span className="text-slate-300 font-semibold">{owner}</span>
-            </div>
-            <div className="flex items-center gap-2 text-slate-500">
-              <Clock size={14} />
-              <span>{date}</span>
-            </div>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setShowNewModal(true)}
+              className="px-6 py-3 bg-purple-500 hover:bg-purple-600 rounded-lg font-semibold flex items-center gap-2"
+            >
+              <Plus size={20} />
+              Nouvelle décision
+            </button>
+            <button 
+              onClick={() => {
+                showToast('info', '🤖 IA en cours', 'Analyse des décisions et génération de recommandations...');
+                setTimeout(() => {
+                  showToast('success', 'Recommandations IA', '3 recommandations stratégiques générées avec succès');
+                }, 2000);
+              }}
+              className="px-4 py-2 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 rounded-lg flex items-center gap-2"
+            >
+              <Brain size={18} />
+              Recommandations IA
+            </button>
           </div>
-
-          {/* AI Insight */}
-          <div className="p-4 rounded-lg bg-gradient-to-br from-amber-500/10 to-sky-500/5 border border-amber-500/20">
-            <div className="flex items-start gap-3">
-              <Brain size={18} className="text-amber-400 flex-shrink-0 mt-0.5" />
-              <div>
-                <div className="text-xs font-semibold text-amber-400 mb-1">IA Copilote</div>
-                <p className="text-sm text-slate-300">{aiInsight}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="flex lg:flex-col gap-2 lg:w-48">
-          {status === "pending" && (
-            <>
-              <button className="px-4 py-2 rounded-lg bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-400 hover:text-green-300 font-semibold transition-colors flex items-center justify-center gap-2 flex-1 lg:flex-none">
-                <CheckCircle2 size={18} />
-                <span>Valider</span>
-              </button>
-              <button className="px-4 py-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 text-red-400 hover:text-red-300 font-semibold transition-colors flex items-center justify-center gap-2 flex-1 lg:flex-none">
-                <AlertCircle size={18} />
-                <span>Refuser</span>
-              </button>
-            </>
-          )}
-          <button className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white font-semibold transition-colors">
-            Détails
-          </button>
         </div>
       </div>
-    </div>
+      {/* Search */}
+      <div className="mb-6">
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+          <input
+            type="text"
+            placeholder="Rechercher une décision..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-12 pr-4 py-3 bg-[#111113] border border-slate-800 rounded-lg focus:border-purple-500/50 focus:outline-none"
+          />
+        </div>
+      </div>
+
+      {/* Decisions List */}
+      <div className="grid gap-4">
+        {filtered.map((decision) => (
+          <div key={decision.id} className="bg-[#111113] border border-slate-800 rounded-xl p-6 hover:border-purple-500/30 transition-all">
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-2">
+                  <h3 className="text-lg font-semibold">{decision.title}</h3>
+                  <StatusBadge status={decision.status} />
+                </div>
+                <p className="text-slate-400 text-sm mb-3">{decision.description}</p>
+                <div className="flex items-center gap-4 text-xs text-slate-500">
+                  <span>👤 {decision.owner}</span>
+                  <span>📁 {decision.project}</span>
+                  <span>⏰ {decision.date}</span>
+                </div>
+              </div>
+              <ActionMenu
+                items={[
+                  { icon: Edit2, label: 'Éditer', onClick: () => showToast('info', 'Édition', 'Fonction à venir') },
+                  { icon: Copy, label: 'Dupliquer', onClick: () => handleDuplicate(decision) },
+                  { icon: Trash2, label: 'Supprimer', onClick: () => handleDelete(decision.id, decision.title), variant: 'danger' }
+                ]}
+              />
+            </div>
+
+            {decision.aiInsight && (
+              <div className="bg-purple-500/5 border border-purple-500/20 rounded-lg p-3 mb-4">
+                <div className="flex items-start gap-2">
+                  <Brain size={16} className="text-purple-400 mt-0.5" />
+                  <p className="text-sm text-slate-300">{decision.aiInsight}</p>
+                </div>
+              </div>
+            )}
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => handleValidate(decision.id, decision.title)}
+                className="px-4 py-2 bg-green-500/10 hover:bg-green-500/20 border border-green-500/30 rounded-lg text-sm flex items-center gap-2 text-green-400"
+              >
+                <ThumbsUp size={16} />
+                Valider
+              </button>
+              <button
+                onClick={() => handleReject(decision.id, decision.title)}
+                className="px-4 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-lg text-sm flex items-center gap-2 text-red-400"
+              >
+                <ThumbsDown size={16} />
+                Rejeter
+              </button>
+              <button 
+                onClick={() => showToast('info', '💬 Commentaire', 'Fonction de commentaire disponible prochainement')}
+                className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm flex items-center gap-2"
+              >
+                <MessageSquare size={16} />
+                Commenter
+              </button>
+              <button 
+                onClick={() => showToast('info', '👁️ Détails', 'Vue détaillée de la décision disponible prochainement')}
+                className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm flex items-center gap-2"
+              >
+                <Eye size={16} />
+                Détails
+              </button>
+            </div>
+          </div>
+        ))}
+
+        {filtered.length === 0 && (
+          <div className="text-center py-12 text-slate-400">
+            <Brain size={48} className="mx-auto mb-4 opacity-20" />
+            <p>Aucune décision trouvée</p>
+          </div>
+        )}
+      </div>
+
+      {/* New Decision Modal */}
+      {showNewModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50" onClick={() => setShowNewModal(false)}>
+          <div className="bg-[#111113] border border-slate-800 rounded-xl p-6 max-w-2xl w-full mx-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold">Nouvelle décision</h2>
+              <button onClick={() => setShowNewModal(false)} className="text-slate-400 hover:text-white">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold mb-2">Titre *</label>
+                <input
+                  type="text"
+                  value={formData.title}
+                  onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                  className="w-full px-4 py-2 bg-[#0A0A0B] border border-slate-800 rounded-lg focus:border-purple-500/50 focus:outline-none"
+                  placeholder="Ex: Migration vers le cloud"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-2">Description</label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                  rows={3}
+                  className="w-full px-4 py-2 bg-[#0A0A0B] border border-slate-800 rounded-lg focus:border-purple-500/50 focus:outline-none"
+                  placeholder="Détails de la décision..."
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold mb-2">Impact</label>
+                  <select
+                    value={formData.impact}
+                    onChange={(e) => setFormData(prev => ({ ...prev, impact: e.target.value as DecisionImpact }))}
+                    className="w-full px-4 py-2 bg-[#0A0A0B] border border-slate-800 rounded-lg"
+                  >
+                    <option value="low">Faible</option>
+                    <option value="medium">Moyen</option>
+                    <option value="high">Fort</option>
+                    <option value="critical">Critique</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold mb-2">Urgence</label>
+                  <select
+                    value={formData.urgency}
+                    onChange={(e) => setFormData(prev => ({ ...prev, urgency: e.target.value as DecisionUrgency }))}
+                    className="w-full px-4 py-2 bg-[#0A0A0B] border border-slate-800 rounded-lg"
+                  >
+                    <option value="low">Faible</option>
+                    <option value="medium">Moyenne</option>
+                    <option value="high">Haute</option>
+                    <option value="critical">Critique</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold mb-2">Responsable</label>
+                  <input
+                    type="text"
+                    value={formData.owner}
+                    onChange={(e) => setFormData(prev => ({ ...prev, owner: e.target.value }))}
+                    className="w-full px-4 py-2 bg-[#0A0A0B] border border-slate-800 rounded-lg"
+                    placeholder="Ex: Marie Dupont"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold mb-2">Projet</label>
+                  <input
+                    type="text"
+                    value={formData.project}
+                    onChange={(e) => setFormData(prev => ({ ...prev, project: e.target.value }))}
+                    className="w-full px-4 py-2 bg-[#0A0A0B] border border-slate-800 rounded-lg"
+                    placeholder="Ex: Cloud Migration"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => setShowNewModal(false)}
+                className="flex-1 px-6 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg font-semibold"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handleCreate}
+                className="flex-1 px-6 py-3 bg-purple-500 hover:bg-purple-600 rounded-lg font-semibold"
+              >
+                Créer la décision
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reject Confirmation Modal */}
+      {showRejectModal && pendingReject && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50" onClick={() => setShowRejectModal(false)}>
+          <div className="bg-[#111113] border border-red-500/30 rounded-xl p-6 max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
+                <ThumbsDown size={24} className="text-red-400" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold">Rejeter la décision</h2>
+                <p className="text-sm text-slate-400">Cette action peut être annulée</p>
+              </div>
+            </div>
+
+            <p className="text-slate-300 mb-6">
+              Voulez-vous vraiment rejeter <strong className="text-white">"{pendingReject.title}"</strong> ?
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowRejectModal(false)}
+                className="flex-1 px-6 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg font-semibold transition-colors"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={confirmReject}
+                className="flex-1 px-6 py-3 bg-red-500 hover:bg-red-600 rounded-lg font-semibold transition-colors"
+              >
+                Rejeter
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </CockpitShell>
   );
 }
