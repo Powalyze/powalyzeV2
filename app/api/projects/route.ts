@@ -21,6 +21,7 @@ export async function POST(req: NextRequest) {
         organization_id: body.organizationId,
         name: body.name,
         description: body.description ?? null,
+        status: 'active',
       })
       .select('*')
       .single();
