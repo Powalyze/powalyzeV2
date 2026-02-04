@@ -102,7 +102,7 @@ export async function POST(req: Request) {
       .insert({
         name,
         description,
-        status: status || 'active',
+        status: status && ['active', 'on_hold', 'closed'].includes(status) ? status : 'active',
         owner: owner || 'Admin',
         user_id: userId, // Peut être null
         bu: bu || 'IT',
