@@ -1,0 +1,50 @@
+{
+  "slug": "securite",
+  "locales": {
+    "fr": {
+      "title": "Sécurité & Gouvernance",
+      "hero": {
+        "tagline": "Sécurité",
+        "title": "Une plateforme de gouvernance ne peut pas être légère sur la sécurité.",
+        "highlight": "ne peut pas",
+        "description": "Powalyze est conçu pour des organisations exigeantes. La sécurité, la confidentialité et la gouvernance des accès sont au cœur de l'architecture.",
+        "primaryCtaLabel": "Parler sécurité",
+        "primaryCtaUrl": "/contact",
+        "secondaryCtaLabel": "Voir le produit",
+        "secondaryCtaUrl": "/produit",
+        "videoBackground": false
+      },
+      "sections": [
+        {
+          "type": "bullet-columns",
+          "eyebrow": "Principes",
+          "title": "Nos principes de sécurité.",
+          "items": [
+            {
+              "title": "Hébergement exigeant",
+              "body": "Environnement cloud conforme aux standards modernes."
+            },
+            {
+              "title": "Chiffrement",
+              "body": "Chiffrement en transit et au repos pour les données sensibles."
+            },
+            {
+              "title": "Gouvernance des accès",
+              "body": "Rôles, permissions, traçabilité."
+            }
+          ]
+        },
+        {
+          "type": "final-cta",
+          "eyebrow": "Transparence",
+          "title": "Discuter de vos exigences.",
+          "body": "<p>Nous adaptons le dispositif à vos contraintes réglementaires et internes.</p>",
+          "primaryCtaLabel": "Planifier une session",
+          "primaryCtaUrl": "/contact",
+          "secondaryCtaLabel": "Voir les cas d'usage",
+          "secondaryCtaUrl": "/cas-d-usage"
+        }
+      ]
+    }
+  }
+}

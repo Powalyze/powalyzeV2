@@ -1,0 +1,56 @@
+{
+  "slug": "vision",
+  "locales": {
+    "fr": {
+      "title": "Vision Powalyze",
+      "hero": {
+        "tagline": "Vision",
+        "title": "Une gouvernance qui pense en portefeuilles, scénarios et capacités.",
+        "highlight": "portefeuilles, scénarios et capacités",
+        "description": "Notre vision : donner aux organisations un cockpit de gouvernance capable de relier leurs ambitions, leurs contraintes et leurs données, sans les noyer dans la complexité.",
+        "primaryCtaLabel": "Voir le Gold Standard",
+        "primaryCtaUrl": "/gold-standard",
+        "secondaryCtaLabel": "Voir le produit",
+        "secondaryCtaUrl": "/produit",
+        "videoBackground": false
+      },
+      "sections": [
+        {
+          "type": "rich-text",
+          "eyebrow": "Cap",
+          "title": "Relier ambitions, contraintes et données.",
+          "content": "<p>Nous voulons que chaque organisation puisse piloter ses transformations comme un portefeuille cohérent de paris, de risques et de trajectoires, soutenu par une donnée propre et une gouvernance explicite.</p>"
+        },
+        {
+          "type": "bullet-columns",
+          "eyebrow": "Axes",
+          "title": "Trois axes de la vision Powalyze.",
+          "items": [
+            {
+              "title": "Portefeuilles lisibles",
+              "body": "Une vue claire de ce qui est en cours, envisagé, abandonné."
+            },
+            {
+              "title": "Scénarios assumés",
+              "body": "Des trajectoires explicites, comparées, discutées."
+            },
+            {
+              "title": "Capacités maîtrisées",
+              "body": "Un réalisme lucide sur ce que l'on peut réellement absorber."
+            }
+          ]
+        },
+        {
+          "type": "final-cta",
+          "eyebrow": "Cadre",
+          "title": "Découvrir le Gold Standard Powalyze.",
+          "body": "<p>La vision prend corps dans un cadre concret : notre Gold Standard.</p>",
+          "primaryCtaLabel": "Voir le Gold Standard",
+          "primaryCtaUrl": "/gold-standard",
+          "secondaryCtaLabel": "Retour au manifeste",
+          "secondaryCtaUrl": "/manifeste"
+        }
+      ]
+    }
+  }
+}

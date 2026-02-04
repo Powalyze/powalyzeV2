@@ -1,0 +1,58 @@
+{
+  "slug": "gold-standard",
+  "locales": {
+    "fr": {
+      "title": "Gold Standard Powalyze",
+      "hero": {
+        "tagline": "Gold Standard",
+        "title": "Un cadre exigeant pour une gouvernance crédible.",
+        "highlight": "cadre exigeant",
+        "description": "Le Gold Standard Powalyze définit un minimum vital pour une gouvernance stratégique cohérente. Ni usine à gaz, ni bricolage : un socle solide, assumé.",
+        "primaryCtaLabel": "Voir les modules",
+        "primaryCtaUrl": "/produit/modules",
+        "secondaryCtaLabel": "Voir les cas d'usage",
+        "secondaryCtaUrl": "/cas-d-usage",
+        "videoBackground": false
+      },
+      "sections": [
+        {
+          "type": "list-with-description",
+          "eyebrow": "Piliers",
+          "title": "Les piliers du Gold Standard.",
+          "items": [
+            {
+              "title": "Portefeuille unique",
+              "body": "Un référentiel unique des initiatives, partagé, versionné."
+            },
+            {
+              "title": "Scénarios explicites",
+              "body": "Des trajectoires formalisées, comparables, discutables."
+            },
+            {
+              "title": "Capacités réalistes",
+              "body": "Un regard honnête sur les ressources, charges et contraintes."
+            },
+            {
+              "title": "Donnée maîtrisée",
+              "body": "Modèles propres, articulation avec Power BI, gouvernance data."
+            },
+            {
+              "title": "Comités préparés",
+              "body": "Des décisions anticipées, tracées, assumées."
+            }
+          ]
+        },
+        {
+          "type": "final-cta",
+          "eyebrow": "Application",
+          "title": "Appliquer le Gold Standard chez vous.",
+          "body": "<p>Nous appliquons ce cadre à vos portefeuilles, vos données, vos comités, en travaillant avec vos équipes sur site.</p>",
+          "primaryCtaLabel": "Planifier une session",
+          "primaryCtaUrl": "/contact",
+          "secondaryCtaLabel": "Voir le produit",
+          "secondaryCtaUrl": "/produit"
+        }
+      ]
+    }
+  }
+}

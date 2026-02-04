@@ -1,0 +1,75 @@
+{
+  "slug": "manifeste",
+  "locales": {
+    "fr": {
+      "title": "Manifeste Powalyze",
+      "hero": {
+        "tagline": "Manifeste",
+        "title": "Moins de bruit, plus de décisions assumées.",
+        "highlight": "décisions assumées",
+        "description": "Powalyze est né d'une lassitude : celle des organisations noyées dans les fichiers, les dashboards décoratifs et les comités sans décisions claires. Nous voulons remettre la gouvernance au centre.",
+        "primaryCtaLabel": "Découvrir le produit",
+        "primaryCtaUrl": "/produit",
+        "secondaryCtaLabel": "Voir les cas d'usage",
+        "secondaryCtaUrl": "/cas-d-usage",
+        "videoBackground": false
+      },
+      "sections": [
+        {
+          "type": "rich-text",
+          "eyebrow": "Constat",
+          "title": "Trop d'outils, pas assez de gouvernance.",
+          "content": "<p>Les organisations sont saturées d'outils, de fichiers et de reportings qui ne produisent pas de meilleures décisions. Les PMO bricolent, les data analysts nettoient des données qu'ils n'ont pas cadrées, les COMEX lisent des slides qu'ils n'ont pas le temps de challenger.</p><p>Powalyze part d'un principe simple : la gouvernance n'est pas un déluge d'informations, c'est un art de choisir.</p>"
+        },
+        {
+          "type": "bullet-columns",
+          "eyebrow": "Principes",
+          "title": "Ce que Powalyze refuse.",
+          "items": [
+            {
+              "title": "Le reporting décoratif",
+              "body": "Des dashboards impressionnants mais inutilisables en comité."
+            },
+            {
+              "title": "Les fichiers éparpillés",
+              "body": "Des portefeuilles éclatés entre Excel, PowerPoint et outils divers."
+            },
+            {
+              "title": "Les décisions fantômes",
+              "body": "Des arbitrages implicites, jamais tracés, jamais assumés."
+            }
+          ]
+        },
+        {
+          "type": "bullet-columns",
+          "eyebrow": "Engagement",
+          "title": "Ce que Powalyze promet.",
+          "items": [
+            {
+              "title": "Un cockpit lisible",
+              "body": "Un lieu unique pour vos portefeuilles, scénarios et arbitrages."
+            },
+            {
+              "title": "Une donnée utile",
+              "body": "Des modèles propres, articulés avec Power BI, au service des décisions."
+            },
+            {
+              "title": "Un partenaire présent",
+              "body": "Un SaaS soutenu par un accompagnement sur site en Suisse."
+            }
+          ]
+        },
+        {
+          "type": "final-cta",
+          "eyebrow": "Prochaine étape",
+          "title": "Projeter ce manifeste dans vos murs.",
+          "body": "<p>Le manifeste prend sens lorsqu'il rencontre vos portefeuilles, vos données et vos comités. C'est là que Powalyze devient concret.</p>",
+          "primaryCtaLabel": "Planifier une session",
+          "primaryCtaUrl": "/contact",
+          "secondaryCtaLabel": "Voir la vision",
+          "secondaryCtaUrl": "/vision"
+        }
+      ]
+    }
+  }
+}

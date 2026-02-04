@@ -1,0 +1,68 @@
+{
+  "locales": {
+    "fr": {
+      "header": [
+        { "label": "Accueil", "url": "/" },
+        { "label": "Produit", "url": "/produit" },
+        { "label": "Modules", "url": "/produit/modules" },
+        { "label": "Power BI", "url": "/produit/power-bi" },
+        { "label": "Cas d'usage", "url": "/cas-d-usage" },
+        { "label": "Tarifs", "url": "/tarifs" }
+      ],
+      "footer": [
+        { "label": "Sécurité", "url": "/securite" },
+        { "label": "FAQ", "url": "/faq" },
+        { "label": "Mentions légales", "url": "/mentions-legales" },
+        { "label": "Politique de confidentialité", "url": "/politique-confidentialite" }
+      ]
+    },
+    "en": {
+      "header": [
+        { "label": "Home", "url": "/en" },
+        { "label": "Product", "url": "/en/product" },
+        { "label": "Modules", "url": "/en/product/modules" },
+        { "label": "Power BI", "url": "/en/product/power-bi" },
+        { "label": "Use cases", "url": "/en/use-cases" },
+        { "label": "Pricing", "url": "/en/pricing" }
+      ],
+      "footer": [
+        { "label": "Security", "url": "/en/security" },
+        { "label": "FAQ", "url": "/en/faq" },
+        { "label": "Legal", "url": "/en/legal" },
+        { "label": "Privacy", "url": "/en/privacy" }
+      ]
+    },
+    "de": {
+      "header": [
+        { "label": "Startseite", "url": "/de" },
+        { "label": "Produkt", "url": "/de/produkt" },
+        { "label": "Module", "url": "/de/produkt/module" },
+        { "label": "Power BI", "url": "/de/produkt/power-bi" },
+        { "label": "Anwendungsfälle", "url": "/de/anwendungsfaelle" },
+        { "label": "Preise", "url": "/de/preise" }
+      ],
+      "footer": [
+        { "label": "Sicherheit", "url": "/de/sicherheit" },
+        { "label": "FAQ", "url": "/de/faq" },
+        { "label": "Rechtliches", "url": "/de/recht" },
+        { "label": "Datenschutz", "url": "/de/datenschutz" }
+      ]
+    },
+    "no": {
+      "header": [
+        { "label": "Hjem", "url": "/no" },
+        { "label": "Produkt", "url": "/no/produkt" },
+        { "label": "Moduler", "url": "/no/produkt/moduler" },
+        { "label": "Power BI", "url": "/no/produkt/power-bi" },
+        { "label": "Brukstilfeller", "url": "/no/brukstilfeller" },
+        { "label": "Priser", "url": "/no/priser" }
+      ],
+      "footer": [
+        { "label": "Sikkerhet", "url": "/no/sikkerhet" },
+        { "label": "FAQ", "url": "/no/faq" },
+        { "label": "Juridisk", "url": "/no/juridisk" },
+        { "label": "Personvern", "url": "/no/personvern" }
+      ]
+    }
+  }
+}
