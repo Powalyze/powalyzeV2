@@ -102,7 +102,7 @@ export async function POST(req: Request) {
       .insert({
         name,
         description,
-        status: status || 'planned',
+        status: status || 'active',
         owner: owner || 'Admin',
         user_id: userId, // Peut être null
         bu: bu || 'IT',
