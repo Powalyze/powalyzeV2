@@ -101,10 +101,16 @@ export default function LoginForm() {
         console.warn('⚠️ [LOGIN] Erreur vérification Pro:', err);
       }
 
-      // 3. MODE PRO PERMANENT: Redirection directe vers cockpit projets
-      // Tous les comptes sont en mode Pro par défaut (plan='pro', mode='admin')
-      console.log('🔄 [LOGIN] Redirection vers /cockpit/projets');
-      router.push('/cockpit/projets');
+      // 3. ATTENTE PROPAGATION SESSION + HARD RELOAD
+      // Important: Utiliser window.location.href pour forcer un reload complet
+      // Cela garantit que le middleware côté serveur voit la nouvelle session
+      console.log('🔄 [LOGIN] Redirection vers /cockpit/projets (hard reload)');
+      
+      // Petit délai pour s'assurer que les cookies sont bien écrits
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Hard reload au lieu de router.push() pour synchroniser session client/serveur
+      window.location.href = '/cockpit/projets';
       
     } catch (err: any) {
       setError(err.message || 'Erreur inconnue');

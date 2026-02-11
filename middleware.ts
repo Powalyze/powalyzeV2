@@ -29,6 +29,16 @@ export async function middleware(req: NextRequest) {
 
   const path = req.nextUrl.pathname;
 
+  // Debug logging pour diagnostiquer les problèmes de session
+  if (path.startsWith('/cockpit') && !path.startsWith('/cockpit/demo')) {
+    console.log('🔍 [MIDDLEWARE]', {
+      path,
+      hasSession: !!session,
+      userId: session?.user?.id,
+      cookies: req.cookies.getAll().filter(c => c.name.includes('sb-')).map(c => c.name)
+    });
+  }
+
   // ========================================
   // REDIRECTIONS LEGACY ROUTES (301 permanent)
   // ========================================
@@ -64,6 +74,7 @@ export async function middleware(req: NextRequest) {
 
   if (!session && !isPublicPath) {
     // Non connecté essayant d'accéder à une page interne → signup
+    console.log('⚠️ [MIDDLEWARE] Pas de session, redirection vers /signup', { path });
     const redirectUrl = new URL('/signup', req.url);
     redirectUrl.searchParams.set('redirect', path);
     return NextResponse.redirect(redirectUrl);
