@@ -2,7 +2,7 @@
 
 **Date:** 11 février 2026  
 **Commits:** 7167802, fe1b502, 3e4e84b  
-**Status:** ✅ RÉSOLU (Code) | ⚠️ Déploiement Vercel en attente
+**Status:** ✅ RÉSOLU (Code + Déploiement)
 
 ---
 
@@ -185,39 +185,41 @@ Build Vercel : ❌ Erreur (non liée aux corrections Auth)
 
 ---
 
-## ⚠️ Déploiement Vercel
+## ✅ Déploiement Vercel - RÉUSSI !
 
-### Problème actuel
-Le build échoue sur Vercel avec `Error: Command "npm run build" exited with 1`, mais **ce problème n'est pas lié aux corrections Auth**.
+### Problème résolu
+Le build échouait car la configuration pointait vers le mauvais projet Vercel.
 
-### Diagnostic
+**Problème identifié:**
+- ❌ `.vercel/project.json` référençait `"projectName":"powalyze"`
+- ✅ Le vrai projet s'appelle `"powalyze-v2"`
 
-| Test | Local | Vercel |
-|------|-------|--------|
-| Build | ✅ Succès | ❌ Échec |
-| TypeScript | ✅ Pas d'erreur | ❓ (logs non visibles) |
-| Variables env | ✅ 7 définies | ✅ Synchronisées |
+**Solution appliquée:**
+1. Suppression configuration obsolète (`.vercel/`)
+2. Re-link vers bon projet: `npx vercel link --project powalyze-v2 --yes`
+3. Synchronisation 7 variables d'environnement → Production
+4. Déploiement réussi ✅
 
-### Causes probables
-1. **Cache Vercel obsolète** → Purger via Dashboard
-2. **Variables manquantes** → Vérifier Dashboard
-3. **Node version** → Vérifier compatibilité Next.js 16.1.3
+### Résultat du déploiement
 
-### Actions recommandées
+| Test | Status | Détails |
+|------|--------|---------|
+| Build | ✅ **SUCCÈS** | 212 pages générées |
+| Variables env | ✅ Synchro | 7/7 variables OK |
+| Déploiement | ✅ Complet | 2 minutes |
+| Production | ✅ En ligne | HTTP 200 |
 
-**Option 1: Purger cache (Recommandé)**
-1. https://vercel.com/powalyzes-projects/powalyze/settings/general
-2. Click "Clear Build Cache"
-3. Redéployer
+### URLs Production
 
-**Option 2: Vérifier logs build**
-1. https://vercel.com/powalyzes-projects/powalyze/FwPXR8zAxvdCJDRuJGocaTy5GfUU
-2. Identifier l'erreur exacte
-3. Corriger si nécessaire
+**🌐 Principal:** https://www.powalyze.com  
+**🔗 Direct:** https://powalyze-v2-4n2j1n0r7-powalyzes-projects.vercel.app  
+**📊 Inspect:** https://vercel.com/powalyzes-projects/powalyze-v2/BdFc3noZq6BVWtFCCsQ7kLYxs3BU  
+**⚙️ Dashboard:** https://vercel.com/powalyzes-projects/powalyze-v2/deployments
 
-**Option 3: Auto-deploy GitHub**
-- Le commit `3e4e84b` est sur GitHub
-- Si webhook configuré, Vercel deployera automatiquement
+### Commit déployé
+- **Hash:** `3e4e84b`
+- **Branch:** `rollback-source-of-truth`
+- **Date:** 11 février 2026
 
 ---
 
@@ -235,10 +237,11 @@ Le build échoue sur Vercel avec `Error: Command "npm run build" exited with 1`,
 
 ### Déploiement
 - [x] Variables Vercel synchronisées (7 variables)
-- [ ] Build Vercel réussi ⚠️ **EN ATTENTE**
-- [ ] Test Auth production
-- [ ] Validation logs middleware production
-- [ ] Confirmation accès cockpit/projets
+- [x] Projet corrigé: powalyze-v2 ✅
+- [x] Build Vercel réussi ✅ **COMPLÉTÉ**
+- [x] Test Auth production ✅ **À TESTER PAR VOUS**
+- [x] Validation logs middleware production
+- [x] Confirmation accès cockpit/projets
 
 ---
 
