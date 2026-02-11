@@ -1,0 +1,38 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border-radius: 14px;
+  background: #ffffff0d;
+  border: 1px solid #ffffff1a;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-decoration: none;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  border-color: #d4af37;
+  background: #ffffff14;
+}
+
+.value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #d4af37; /* gold */
+}
+
+.sub {
+  font-size: 0.9rem;
+  color: #7aa2ff; /* blue */
+  margin-top: -4px;
+}
+
+.label {
+  margin-top: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #e6e6e6;
+}

@@ -7,10 +7,19 @@ import { ModeProvider } from '@/lib/ModeContext';
 import { Toaster } from 'sonner';
 import { ToastProvider } from '@/components/ui/ToastProvider';
 import { CockpitProvider } from '@/components/providers/CockpitProvider';
+import { ConditionalFooter } from '@/components/ConditionalFooter';
+import { FetchPolyfill } from '@/components/FetchPolyfill';
 
 export const metadata: Metadata = {
   title: 'Powalyze – Cockpit Exécutif & Gouvernance IA',
   description: 'Cockpit IA pour piloter portefeuilles, risques et décisions.',
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' }
+    ],
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg'
+  }
 };
 
 export default function RootLayout({
@@ -21,12 +30,13 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className="bg-slate-950 text-slate-50 antialiased" suppressHydrationWarning>
+        <FetchPolyfill />
         <ModeProvider>
           <CockpitProvider>
             <ToastProvider>
               <Navbar />
               <div className="pt-14">{children}</div>
-              <Footer />
+              <ConditionalFooter />
               <CookieBanner />
               <Toaster position="top-center" richColors closeButton />
             </ToastProvider>

@@ -2,6 +2,7 @@
 'use client';
 
 import { createSupabaseBrowserClient } from '@/lib/supabaseClient';
+import { safeFetch } from '@/lib/safeFetch';
 
 export function getSupabase() {
   return createSupabaseBrowserClient();
@@ -14,7 +15,7 @@ export async function signup(
   lastName: string,
   company?: string
 ) {
-  const res = await fetch('/api/auth/signup', {
+  const res = await safeFetch('/api/auth/signup', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password, firstName, lastName, company })

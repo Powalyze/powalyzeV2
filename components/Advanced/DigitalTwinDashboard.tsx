@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Brain, Zap, Activity, Sparkles, TrendingUp, Shield, Target, Cpu } from 'lucide-react';
+import { safeFetch } from '@/lib/safeFetch';
 
 interface DigitalTwinData {
   real_time_state: {
@@ -39,7 +40,7 @@ export default function DigitalTwinDashboard({ projectId }: { projectId: string 
 
   useEffect(() => {
     const fetchTwinData = () => {
-      fetch(`/api/ai/digital-twin?project_id=${projectId}`, {
+      safeFetch(`/api/ai/digital-twin?project_id=${projectId}`, {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
@@ -67,7 +68,7 @@ export default function DigitalTwinDashboard({ projectId }: { projectId: string 
   const triggerAutoHealing = async () => {
     setAutoHealingActive(true);
     try {
-      const response = await fetch('/api/ai/auto-healing', {
+      const response = await safeFetch('/api/ai/auto-healing', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

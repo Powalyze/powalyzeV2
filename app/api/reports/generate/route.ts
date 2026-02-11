@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { sanitizeHeaders } from '@/lib/headerUtils';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -28,7 +29,7 @@ export async function POST(req: Request) {
     // Générer le résumé IA
     const summaryResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/ai/summary`, {
       method: 'POST',
-      headers: { 'x-tenant-id': tenantId }
+      headers: sanitizeHeaders({ 'x-tenant-id': tenantId })
     });
 
     let aiSummary = null;

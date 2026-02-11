@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Brain, Loader2 } from "lucide-react";
+import { safeFetch } from "@/lib/safeFetch";
 
 type Props = {
   tenantId?: string;
@@ -24,13 +25,21 @@ export function ExecutiveSummaryCard({ tenantId }: Props) {
     setError(null);
 
     try {
-      const res = await fetch('/api/ai/summary', { 
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json'
+      };
+      
+      if (tenantId) {
+        headers['x-tenant-id'] = tenantId;
+      }
+      
+      const res = await safeFetch('/api/ai/summary', { 
         method: 'POST',
-        headers: tenantId ? { 'x-tenant-id': tenantId } : {}
+        headers
       });
       
       if (!res.ok) {
-        throw new Error('Erreur lors de la génération du résumé');
+        throw new Error('Failed to generate summary');
       }
 
       const data = await res.json();

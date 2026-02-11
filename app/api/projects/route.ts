@@ -1,80 +1,55 @@
-// ============================================================
-// API ROUTE — PROJECTS
-// /app/api/projects/route.ts
-// ============================================================
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/utils/supabase/server";
 
-import { NextRequest, NextResponse } from 'next/server';
-import { getSupabaseClient, mapProjectRow } from '@/lib/supabase-cockpit';
+export async function GET(req: NextRequest) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // Les policies RLS filtrent automatiquement par owner_id = auth.uid()
+  const { data, error } = await supabase
+    .from("projects")
+    .select("*")
+    .order("updated_at", { ascending: false });
+
+  if (error) {
+    console.error("Projects fetch error:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  console.log(`Fetched ${data?.length || 0} projects for user ${user.id}`);
+  return NextResponse.json(data || []);
+}
 
 export async function POST(req: NextRequest) {
-  try {
-    const body = (await req.json()) as {
-      organizationId: string;
-      name: string;
-      description?: string;
-    };
+  const supabase = await createClient();
 
-    const supabase = getSupabaseClient(true);
-    const { data, error } = await supabase
-      .from('projects')
-      .insert({
-        organization_id: body.organizationId,
-        name: body.name,
-        description: body.description ?? null,
-        status: 'active',
-      })
-      .select('*')
-      .single();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-    if (error) throw error;
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    return NextResponse.json(mapProjectRow(data), { status: 201 });
-  } catch (error: any) {
-    console.error('Project create error', error);
-    return NextResponse.json(
-      { error: 'PROJECT_CREATE_FAILED', message: error.message ?? 'Unknown error' },
-      { status: 500 },
-    );
-  }
-}
-export async function DELETE(req: NextRequest) {
-  try {
-    const { searchParams } = new URL(req.url);
-    const organizationId = searchParams.get('organizationId');
+  const body = await req.json();
 
-    if (!organizationId) {
-      return NextResponse.json(
-        { error: 'MISSING_ORG_ID', message: 'organizationId requis' },
-        { status: 400 }
-      );
-    }
+  const { data, error } = await supabase
+    .from("projects")
+    .insert({
+      name: body.name,
+      status: body.status ?? "draft",
+      owner_id: body.owner_id ?? user.id,
+      start_date: body.start_date ?? null,
+      end_date: body.end_date ?? null,
+      progress: body.progress ?? 0,
+    })
+    .select()
+    .single();
 
-    console.log('[Projects DELETE] Suppression pour organizationId:', organizationId);
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-    const supabase = getSupabaseClient(true);
-    const { error, data } = await supabase
-      .from('projects')
-      .delete()
-      .eq('organization_id', organizationId)
-      .select();
-
-    if (error) {
-      console.error('[Projects DELETE] Supabase error:', error);
-      throw error;
-    }
-
-    console.log(`[Projects DELETE] ${data.length} projets supprimés`);
-
-    return NextResponse.json({
-      success: true,
-      message: `${data.length} projet(s) supprimé(s)`,
-      deleted: data.length,
-    }, { status: 200 });
-  } catch (error: any) {
-    console.error('[Projects DELETE] ERROR:', error);
-    return NextResponse.json(
-      { error: 'DELETE_FAILED', message: error.message },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json(data);
 }

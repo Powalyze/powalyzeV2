@@ -129,7 +129,7 @@ export default function IACopilotePage() {
   };
 
   return (
-    <CockpitShell hideFooter={true}>
+    <CockpitShell>
       <div className="h-[calc(100vh-4rem)] flex flex-col max-w-7xl mx-auto">
         {/* Header */}
         <div className="p-6 md:p-8 border-b border-slate-800">

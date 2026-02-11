@@ -1,35 +1,62 @@
-import { createBrowserClient, createServerClient } from "@supabase/ssr";
+import { createClient } from "@supabase/supabase-js";
+import { createServerClient } from "@supabase/ssr";
 
-function cleanEnv(value?: string) {
-  return value?.replace(/^\uFEFF/, '').trim();
+// Nettoie les variables d'environnement des caractères invisibles (BOM, retours à la ligne)
+function cleanEnv(value?: string): string {
+  if (!value) return '';
+  return value.replace(/^\uFEFF/, '').replace(/\r?\n/g, '').trim();
 }
 
+const supabaseUrl = cleanEnv(process.env.NEXT_PUBLIC_SUPABASE_URL);
+const supabaseKey = cleanEnv(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+
+if (!supabaseUrl || !supabaseKey) {
+  console.error('❌ Variables Supabase manquantes:', {
+    url: supabaseUrl ? 'OK' : 'MANQUANT',
+    key: supabaseKey ? 'OK' : 'MANQUANT'
+  });
+  throw new Error('Configuration Supabase invalide - variables d\'environnement manquantes');
+}
+
+export const supabase = createClient(supabaseUrl, supabaseKey);
+
+// Fonction helper pour compatibilité avec l'ancien code (client browser)
 export function createSupabaseBrowserClient() {
-  const supabaseUrl = cleanEnv(process.env.NEXT_PUBLIC_SUPABASE_URL) || 'https://placeholder.supabase.co';
-  const supabaseKey = cleanEnv(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) || 'placeholder-key';
-
-  return createBrowserClient(supabaseUrl, supabaseKey);
+  return supabase;
 }
 
+// Fonction helper pour compatibilité avec l'ancien code (server-side avec cookies)
 export async function createSupabaseServerClient() {
   const { cookies } = await import("next/headers");
   const cookieStore = await cookies();
 
-  return createServerClient(
-    cleanEnv(process.env.NEXT_PUBLIC_SUPABASE_URL)!,
-    cleanEnv(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-        set(name: string, value: string, options: any) {
+  // Utiliser les mêmes variables nettoyées
+  const cleanUrl = cleanEnv(process.env.NEXT_PUBLIC_SUPABASE_URL);
+  const cleanKey = cleanEnv(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+
+  if (!cleanUrl || !cleanKey) {
+    throw new Error('Configuration Supabase invalide - variables d\'environnement manquantes (server)');
+  }
+
+  return createServerClient(cleanUrl, cleanKey, {
+    cookies: {
+      get(name: string) {
+        return cookieStore.get(name)?.value;
+      },
+      set(name: string, value: string, options: any) {
+        try {
           cookieStore.set(name, value, options);
-        },
-        remove(name: string, options: any) {
-          cookieStore.delete(name);
+        } catch {
+          // Ignore dans les Server Components
         }
-      }
-    }
-  );
+      },
+      remove(name: string, options: any) {
+        try {
+          cookieStore.delete(name);
+        } catch {
+          // Ignore dans les Server Components
+        }
+      },
+    },
+  });
 }

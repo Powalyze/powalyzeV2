@@ -8,10 +8,10 @@ export default function TarifsPage() {
       <section className="py-20 px-6">
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-5xl md:text-6xl font-bold mb-6">
-            Un modèle hybride,<br />simple et transparent.
+            Une plateforme évolutive,<br />des tarifs sur mesure.
           </h1>
           <p className="text-xl text-slate-300 max-w-3xl mx-auto">
-            Combinez SaaS et expertise selon vos besoins. Aucun engagement long terme, annulation à tout moment.
+            Mode DEMO gratuit illimité ou mode PRO avec accompagnement. Découvrez nos offres après inscription.
           </p>
         </div>
       </section>
@@ -21,142 +21,202 @@ export default function TarifsPage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-3 gap-8">
             <PricingCard
-              title="SaaS Essentiel"
-              price="CHF 990"
-              period="/ mois"
-              description="Pour les équipes qui veulent démarrer rapidement avec un cockpit complet."
+              title="Mode DEMO"
+              price="Gratuit"
+              period="pour toujours"
+              description="Explorez toutes les fonctionnalités avec des données de démonstration."
               features={[
-                "Cockpit complet (projets, risques, décisions)",
-                "IA stratégique intégrée",
-                "Rapports automatisés",
-                "Multilingue (FR/EN/DE/IT)",
-                "Jusqu'à 10 utilisateurs",
-                "Support email (48h)",
-                "Mises à jour incluses",
-                "Hébergement Suisse sécurisé"
+                "Accès complet à la plateforme",
+                "Toutes les fonctionnalités débloquées",
+                "Données de démonstration réalistes",
+                "Idéal pour tester et évaluer",
+                "Aucune carte bancaire requise",
+                "Sans limite de temps",
+                "Mode bac à sable illimité",
+                "Parfait pour POC et démos"
               ]}
               cta="Démarrer gratuitement"
-              href="/contact"
+              href="/signup"
             />
 
             <PricingCard
-              title="SaaS + Modules"
-              price="Sur mesure"
-              period=""
-              description="Pour les organisations qui veulent personnaliser leur cockpit module par module."
+              title="Mode PRO Starter"
+              price="Nous contacter"
+              period="/ personne / mois"
+              description="Pour les équipes qui veulent démarrer avec leurs vraies données."
               features={[
-                "Tout du plan Essentiel",
-                "Modules additionnels à la carte",
-                "Intégrations Power BI avancées",
-                "Personnalisation workflows",
-                "Champs personnalisés",
-                "Automatisations avancées",
-                "Utilisateurs illimités",
-                "Support prioritaire (24h)"
+                "Tout du mode DEMO",
+                "Vos données réelles en production",
+                "Connexion Supabase incluse",
+                "IA stratégique personnalisée",
+                "Jusqu'à 10 utilisateurs",
+                "Support email (48h)",
+                "Sauvegardes automatiques",
+                "Hébergement sécurisé"
               ]}
-              cta="Recevoir un devis"
-              href="/contact"
+              cta="S'inscrire pour voir les tarifs"
+              href="/signup"
+            />
+
+            <PricingCard
+              title="Mode HYBRIDE"
+              price="Tarif personnalisé"
+              period="selon vos besoins"
+              description="Combinez plateforme, modules avancés et expertise humaine."
+              features={[
+                "Tout du plan PRO",
+                "Modules additionnels à la carte",
+                "Accompagnement PMO expert",
+                "Power BI sur mesure",
+                "Utilisateurs illimités",
+                "Formation des équipes",
+                "Support prioritaire (4h)",
+                "Consulting + SaaS intégré"
+              ]}
+              cta="S'inscrire pour un devis"
+              href="/signup"
               highlighted
             />
+          </div>
 
-            <PricingCard
-              title="Consulting + SaaS"
-              price="Pack hybride"
-              period=""
-              description="Pour les organisations qui veulent un accompagnement expert sur site ou à distance."
-              features={[
-                "Tout du plan Modules",
-                "Accompagnement PMO senior",
-                "Expertise Data & Power BI",
-                "Déploiement sur site",
-                "Formation des équipes",
-                "Coaching continu",
-                "Revues mensuelles",
-                "Support dédié (4h)"
-              ]}
-              cta="Parler à un expert"
-              href="/contact"
-            />
+          {/* Bande informative */}
+          <div className="mt-12 p-6 rounded-xl bg-gradient-to-r from-amber-500/10 to-purple-500/10 border border-amber-500/30 text-center">
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <Sparkles className="text-amber-400" size={24} />
+              <p className="text-xl font-bold text-white">
+                Tarifs détaillés disponibles après inscription
+              </p>
+            </div>
+            <p className="text-slate-300">
+              Inscrivez-vous gratuitement pour découvrir nos tarifs adaptés à la taille de votre équipe et vos besoins spécifiques.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* Modules à la carte */}
+      {/* Avantages du mode HYBRIDE */}
       <section className="py-20 px-6 bg-slate-900/30 border-t border-slate-800/50">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-6">Modules additionnels</h2>
+            <h2 className="text-4xl font-bold mb-6">Pourquoi choisir le mode HYBRIDE ?</h2>
             <p className="text-xl text-slate-300">
-              Enrichissez votre cockpit avec des modules spécialisés
+              Le meilleur des deux mondes : technologie et expertise humaine
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            <ModuleCard
-              title="IA Personnalisée"
-              price="CHF 500/mois"
-              description="Entraînement de l'IA sur vos données historiques, vocabulaire métier et contexte organisationnel."
-            />
-            <ModuleCard
-              title="Power BI Premium"
-              price="CHF 400/mois"
-              description="Dashboards sur mesure, connecteurs avancés, pipelines de données automatisés."
-            />
-            <ModuleCard
-              title="Multi-organisations"
-              price="CHF 300/mois"
-              description="Gestion de plusieurs organisations dans une seule instance, consolidation transverse."
-            />
-            <ModuleCard
-              title="API & Webhooks"
-              price="CHF 200/mois"
-              description="Accès complet aux APIs REST, webhooks pour intégrations custom, documentation développeur."
-            />
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="p-8 rounded-xl bg-slate-800/50 border border-slate-700">
+              <h3 className="text-2xl font-bold mb-4 text-amber-400">🚀 Plateforme SaaS</h3>
+              <ul className="space-y-3 text-slate-300">
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="text-green-400 flex-shrink-0 mt-1" size={20} />
+                  <span>Cockpit exécutif en temps réel 24/7</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="text-green-400 flex-shrink-0 mt-1" size={20} />
+                  <span>IA pour prédictions et recommandations</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="text-green-400 flex-shrink-0 mt-1" size={20} />
+                  <span>Automatisations et workflows intelligents</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="text-green-400 flex-shrink-0 mt-1" size={20} />
+                  <span>Intégrations Jira, Slack, Azure DevOps...</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="p-8 rounded-xl bg-slate-800/50 border border-slate-700">
+              <h3 className="text-2xl font-bold mb-4 text-purple-400">👥 Expertise Humaine</h3>
+              <ul className="space-y-3 text-slate-300">
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="text-green-400 flex-shrink-0 mt-1" size={20} />
+                  <span>PMO senior pour cadrage et pilotage</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="text-green-400 flex-shrink-0 mt-1" size={20} />
+                  <span>Expert Data & Power BI pour dashboards</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="text-green-400 flex-shrink-0 mt-1" size={20} />
+                  <span>Formation et coaching continu des équipes</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="text-green-400 flex-shrink-0 mt-1" size={20} />
+                  <span>Accompagnement gouvernance et transformation</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Services Consulting */}
+      {/* Comparaison des modes */}
       <section className="py-20 px-6 border-t border-slate-800/50">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-6">Services d'accompagnement</h2>
+            <h2 className="text-4xl font-bold mb-6">Comparez nos modes</h2>
             <p className="text-xl text-slate-300">
-              Tarifs journaliers pour l'expertise humaine
+              Choisissez le mode adapté à votre maturité PMO
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            <ServiceCard
-              title="PMO Senior"
-              price="CHF 1'200"
-              period="/ jour"
-              description="Cadrage, pilotage de programmes, animation de comités, arbitrage de décisions."
-            />
-            <ServiceCard
-              title="Data & Power BI Expert"
-              price="CHF 1'000"
-              period="/ jour"
-              description="Architecture data, dashboards exécutifs, connecteurs, formation Power BI."
-            />
-            <ServiceCard
-              title="Consultant Gouvernance"
-              price="CHF 1'100"
-              period="/ jour"
-              description="Audit processus, design gouvernance cible, conduite du changement."
-            />
-            <ServiceCard
-              title="Coach Agile / Transformation"
-              price="CHF 900"
-              period="/ jour"
-              description="Accompagnement équipes, mentorat PMO internes, optimisation continue."
-            />
-          </div>
-
-          <div className="mt-12 p-6 rounded-xl bg-gradient-to-r from-amber-500/10 to-sky-500/10 border border-amber-500/30 text-center">
-            <p className="text-lg text-slate-300">
-              <strong className="text-white">Packs forfaitaires disponibles</strong> pour engagements de 10, 20 ou 50 jours avec remises progressives.
-            </p>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="border-b border-slate-700">
+                  <th className="text-left p-4 text-slate-400">Fonctionnalité</th>
+                  <th className="text-center p-4">Mode DEMO</th>
+                  <th className="text-center p-4">Mode PRO</th>
+                  <th className="text-center p-4 bg-amber-500/10">Mode HYBRIDE</th>
+                </tr>
+              </thead>
+              <tbody className="text-slate-300">
+                <tr className="border-b border-slate-800">
+                  <td className="p-4">Accès à la plateforme</td>
+                  <td className="text-center p-4">✅</td>
+                  <td className="text-center p-4">✅</td>
+                  <td className="text-center p-4 bg-amber-500/5">✅</td>
+                </tr>
+                <tr className="border-b border-slate-800">
+                  <td className="p-4">Vos données en production</td>
+                  <td className="text-center p-4">❌</td>
+                  <td className="text-center p-4">✅</td>
+                  <td className="text-center p-4 bg-amber-500/5">✅</td>
+                </tr>
+                <tr className="border-b border-slate-800">
+                  <td className="p-4">IA personnalisée</td>
+                  <td className="text-center p-4">❌</td>
+                  <td className="text-center p-4">✅</td>
+                  <td className="text-center p-4 bg-amber-500/5">✅</td>
+                </tr>
+                <tr className="border-b border-slate-800">
+                  <td className="p-4">Modules additionnels</td>
+                  <td className="text-center p-4">❌</td>
+                  <td className="text-center p-4">💰</td>
+                  <td className="text-center p-4 bg-amber-500/5">✅</td>
+                </tr>
+                <tr className="border-b border-slate-800">
+                  <td className="p-4">Accompagnement PMO</td>
+                  <td className="text-center p-4">❌</td>
+                  <td className="text-center p-4">❌</td>
+                  <td className="text-center p-4 bg-amber-500/5">✅</td>
+                </tr>
+                <tr className="border-b border-slate-800">
+                  <td className="p-4">Formation équipes</td>
+                  <td className="text-center p-4">❌</td>
+                  <td className="text-center p-4">2h</td>
+                  <td className="text-center p-4 bg-amber-500/5">Illimitée</td>
+                </tr>
+                <tr>
+                  <td className="p-4 font-bold">Tarif par personne/mois</td>
+                  <td className="text-center p-4 text-green-400 font-bold">Gratuit</td>
+                  <td className="text-center p-4 font-bold">Nous contacter</td>
+                  <td className="text-center p-4 bg-amber-500/5 text-amber-400 font-bold">Sur mesure</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
@@ -170,24 +230,24 @@ export default function TarifsPage() {
 
           <div className="space-y-6">
             <FAQItem
-              question="Puis-je commencer avec le plan Essentiel et évoluer ensuite ?"
-              answer="Oui, absolument. Vous pouvez démarrer avec le plan Essentiel et ajouter des modules ou du consulting à tout moment selon vos besoins."
+              question="Comment fonctionne le mode DEMO ?"
+              answer="Le mode DEMO vous donne accès gratuit à la plateforme complète avec des données fictives. Explorez toutes les fonctionnalités sans limite de temps ni engagement. Aucune carte bancaire requise."
             />
             <FAQItem
-              question="Y a-t-il des frais cachés ou d'installation ?"
-              answer="Non. Les prix affichés incluent l'hébergement, les mises à jour et le support standard. Seuls les modules additionnels et le consulting sont facturés en supplément."
+              question="Puis-je voir les tarifs détaillés avant de m'inscrire ?"
+              answer="Nos tarifs sont personnalisés en fonction de votre nombre d'utilisateurs, projets et modules choisis. Créez votre compte gratuit pour recevoir une proposition sur mesure adaptée à vos besoins réels."
             />
             <FAQItem
-              question="Quelle est la durée d'engagement minimum ?"
-              answer="Aucun engagement long terme. Les abonnements sont mensuels et résiliables à tout moment avec un préavis de 30 jours."
+              question="Qu'est-ce que le mode HYBRIDE concrètement ?"
+              answer="Le mode HYBRIDE combine la plateforme SaaS + l'intervention d'experts PMO, Data et gouvernance. C'est notre offre premium pour les organisations qui veulent la technologie ET l'accompagnement humain. Tarifs au forfait mensuel par personne."
+            />
+            <FAQItem
+              question="Comment sont calculés les tarifs par personne ?"
+              answer="Chaque utilisateur actif de la plateforme compte comme 1 personne. Le tarif mensuel par personne dépend du mode choisi (PRO ou HYBRIDE) et dégressif selon le volume. Contactez-nous après inscription pour un devis précis."
             />
             <FAQItem
               question="Proposez-vous des remises pour les ONGs ou le secteur public ?"
-              answer="Oui, nous proposons des conditions préférentielles pour les organisations à but non lucratif et les administrations publiques. Contactez-nous pour en discuter."
-            />
-            <FAQItem
-              question="Les tarifs incluent-ils la formation des utilisateurs ?"
-              answer="Le plan Essentiel inclut une formation de base (2h). Les plans supérieurs incluent des sessions de formation étendues. Du coaching personnalisé est disponible à la carte."
+              answer="Oui, nous proposons des conditions préférentielles pour les organisations à but non lucratif et les administrations publiques. Inscrivez-vous pour recevoir une offre adaptée."
             />
           </div>
         </div>
@@ -197,24 +257,24 @@ export default function TarifsPage() {
       <section className="py-20 px-6 border-t border-slate-800/50">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl font-bold mb-6">
-            Prêt à construire votre cockpit ?
+            Prêt à transformer votre gouvernance ?
           </h2>
           <p className="text-xl text-slate-300 mb-8">
-            Recevez une proposition personnalisée adaptée à vos enjeux et votre budget.
+            Créez votre compte gratuit et recevez une proposition personnalisée.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/contact"
+              href="/signup"
               className="group px-10 py-5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 font-bold text-lg shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 transition-all flex items-center gap-2 justify-center"
             >
-              Recevoir une proposition
+              Créer mon compte gratuit
               <ArrowRight className="group-hover:translate-x-1 transition-transform" size={22} />
             </Link>
             <Link
-              href="/signup?demo=true"
+              href="/cockpit-real"
               className="px-10 py-5 rounded-xl border-2 border-amber-400/50 hover:border-amber-400 text-white font-bold text-lg transition-all"
             >
-              Essayer gratuitement
+              Essayer le mode DEMO
             </Link>
           </div>
         </div>

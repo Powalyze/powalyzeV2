@@ -17,15 +17,23 @@ import {
   Menu,
   X,
   ChevronLeft,
-  Globe
+  Globe,
+  TrendingUp,
+  BarChart3,
+  Calendar,
+  Zap,
+  FolderOpen,
+  Bell,
+  Plug
 } from "lucide-react";
+import { CommandPalette } from "./CommandPalette";
+import { NotificationCenter } from "./NotificationCenter";
 
 interface CockpitShellProps {
   children: ReactNode;
-  hideFooter?: boolean;
 }
 
-export function CockpitShell({ children, hideFooter = true }: CockpitShellProps) {
+export function CockpitShell({ children }: CockpitShellProps) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -33,8 +41,15 @@ export function CockpitShell({ children, hideFooter = true }: CockpitShellProps)
   const navigation = [
     { name: "Dashboard", href: "/cockpit", icon: LayoutDashboard },
     { name: "Projets", href: "/cockpit/projets", icon: FolderKanban },
+    { name: "Kanban", href: "/cockpit/kanban", icon: GitBranch },
+    { name: "Gantt", href: "/cockpit/gantt", icon: Calendar },
+    { name: "KPI", href: "/cockpit/kpi", icon: TrendingUp },
+    { name: "Power BI", href: "/cockpit/powerbi", icon: BarChart3 },
     { name: "Décisions", href: "/cockpit/decisions", icon: CheckSquare },
     { name: "Risques", href: "/cockpit/risques", icon: Shield },
+    { name: "Documents", href: "/cockpit/documents", icon: FolderOpen },
+    { name: "Automatisations", href: "/cockpit/automations", icon: Zap },
+    { name: "Intégrations", href: "/cockpit/integrations", icon: Plug },
     { name: "Rapports", href: "/cockpit/rapports", icon: FileText },
     { name: "Méthodologie", href: "/cockpit/methodologie", icon: GitBranch },
     { name: "IA Copilote", href: "/cockpit/ia", icon: Brain },
@@ -64,9 +79,12 @@ export function CockpitShell({ children, hideFooter = true }: CockpitShellProps)
             <span className="font-bold">Powalyze</span>
           </Link>
         </div>
-        <button title="Changer de langue" className="p-2 hover:bg-slate-800 rounded-lg transition-colors">
-          <Globe size={20} />
-        </button>
+        <div className="flex items-center gap-2">
+          <NotificationCenter />
+          <button title="Changer de langue" className="p-2 hover:bg-slate-800 rounded-lg transition-colors">
+            <Globe size={20} />
+          </button>
+        </div>
       </div>
 
       {/* Desktop Sidebar */}
@@ -208,12 +226,8 @@ export function CockpitShell({ children, hideFooter = true }: CockpitShellProps)
         {children}
       </main>
 
-      {/* Footer conditionnel */}
-      {!hideFooter && (
-        <footer className="border-t border-slate-800 bg-slate-950 py-4 text-center text-sm text-slate-500">
-          Powalyze © {new Date().getFullYear()} - Cockpit Executive
-        </footer>
-      )}
+      {/* Command Palette (Ctrl+K) */}
+      <CommandPalette />
     </div>
   );
 }

@@ -4,7 +4,7 @@
 // ============================================================
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createSupabaseBrowserClient } from '@/lib/supabaseClient';
+import { createClient } from '@/utils/supabase/server';
 
 export async function POST(req: NextRequest) {
   try {
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const supabase = createSupabaseBrowserClient();
+    const supabase = await createClient();
     const { data, error } = await supabase
       .from('actions')
       .insert({
@@ -81,7 +81,7 @@ export async function GET(req: NextRequest) {
     const status = searchParams.get('status');
     const priority = searchParams.get('priority');
 
-    const supabase = createSupabaseBrowserClient();
+    const supabase = await createClient();
 
     let query = supabase
       .from('actions')

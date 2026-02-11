@@ -3,6 +3,7 @@
 import React, { useState, useCallback } from 'react';
 import { Upload, FileText, AlertCircle, CheckCircle, X } from 'lucide-react';
 import { useToast } from '@/components/ui/ToastProvider';
+import { safeFetch } from '@/lib/safeFetch';
 
 interface PBIXUploaderProps {
   projectId: string;
@@ -107,7 +108,7 @@ export default function PBIXUploader({
       }, 500);
 
       // Envoyer la requête
-      const response = await fetch('/api/powerbi/import', {
+      const response = await safeFetch('/api/powerbi/import', {
         method: 'POST',
         body: formData,
         headers: {

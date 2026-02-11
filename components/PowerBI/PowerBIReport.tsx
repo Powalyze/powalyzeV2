@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { PowerBIEmbed } from 'powerbi-client-react';
 import { models } from 'powerbi-client';
+import { safeFetch } from '@/lib/safeFetch';
 
 interface PowerBIReportProps {
   reportId: string;
@@ -14,7 +15,7 @@ export default function PowerBIReport({ reportId, datasetId }: PowerBIReportProp
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`/api/powerbi/token?reportId=${reportId}&datasetId=${datasetId}`, {
+    safeFetch(`/api/powerbi/token?reportId=${reportId}&datasetId=${datasetId}`, {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'

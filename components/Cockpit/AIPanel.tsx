@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Project } from '@/types/cockpit';
+import { safeFetch } from '@/lib/safeFetch';
 
 interface Props {
   organization_id: string;
@@ -16,7 +17,7 @@ export default function AIPanel({ organization_id, selectedProject }: Props) {
     setLoading(true);
     setSummary(null);
     try {
-      const res = await fetch('/api/ai/executive-summary', {
+      const res = await safeFetch('/api/ai/executive-summary', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

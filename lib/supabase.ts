@@ -9,7 +9,8 @@
 import { createClient } from '@supabase/supabase-js';
 
 function cleanEnv(value?: string) {
-  return value?.replace(/^\uFEFF/, '').trim();
+  if (!value) return '';
+  return value.replace(/^\uFEFF/, '').replace(/\r?\n/g, '').trim();
 }
 
 const supabaseUrl = cleanEnv(process.env.NEXT_PUBLIC_SUPABASE_URL) || 'https://placeholder.supabase.co';

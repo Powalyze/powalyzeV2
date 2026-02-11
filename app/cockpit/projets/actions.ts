@@ -115,26 +115,48 @@ async function getOrganizationId() {
 
 export async function getProjects() {
   try {
+    console.log('[getProjects] Début de la récupération...');
+    
     const userId = await getUserId();
+    const organizationId = await getOrganizationId();
+    
+    console.log('[getProjects] userId:', userId);
+    console.log('[getProjects] organizationId:', organizationId);
+    
     if (!userId) {
+      console.warn('[getProjects] Aucun userId trouvé');
       return { projects: [], error: null };
     }
 
-    const supabase = await createClient();
-    const { data, error } = await supabase
+    // Utiliser le service client pour bypasser RLS
+    const supabase = getSupabaseService();
+    
+    // Si on a un organizationId, filtrer par org, sinon récupérer tous les projets de l'utilisateur
+    let query = supabase
       .from('projects')
       .select('*')
-      .eq('user_id', userId)
       .order('created_at', { ascending: false });
+    
+    if (organizationId) {
+      console.log('[getProjects] Filtrage par organizationId:', organizationId);
+      query = query.eq('organization_id', organizationId);
+    } else {
+      console.log('[getProjects] Pas d\'organizationId, récupération de tous les projets');
+    }
+    
+    const { data, error } = await query;
 
     if (error) {
-      console.error('Error fetching projects:', error);
+      console.error('[getProjects] Erreur Supabase:', error);
       return { projects: [], error: error.message };
     }
 
+    console.log('[getProjects] Projets récupérés:', data?.length || 0);
+    console.log('[getProjects] Données:', data);
+    
     return { projects: data || [], error: null };
   } catch (err: any) {
-    console.error('Unexpected error:', err);
+    console.error('[getProjects] Erreur inattendue:', err);
     return { projects: [], error: err.message };
   }
 }

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
+import { safeFetch } from '@/lib/safeFetch'
 
 interface OnboardingProps {
   userId: string
@@ -21,7 +22,7 @@ export default function Onboarding({ userId, organizationId }: OnboardingProps) 
     setLoading(true)
 
     try {
-      const response = await fetch('/api/projects', {
+      const response = await safeFetch('/api/projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

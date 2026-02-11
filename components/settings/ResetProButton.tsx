@@ -6,6 +6,7 @@
 'use client';
 
 import { useState } from 'react';
+import { safeFetch } from '@/lib/safeFetch';
 
 interface ResetProButtonProps {
   organizationId: string;
@@ -19,7 +20,7 @@ export function ResetProButton({ organizationId }: ResetProButtonProps) {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/admin/reset-pro', {
+      const res = await safeFetch('/api/admin/reset-pro', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
