@@ -34,8 +34,7 @@ export async function middleware(req: NextRequest) {
     console.log('🔍 [MIDDLEWARE]', {
       path,
       hasSession: !!session,
-      userId: session?.user?.id,
-      cookies: req.cookies.getAll().filter(c => c.name.includes('sb-')).map(c => c.name)
+      userId: session?.user?.id
     });
   }
 
