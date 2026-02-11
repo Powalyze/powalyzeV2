@@ -66,7 +66,42 @@ export default function LoginForm() {
         sessionToken: data.session.access_token ? 'présent' : 'absent'
       });
 
-      // 2. MODE PRO PERMANENT: Redirection directe vers cockpit projets
+      // 2. S'assurer que l'utilisateur a les droits Pro actifs
+      console.log('🔧 [LOGIN] Activation des droits Pro...');
+      try {
+        const { data: existingUser } = await supabase
+          .from('users')
+          .select('pro_active')
+          .eq('id', data.user.id)
+          .single();
+
+        if (!existingUser || !existingUser.pro_active) {
+          // Activer le mode Pro automatiquement
+          const { error: updateError } = await supabase
+            .from('users')
+            .upsert({
+              id: data.user.id,
+              email: data.user.email,
+              pro_active: true,
+              role: 'admin',
+              created_at: new Date().toISOString()
+            }, {
+              onConflict: 'id'
+            });
+
+          if (updateError) {
+            console.warn('⚠️ [LOGIN] Erreur activation Pro:', updateError);
+          } else {
+            console.log('✅ [LOGIN] Droits Pro activés');
+          }
+        } else {
+          console.log('✅ [LOGIN] Droits Pro déjà actifs');
+        }
+      } catch (err) {
+        console.warn('⚠️ [LOGIN] Erreur vérification Pro:', err);
+      }
+
+      // 3. MODE PRO PERMANENT: Redirection directe vers cockpit projets
       // Tous les comptes sont en mode Pro par défaut (plan='pro', mode='admin')
       console.log('🔄 [LOGIN] Redirection vers /cockpit/projets');
       router.push('/cockpit/projets');
