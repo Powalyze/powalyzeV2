@@ -31,8 +31,15 @@ export async function signup(
 
 export async function login(email: string, password: string) {
   const supabase = getSupabase();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
-  return { error };
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  
+  console.log('🔐 [AUTH SERVICE] Login:', { 
+    hasSession: !!data?.session, 
+    hasUser: !!data?.user,
+    error: error?.message 
+  });
+  
+  return { data, error };
 }
 
 export async function logout() {

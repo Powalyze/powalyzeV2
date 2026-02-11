@@ -32,20 +32,43 @@ export default function LoginForm() {
         password,
       });
 
+      console.log('🔐 [LOGIN] Réponse Supabase:', { 
+        hasData: !!data, 
+        hasUser: !!data?.user, 
+        hasSession: !!data?.session,
+        error: signInError?.message 
+      });
+
       if (signInError) {
+        console.error('❌ [LOGIN] Erreur d\'authentification:', signInError);
         setError(signInError.message);
         setLoading(false);
         return;
       }
 
+      if (!data.session) {
+        console.error('❌ [LOGIN] Pas de session créée');
+        setError('Échec de création de session');
+        setLoading(false);
+        return;
+      }
+
       if (!data.user) {
+        console.error('❌ [LOGIN] Pas d\'utilisateur trouvé');
         setError('Erreur de connexion');
         setLoading(false);
         return;
       }
 
+      console.log('✅ [LOGIN] Session créée:', {
+        userId: data.user.id,
+        email: data.user.email,
+        sessionToken: data.session.access_token ? 'présent' : 'absent'
+      });
+
       // 2. MODE PRO PERMANENT: Redirection directe vers cockpit projets
       // Tous les comptes sont en mode Pro par défaut (plan='pro', mode='admin')
+      console.log('🔄 [LOGIN] Redirection vers /cockpit/projets');
       router.push('/cockpit/projets');
       
     } catch (err: any) {
