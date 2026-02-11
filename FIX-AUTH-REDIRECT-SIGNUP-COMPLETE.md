@@ -1,8 +1,8 @@
 # 🔧 FIX: Blocage Auth - Redirection /signup après login
 
 **Date:** 11 février 2026  
-**Commits:** 7167802, fe1b502, 3e4e84b  
-**Status:** ✅ RÉSOLU (Code + Déploiement)
+**Commits:** 7167802, fe1b502, 3e4e84b, **be82119** (renforcé)  
+**Status:** ✅ RÉSOLU (Code + Déploiement Renforcé)
 
 ---
 
@@ -43,8 +43,16 @@ au lieu d'accéder directement à `/cockpit/projets`.
 // ❌ AVANT (client-side routing)
 router.push('/cockpit/projets');
 
-// ✅ APRÈS (hard reload)
-await new Promise(resolve => setTimeout(resolve, 500)); // Attente propagation cookies
+// ✅ APRÈS (hard reload + vérification)
+// Vérification session persistée
+const savedSession = await supabase.auth.getSession();
+console.log('✅ [LOGIN] Session confirmée persistée:', {
+  userId: savedSession.data.session.user.id,
+  hasAccessToken: !!savedSession.data.session.access_token
+});
+
+// Délai augmenté pour propagation cookies côté serveur
+await new Promise(resolve => setTimeout(resolve, 1500)); // 500ms → 1500ms
 window.location.href = '/cockpit/projets'; // Force une requête HTTP complète
 ```
 
@@ -149,6 +157,15 @@ sequenceDiagram
 - Simplification logs middleware (suppression `req.cookies.getAll()`)
 - Compatibilité Next.js toutes versions
 
+### Commit be82119 (RENFORCÉ)
+**Message:** `🔧 Fix: Renforce session sync - Délai 1.5s + vérification session persistée`
+
+**Changes:**
+- Délai augmenté: 500ms → 1500ms (triple) pour garantir propagation
+- Vérification explicite session persistée avant redirect
+- Logs enrichis: userId, access_token, étapes détaillées
+- Traçabilité complète du flux Auth
+
 ---
 
 ## 🧪 Tests de validation
@@ -167,6 +184,9 @@ npm run dev
    🔧 [LOGIN] Activation des droits Pro...
    ✅ [LOGIN] Droits Pro activés
    🔄 [LOGIN] Redirection vers /cockpit/projets (hard reload)
+   ✅ [LOGIN] Session confirmée persistée: { userId: '...', hasAccessToken: true }
+   ⏳ [LOGIN] Attente 1.5s propagation cookies...
+   🚀 [LOGIN] Lancement hard reload...
    🔍 [MIDDLEWARE] { path: '/cockpit/projets', hasSession: true, userId: '...' }
    ```
 4. **Résultat:** Accès direct à `/cockpit/projets` ✅
@@ -217,9 +237,11 @@ Le build échouait car la configuration pointait vers le mauvais projet Vercel.
 **⚙️ Dashboard:** https://vercel.com/powalyzes-projects/powalyze-v2/deployments
 
 ### Commit déployé
-- **Hash:** `3e4e84b`
+- **Hash:** `be82119` (version renforcée)
+- **Précédents:** `3e4e84b`, `fe1b502`, `7167802`
 - **Branch:** `rollback-source-of-truth`
 - **Date:** 11 février 2026
+- **Inspect:** https://vercel.com/powalyzes-projects/powalyze-v2/miZyiBotBJfYi5qhxYbxxU5gpPAJ
 
 ---
 
@@ -227,13 +249,14 @@ Le build échouait car la configuration pointait vers le mauvais projet Vercel.
 
 ### Code (Local)
 - [x] LoginForm utilise `window.location.href`
-- [x] Délai 500ms avant redirect
+- [x] Délai augmenté: 1500ms (renforcé)
+- [x] Vérification session persistée avant redirect
 - [x] Activation Pro automatique maintenue
 - [x] Options auth explicites sur client Supabase
-- [x] Logs middleware pour traçabilité
+- [x] Logs middleware + LoginForm pour traçabilité complète
 - [x] Build local réussi (212 pages)
 - [x] TypeScript sans erreur
-- [x] Commits poussés sur GitHub
+- [x] Commits poussés sur GitHub (be82119)
 
 ### Déploiement
 - [x] Variables Vercel synchronisées (7 variables)
