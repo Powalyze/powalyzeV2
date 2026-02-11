@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { createServerClient, createBrowserClient } from "@supabase/ssr";
+import { createServerClient } from "@supabase/ssr";
 
 // Nettoie les variables d'environnement des caractères invisibles (BOM, retours à la ligne)
 function cleanEnv(value?: string): string {
@@ -18,13 +18,18 @@ if (!supabaseUrl || !supabaseKey) {
   throw new Error('Configuration Supabase invalide - variables d\'environnement manquantes');
 }
 
-// Client basique (legacy, à éviter pour SSR)
-export const supabase = createClient(supabaseUrl, supabaseKey);
+// Client basique pour browser (avec persistSession activé par défaut)
+export const supabase = createClient(supabaseUrl, supabaseKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true
+  }
+});
 
-// Fonction helper pour client browser avec SSR (RECOMMANDÉ)
+// Fonction helper pour compatibilité avec l'ancien code (client browser)
 export function createSupabaseBrowserClient() {
-  // Utilise createBrowserClient pour une gestion optimale des cookies en SSR
-  return createBrowserClient(supabaseUrl, supabaseKey);
+  return supabase;
 }
 
 // Fonction helper pour compatibilité avec l'ancien code (server-side avec cookies)
