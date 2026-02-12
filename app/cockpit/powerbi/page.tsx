@@ -1,7 +1,7 @@
 "use client";
 
 import { CockpitShell } from "@/components/cockpit/CockpitShell";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getDemoData } from "@/lib/cockpitData";
 import {
   Maximize2,
@@ -13,6 +13,11 @@ import {
   PieChart,
   TrendingUp,
   Calendar,
+  X,
+  Save,
+  Link,
+  Key,
+  CheckCircle,
 } from "lucide-react";
 import {
   BarChart,
@@ -38,10 +43,69 @@ interface PowerBIReport {
   icon: any;
 }
 
+interface PowerBIConfig {
+  workspaceId: string;
+  reportId: string;
+  embedToken: string;
+  embedUrl: string;
+}
+
 export default function PowerBIPage() {
   const [selectedReport, setSelectedReport] = useState<PowerBIReport | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showConfigModal, setShowConfigModal] = useState(false);
+  const [powerBIConfig, setPowerBIConfig] = useState<PowerBIConfig | null>(null);
+  const [configForm, setConfigForm] = useState({
+    workspaceId: "",
+    reportId: "",
+    embedToken: "",
+    embedUrl: "",
+  });
   const demoData = getDemoData();
+
+  // Load saved Power BI config from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem("powerbi_config");
+    if (saved) {
+      try {
+        const config = JSON.parse(saved);
+        setPowerBIConfig(config);
+        setConfigForm(config);
+      } catch (e) {
+        console.error("Failed to load Power BI config", e);
+      }
+    }
+  }, []);
+
+  const handleSaveConfig = () => {
+    const config: PowerBIConfig = {
+      workspaceId: configForm.workspaceId,
+      reportId: configForm.reportId,
+      embedToken: configForm.embedToken,
+      embedUrl: configForm.embedUrl || `https://app.powerbi.com/reportEmbed?reportId=${configForm.reportId}&groupId=${configForm.workspaceId}`,
+    };
+    
+    localStorage.setItem("powerbi_config", JSON.stringify(config));
+    setPowerBIConfig(config);
+    setShowConfigModal(false);
+    
+    // Show success message
+    alert("✅ Configuration Power BI enregistrée avec succès !");
+  };
+
+  const handleClearConfig = () => {
+    if (confirm("Êtes-vous sûr de vouloir supprimer la configuration Power BI ?")) {
+      localStorage.removeItem("powerbi_config");
+      setPowerBIConfig(null);
+      setConfigForm({
+        workspaceId: "",
+        reportId: "",
+        embedToken: "",
+        embedUrl: "",
+      });
+      alert("Configuration supprimée");
+    }
+  };
 
   // Prepare data for visualizations
   const budgetData = demoData.projects.map(p => ({
@@ -290,6 +354,123 @@ export default function PowerBIPage() {
 
   return (
     <CockpitShell>
+      {/* Configuration Modal */}
+      {showConfigModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-xl max-w-2xl w-full p-6">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <Settings className="w-6 h-6 text-amber-500" />
+                Configuration Power BI
+              </h3>
+              <button
+                onClick={() => setShowConfigModal(false)}
+                className="p-2 hover:bg-slate-800 rounded-lg transition-colors text-slate-400"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Form */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2 flex items-center gap-2">
+                  <Link className="w-4 h-4" />
+                  Workspace ID (Group ID)
+                </label>
+                <input
+                  type="text"
+                  value={configForm.workspaceId}
+                  onChange={(e) => setConfigForm({ ...configForm, workspaceId: e.target.value })}
+                  placeholder="ex: 12345678-1234-1234-1234-123456789012"
+                  className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-amber-500"
+                />
+                <p className="text-slate-500 text-xs mt-1">
+                  Trouvez-le dans l'URL de votre workspace Power BI : groupId=...
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2 flex items-center gap-2">
+                  <BarChart3 className="w-4 h-4" />
+                  Report ID
+                </label>
+                <input
+                  type="text"
+                  value={configForm.reportId}
+                  onChange={(e) => setConfigForm({ ...configForm, reportId: e.target.value })}
+                  placeholder="ex: 98765432-4321-4321-4321-987654321098"
+                  className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-amber-500"
+                />
+                <p className="text-slate-500 text-xs mt-1">
+                  Trouvez-le dans l'URL de votre rapport : reportId=...
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2 flex items-center gap-2">
+                  <Key className="w-4 h-4" />
+                  Embed Token (optionnel)
+                </label>
+                <textarea
+                  value={configForm.embedToken}
+                  onChange={(e) => setConfigForm({ ...configForm, embedToken: e.target.value })}
+                  placeholder="Collez votre token d'intégration ici (généré via Power BI REST API)"
+                  rows={3}
+                  className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-amber-500 font-mono text-xs"
+                />
+                <p className="text-slate-500 text-xs mt-1">
+                  Token temporaire pour l'authentification (valide 1h)
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Embed URL (auto-généré)
+                </label>
+                <input
+                  type="text"
+                  value={configForm.embedUrl || `https://app.powerbi.com/reportEmbed?reportId=${configForm.reportId}&groupId=${configForm.workspaceId}`}
+                  onChange={(e) => setConfigForm({ ...configForm, embedUrl: e.target.value })}
+                  placeholder="URL d'intégration complète"
+                  className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-amber-500 text-sm"
+                />
+              </div>
+
+              {/* Info Box */}
+              <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+                <p className="text-blue-400 text-sm font-semibold mb-2">📘 Comment obtenir ces informations ?</p>
+                <ul className="text-slate-300 text-xs space-y-1">
+                  <li>1. Connectez-vous à <a href="https://app.powerbi.com" target="_blank" rel="noopener" className="text-blue-400 underline">app.powerbi.com</a></li>
+                  <li>2. Ouvrez votre workspace et rapport</li>
+                  <li>3. Les IDs sont dans l'URL du navigateur</li>
+                  <li>4. Pour le token, utilisez l'API Power BI REST ou Azure AD</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => setShowConfigModal(false)}
+                className="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handleSaveConfig}
+                disabled={!configForm.workspaceId || !configForm.reportId}
+                className="flex-1 px-4 py-2 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-700 disabled:text-slate-500 text-slate-950 rounded-lg transition-colors flex items-center justify-center gap-2 font-semibold"
+              >
+                <Save size={18} />
+                Enregistrer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className={`${isFullscreen ? "fixed inset-0 z-50" : ""} bg-slate-950 flex flex-col h-screen`}>
         {/* Header */}
         <div className="p-6 border-b border-slate-800 bg-slate-900">
@@ -372,12 +553,38 @@ export default function PowerBIPage() {
                   <Settings size={16} />
                   Configuration
                 </h4>
-                <p className="text-slate-400 text-xs mb-3">
-                  Configurez vos connexions Power BI pour afficher les rapports en temps réel.
-                </p>
-                <button className="w-full px-3 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-lg text-sm font-medium transition-colors">
-                  Configurer Power BI
-                </button>
+                {powerBIConfig ? (
+                  <>
+                    <div className="flex items-center gap-2 mb-3">
+                      <CheckCircle className="w-4 h-4 text-green-400" />
+                      <p className="text-green-400 text-xs">Connecté</p>
+                    </div>
+                    <button 
+                      onClick={() => setShowConfigModal(true)}
+                      className="w-full px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm font-medium transition-colors mb-2"
+                    >
+                      Modifier la config
+                    </button>
+                    <button 
+                      onClick={handleClearConfig}
+                      className="w-full px-3 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg text-sm font-medium transition-colors"
+                    >
+                      Déconnecter
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-slate-400 text-xs mb-3">
+                      Configurez vos connexions Power BI pour afficher les rapports en temps réel.
+                    </p>
+                    <button 
+                      onClick={() => setShowConfigModal(true)}
+                      className="w-full px-3 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-lg text-sm font-medium transition-colors"
+                    >
+                      Configurer Power BI
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           )}
