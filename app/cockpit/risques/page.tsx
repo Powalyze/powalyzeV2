@@ -266,8 +266,8 @@ function RiskMatrix({ risks, onMitigate }: { risks: Risk[]; onMitigate: (id: str
           return (
             <div key={idx} className={`${bgColor} border rounded-lg p-3 flex flex-col items-center justify-center relative hover:border-amber-500/50 transition-colors cursor-pointer group`}>
               <div className="text-xs text-slate-500 absolute top-1 left-1">{impact}x{probability}</div>
-              {cellRisks.map(risk => (
-                <div key={risk.id} className="relative">
+              {cellRisks.map((risk, riskIdx) => (
+                <div key={`${risk.id}-${impact}-${probability}-${riskIdx}`} className="relative">
                   <div className="w-8 h-8 rounded-full bg-slate-900 border-2 border-white flex items-center justify-center text-xs font-bold" title={risk.title}>
                     {risk.project.slice(0, 2)}
                   </div>

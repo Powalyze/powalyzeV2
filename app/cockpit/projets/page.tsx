@@ -1,6 +1,7 @@
 "use client";
 
 import { CockpitShell } from "@/components/cockpit/CockpitShell";
+import { AuthGuard } from "@/components/auth/AuthGuard";
 import { useToast } from "@/components/ui/ToastProvider";
 import { useState, useEffect } from "react";
 import { 
@@ -181,8 +182,9 @@ export default function ProjetsPage() {
     });
 
   return (
-    <CockpitShell>
-      <div className="p-6 space-y-6">
+    <AuthGuard requireAuth={true} requirePro={true} redirectTo="/login">
+      <CockpitShell>
+        <div className="p-6 space-y-6">
         {/* Header minimal & premium */}
         <div className="flex items-start justify-between">
           <div>
@@ -661,6 +663,7 @@ export default function ProjetsPage() {
         )}
       </div>
     </CockpitShell>
+    </AuthGuard>
   );
 }
 

@@ -3,38 +3,68 @@ import type { NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
 export async function middleware(req: NextRequest) {
-  const res = NextResponse.next();
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return req.cookies.get(name)?.value;
-        },
-        set(name: string, value: string, options: any) {
-          res.cookies.set({ name, value, ...options });
-        },
-        remove(name: string, options: any) {
-          res.cookies.set({ name, value: "", ...options });
-        }
-      }
-    }
-  );
-
-  const {
-    data: { session }
-  } = await supabase.auth.getSession();
+  let res = NextResponse.next({
+    request: {
+      headers: req.headers,
+    },
+  });
 
   const path = req.nextUrl.pathname;
+
+  // ========================================
+  // MODE SIMPLE AUTH - Vérifier cookie simple_auth
+  // ========================================
+  const simpleAuthCookie = req.cookies.get('simple_auth_token');
+  const hasSimpleAuth = !!simpleAuthCookie;
+
+  // Si auth simple présente, on laisse passer pour le cockpit
+  if (hasSimpleAuth && path.startsWith('/cockpit')) {
+    console.log('✅ [MIDDLEWARE] Auth simple détectée, accès autorisé:', path);
+    return res;
+  }
+
+  // ========================================
+  // MODE SUPABASE AUTH (optionnel)
+  // ========================================
+  let user = null;
+  let authError = null;
+  let supabase = null;
+
+  try {
+    supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return req.cookies.get(name)?.value;
+          },
+          set(name: string, value: string, options: any) {
+            req.cookies.set({ name, value, ...options });
+            res.cookies.set({ name, value, ...options });
+          },
+          remove(name: string, options: any) {
+            req.cookies.set({ name, value: "", ...options });
+            res.cookies.set({ name, value: "", ...options });
+          }
+        }
+      }
+    );
+
+    const result = await supabase.auth.getUser();
+    user = result.data.user;
+    authError = result.error;
+  } catch (error) {
+    console.log('⚠️ [MIDDLEWARE] Supabase non disponible, mode simple auth uniquement');
+  }
 
   // Debug logging pour diagnostiquer les problèmes de session
   if (path.startsWith('/cockpit') && !path.startsWith('/cockpit/demo')) {
     console.log('🔍 [MIDDLEWARE]', {
       path,
-      hasSession: !!session,
-      userId: session?.user?.id
+      hasUser: !!user,
+      userId: user?.id,
+      authError: authError?.message
     });
   }
 
@@ -69,23 +99,25 @@ export async function middleware(req: NextRequest) {
                       path.startsWith('/contact') ||
                       path.startsWith('/auth') || 
                       path.startsWith('/signup') || 
-                      path.startsWith('/login');
+                      path.startsWith('/login') ||
+                      path.startsWith('/login-simple'); // ✅ NOUVEAU: Login simple
 
-  if (!session && !isPublicPath) {
-    // Non connecté essayant d'accéder à une page interne → signup
-    console.log('⚠️ [MIDDLEWARE] Pas de session, redirection vers /signup', { path });
-    const redirectUrl = new URL('/signup', req.url);
+  // Si pas d'auth (ni simple ni Supabase) et tentative d'accès page protégée
+  if (!hasSimpleAuth && !user && !isPublicPath) {
+    // Non connecté essayant d'accéder à une page interne → LOGIN SIMPLE
+    console.log('⚠️ [MIDDLEWARE] Pas d\'auth, redirection vers /login-simple', { path });
+    const redirectUrl = new URL('/login-simple', req.url);
     redirectUrl.searchParams.set('redirect', path);
     return NextResponse.redirect(redirectUrl);
   }
 
-  // Si connecté, récupérer les infos utilisateur
-  if (session) {
+  // Si connecté via Supabase, récupérer les infos utilisateur
+  if (user && supabase) {
     try {
       const { data: userData, error } = await supabase
         .from('users')
         .select('role, tenant_id, pro_active')
-        .eq('id', session.user.id)
+        .eq('id', user.id)
         .single();
 
       if (!error && userData) {
@@ -151,14 +183,16 @@ export async function middleware(req: NextRequest) {
         }
       }
     } catch (error) {
-      console.error('Error in middleware:', error);
-      // En cas d'erreur, rediriger vers signup par sécurité
-      if (path.startsWith('/cockpit')) {
-        return NextResponse.redirect(new URL('/signup', req.url));
+      console.error('❌ [MIDDLEWARE] Erreur:', error);
+      // En cas d'erreur, rediriger vers LOGIN par sécurité (PAS signup)
+      if (path.startsWith('/cockpit') && !path.startsWith('/cockpit/demo')) {
+        console.log('⚠️ [MIDDLEWARE] Erreur critique, redirection vers /login');
+        return NextResponse.redirect(new URL('/login', req.url));
       }
     }
   }
 
+  // Retourner la response avec les cookies mis à jour
   return res;
 }
 

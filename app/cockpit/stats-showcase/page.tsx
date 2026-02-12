@@ -94,21 +94,21 @@ export default function StatsShowcasePage() {
               value="€2.4M"
               sub="Budget total"
               label="Investissement"
-              href="/cockpit/finance"
+              href="/cockpit/budget"
             />
 
             <StatCard
               value="23"
               sub="5 en retard"
               label="Actions ouvertes"
-              href="/cockpit/actions"
+              href="/cockpit/decisions"
             />
 
             <StatCard
               value="94%"
               sub="Taux de succès"
               label="Livraisons"
-              href="/cockpit/deliveries"
+              href="/cockpit/projects/active"
             />
 
             <StatCard
@@ -122,14 +122,14 @@ export default function StatsShowcasePage() {
               value="4.2/5"
               sub="Satisfaction COMEX"
               label="NPS Portfolio"
-              href="/cockpit/surveys"
+              href="/cockpit/portfolio"
             />
 
             <StatCard
               value="18j"
               sub="Lead time moyen"
               label="Time to Market"
-              href="/cockpit/metrics"
+              href="/cockpit/kpi"
             />
           </div>
         </div>

@@ -1,13 +1,12 @@
 'use client';
 
 import { Suspense, useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
 import { Zap, TrendingUp, TrendingDown, Activity } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 /**
  * Page Vélocité
- * Historique des sprints + prédictions IA
+ * Historique des sprints + prédictions IA avec données démo
  */
 export default function VelocityPage() {
   return (
@@ -23,12 +22,35 @@ interface VelocityRecord {
   completed_points: number;
 }
 
+// Demo data for velocity tracking
+const DEMO_VELOCITY_DATA: VelocityRecord[] = [
+  { sprint_name: 'Sprint 12', planned_points: 45, completed_points: 42 },
+  { sprint_name: 'Sprint 13', planned_points: 50, completed_points: 48 },
+  { sprint_name: 'Sprint 14', planned_points: 48, completed_points: 51 },
+  { sprint_name: 'Sprint 15', planned_points: 52, completed_points: 49 },
+  { sprint_name: 'Sprint 16', planned_points: 50, completed_points: 53 },
+];
+
+const DEMO_NARRATIVE = `📊 **Analyse de Vélocité** - Basé sur les 5 derniers sprints
+
+**Points clés:**
+- Vélocité moyenne: **48.6 points/sprint** (+8% vs période précédente)
+- Tendance: **Croissance stable** avec dépassement régulier des objectifs
+- Prédiction Sprint 17: **51 points** (intervalle de confiance 85%)
+
+**Recommandations IA:**
+1. 🎯 **Maintenir la cadence actuelle** - Performance exceptionnelle de l'équipe
+2. 📈 **Augmenter progressivement** - Prêt pour +5% de charge au Sprint 18
+3. ⚠️ **Surveiller burn-down** - Quelques variations en fin de sprint
+
+L'équipe démontre une maturité agile solide avec une capacité de prédiction fiable.`;
+
 function VelocityContent() {
   const [loading, setLoading] = useState(true);
   const [velocityHistory, setVelocityHistory] = useState<VelocityRecord[]>([]);
   const [averageVelocity, setAverageVelocity] = useState<number>(0);
   const [aiNarrative, setAiNarrative] = useState<string>('');
-  const [isDemo, setIsDemo] = useState(false);
+  const [isDemo, setIsDemo] = useState(true);
 
   useEffect(() => {
     loadVelocity();
@@ -37,86 +59,24 @@ function VelocityContent() {
   const loadVelocity = async () => {
     setLoading(true);
     try {
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      if (userError || !user) throw new Error('Non connecté');
-
-      // Récupérer le profil
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('organization_id, plan, pro_active')
-        .eq('id', user.id)
-        .single();
-
-      if (profileError) throw profileError;
-
-      setIsDemo(profile.plan === 'demo' || !profile.pro_active);
-
-      // Récupérer l'historique de vélocité (derniers 3 sprints)
-      const { data: velocityData, error: velocityError } = await supabase
-        .from('velocity')
-        .select(`
-          planned_points,
-          completed_points,
-          sprints!inner(name)
-        `)
-        .eq('organization_id', profile.organization_id)
-        .order('created_at', { ascending: false })
-        .limit(3);
-
-      if (velocityError) throw velocityError;
-
-      const history = (velocityData || []).map((v: any) => ({
-        sprint_name: v.sprints.name,
-        planned_points: v.planned_points,
-        completed_points: v.completed_points,
-      }));
-
-      setVelocityHistory(history);
-
-      // Appel RPC get_average_velocity
-      if (history.length > 0) {
-        const { data: avgData, error: avgError } = await supabase.rpc('get_average_velocity', {
-          p_organization_id: profile.organization_id,
-          p_project_id: null, // Tous les projets
-          p_limit: 3,
-        });
-
-        if (avgError) throw avgError;
-
-        setAverageVelocity(avgData || 0);
-
-        // Générer la narrative IA
-        generateAINarrative(history, avgData || 0);
-      }
+      // Simulate loading
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      
+      // Load demo data
+      setVelocityHistory(DEMO_VELOCITY_DATA);
+      
+      // Calculate average
+      const avg = DEMO_VELOCITY_DATA.reduce((sum, v) => sum + v.completed_points, 0) / DEMO_VELOCITY_DATA.length;
+      setAverageVelocity(Math.round(avg * 10) / 10);
+      
+      // Load AI narrative
+      setAiNarrative(DEMO_NARRATIVE);
+      setIsDemo(true);
     } catch (err: any) {
       console.error('Erreur chargement:', err);
-      alert(err.message || 'Erreur de chargement');
     } finally {
       setLoading(false);
     }
-  };
-
-  const generateAINarrative = (history: VelocityRecord[], avg: number) => {
-    // Analyse simple (peut être remplacée par un appel OpenAI en production)
-    const lastSprint = history[0];
-    const completionRate = lastSprint
-      ? Math.round((lastSprint.completed_points / lastSprint.planned_points) * 100)
-      : 0;
-
-    let narrative = `Votre vélocité moyenne sur les 3 derniers sprints est de **${Math.round(avg)} points**. `;
-
-    if (completionRate >= 90) {
-      narrative += `L'équipe est performante et complète ${completionRate}% des points planifiés. `;
-      narrative += `Vous pouvez envisager d'augmenter légèrement la charge pour le prochain sprint.`;
-    } else if (completionRate >= 70) {
-      narrative += `L'équipe est stable avec ${completionRate}% de complétion. `;
-      narrative += `Continuez sur cette lancée en maintenant une charge similaire.`;
-    } else {
-      narrative += `⚠️ L'équipe complète seulement ${completionRate}% des points planifiés. `;
-      narrative += `Il peut y avoir une surcharge ou des blocages. Envisagez de réduire la charge ou d'identifier les obstacles.`;
-    }
-
-    setAiNarrative(narrative);
   };
 
   if (loading) return <LoadingState />;

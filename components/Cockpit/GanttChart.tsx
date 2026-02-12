@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Calendar, Expand, Download } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar, Expand, Download, X, Save } from "lucide-react";
 
 interface Task {
   id: string;
@@ -11,6 +11,121 @@ interface Task {
   progress: number;
   dependencies: string[];
   color: string;
+}
+
+interface EditModalProps {
+  task: Task;
+  onSave: (task: Task) => void;
+  onClose: () => void;
+}
+
+function EditTaskModal({ task, onSave, onClose }: EditModalProps) {
+  const [editedTask, setEditedTask] = useState<Task>({ ...task });
+
+  const formatDateForInput = (date: Date) => {
+    return date.toISOString().split('T')[0];
+  };
+
+  const handleSave = () => {
+    onSave(editedTask);
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-slate-900 border border-slate-800 rounded-xl max-w-md w-full p-6">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-bold text-white">Éditer la Tâche</h3>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-slate-800 rounded-lg transition-colors text-slate-400"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* Form */}
+        <div className="space-y-4">
+          {/* Task Name */}
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">
+              Nom de la tâche
+            </label>
+            <input
+              type="text"
+              value={editedTask.name}
+              onChange={(e) => setEditedTask({ ...editedTask, name: e.target.value })}
+              className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+            />
+          </div>
+
+          {/* Start Date */}
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">
+              Date de début
+            </label>
+            <input
+              type="date"
+              value={formatDateForInput(editedTask.start)}
+              onChange={(e) => setEditedTask({ ...editedTask, start: new Date(e.target.value) })}
+              className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+            />
+          </div>
+
+          {/* End Date */}
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">
+              Date de fin
+            </label>
+            <input
+              type="date"
+              value={formatDateForInput(editedTask.end)}
+              onChange={(e) => setEditedTask({ ...editedTask, end: new Date(e.target.value) })}
+              className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+            />
+          </div>
+
+          {/* Progress */}
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">
+              Progression: {editedTask.progress}%
+            </label>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={editedTask.progress}
+              onChange={(e) => setEditedTask({ ...editedTask, progress: parseInt(e.target.value) })}
+              className="w-full"
+            />
+            <div className="flex justify-between text-xs text-slate-500 mt-1">
+              <span>0%</span>
+              <span>50%</span>
+              <span>100%</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex gap-3 mt-6">
+          <button
+            onClick={onClose}
+            className="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors"
+          >
+            Annuler
+          </button>
+          <button
+            onClick={handleSave}
+            className="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
+          >
+            <Save size={18} />
+            Enregistrer
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export function GanttChart() {
@@ -64,7 +179,7 @@ export function GanttChart() {
 
   const [viewStart, setViewStart] = useState(new Date(2026, 0, 1));
   const [viewEnd, setViewEnd] = useState(new Date(2026, 6, 1));
-  const [draggedTask, setDraggedTask] = useState<string | null>(null);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
   const chartRef = useRef<HTMLDivElement>(null);
 
   const months: Date[] = [];
@@ -89,13 +204,25 @@ export function GanttChart() {
     return { left: `${left}%`, width: `${width}%` };
   }
 
-  function handleTaskDrag(taskId: string, e: React.MouseEvent) {
-    setDraggedTask(taskId);
-    // TODO: Implémenter le drag & drop pour modifier les dates
+  function handleTaskClick(task: Task) {
+    setEditingTask(task);
+  }
+
+  function handleSaveTask(updatedTask: Task) {
+    setTasks(tasks.map(t => t.id === updatedTask.id ? updatedTask : t));
   }
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+    <>
+      {editingTask && (
+        <EditTaskModal
+          task={editingTask}
+          onSave={handleSaveTask}
+          onClose={() => setEditingTask(null)}
+        />
+      )}
+
+      <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
       {/* Header */}
       <div className="p-4 border-b border-slate-800 flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -188,12 +315,14 @@ export function GanttChart() {
 
                   {/* Task Bar */}
                   <div
-                    className="absolute top-1/2 -translate-y-1/2 h-8 rounded-lg cursor-move hover:shadow-lg transition-shadow"
+                    className="absolute top-1/2 -translate-y-1/2 h-8 rounded-lg cursor-pointer hover:shadow-lg hover:scale-105 transition-all"
                     style={{
-                      ...position,
+                      left: position.left,
+                      width: position.width,
                       backgroundColor: task.color,
                     }}
-                    onMouseDown={(e) => handleTaskDrag(task.id, e)}
+                    onClick={() => handleTaskClick(task)}
+                    title="Cliquez pour éditer les dates"
                   >
                     {/* Progress */}
                     <div
@@ -205,10 +334,6 @@ export function GanttChart() {
                     <div className="absolute inset-0 flex items-center justify-center text-xs font-medium text-white px-2 truncate">
                       {task.name}
                     </div>
-
-                    {/* Resize Handles */}
-                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-white/50 cursor-ew-resize" />
-                    <div className="absolute right-0 top-0 bottom-0 w-1 bg-white/50 cursor-ew-resize" />
                   </div>
 
                   {/* Dependencies */}
@@ -244,6 +369,7 @@ export function GanttChart() {
           <span className="text-slate-400">En retard</span>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

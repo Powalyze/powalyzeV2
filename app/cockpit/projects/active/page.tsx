@@ -2,19 +2,18 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { getDemoData } from "@/lib/cockpitData";
 import "./styles.css";
 
 type Project = {
   id: string;
   name: string;
   status: string;
-  owner_id: string;
-  start_date: string | null;
-  end_date: string | null;
-  progress: number | null;
-  updated_at: string | null;
-  description?: string;
-  budget?: number;
+  progress: number;
+  budget: string;
+  team: string;
+  deadline: string;
+  sponsor: string;
 };
 
 export default function ActiveProjectsPage() {
@@ -31,20 +30,12 @@ export default function ActiveProjectsPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/projects");
+      // Use demo data instead of API call
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      const demoData = getDemoData();
       
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-      }
-      
-      const data = await res.json();
-      
-      // Filtrer uniquement les projets actifs
-      const activeProjects = data.filter((p: Project) => 
-        p.status === "active" || p.status === "ACTIVE"
-      );
-      
-      setProjects(activeProjects);
+      // All demo projects are considered "active"
+      setProjects(demoData.projects as any[]);
     } catch (err) {
       console.error("Error fetching active projects:", err);
       setError(err instanceof Error ? err.message : "Erreur inconnue");
@@ -55,7 +46,8 @@ export default function ActiveProjectsPage() {
 
   const formatDate = (dateStr: string | null) => {
     if (!dateStr) return "-";
-    return new Date(dateStr).toLocaleDateString("fr-FR");
+    // Demo data uses format like "30 juin 2026"
+    return dateStr;
   };
 
   const getProgressColor = (progress: number | null) => {
@@ -155,25 +147,23 @@ export default function ActiveProjectsPage() {
                   <h3 className="text-xl font-bold text-white mb-2 line-clamp-2">
                     {project.name}
                   </h3>
-                  {project.description && (
-                    <p className="text-sm text-white/60 line-clamp-2">
-                      {project.description}
-                    </p>
-                  )}
+                  <p className="text-sm text-white/60">
+                    {project.team} • {project.sponsor}
+                  </p>
                 </div>
 
                 {/* Dates */}
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-white/60">Début</span>
+                    <span className="text-white/60">Échéance</span>
                     <span className="text-white font-medium">
-                      {formatDate(project.start_date)}
+                      {formatDate(project.deadline)}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-white/60">Fin prévue</span>
+                    <span className="text-white/60">Budget</span>
                     <span className="text-white font-medium">
-                      {formatDate(project.end_date)}
+                      {project.budget}
                     </span>
                   </div>
                 </div>
@@ -183,35 +173,40 @@ export default function ActiveProjectsPage() {
                   <div className="flex items-center justify-between text-sm mb-2">
                     <span className="text-white/60">Progression</span>
                     <span className="text-white font-bold">
-                      {project.progress ?? 0}%
+                      {project.progress}%
                     </span>
                   </div>
                   <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden relative">
                     <div
                       className={`absolute top-0 left-0 h-full ${getProgressColor(project.progress)} transition-all`}
-                      data-progress={project.progress ?? 0}
+                      style={{ width: `${project.progress}%` }}
                     />
                   </div>
                 </div>
 
-                {/* Budget (si disponible) */}
-                {project.budget && (
-                  <div className="flex items-center justify-between text-sm pt-4 border-t border-white/10">
-                    <span className="text-white/60">Budget</span>
-                    <span className="text-white font-medium">
-                      {new Intl.NumberFormat("fr-FR", {
-                        style: "currency",
-                        currency: "EUR",
-                      }).format(project.budget)}
-                    </span>
-                  </div>
-                )}
-
-                {/* Badge actif */}
-                <div className="mt-4">
+                {/* Badge status */}
+                <div className="mt-4 flex items-center justify-between">
                   <span className="inline-block px-3 py-1 bg-green-500/20 text-green-400 border border-green-500/40 rounded-full text-xs font-medium">
                     ✓ Actif
                   </span>
+                  <div className="flex items-center gap-2">
+                    <div
+                      className={`w-3 h-3 rounded-full ${
+                        project.status === "green"
+                          ? "bg-green-400"
+                          : project.status === "orange"
+                          ? "bg-orange-400"
+                          : "bg-red-400"
+                      }`}
+                    />
+                    <span className="text-xs text-white/60 capitalize">
+                      {project.status === "green"
+                        ? "Nominal"
+                        : project.status === "orange"
+                        ? "Vigilance"
+                        : "Critique"}
+                    </span>
+                  </div>
                 </div>
               </div>
             ))}

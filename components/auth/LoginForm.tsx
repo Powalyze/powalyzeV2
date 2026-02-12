@@ -106,20 +106,34 @@ export default function LoginForm() {
       // Cela garantit que le middleware côté serveur voit la nouvelle session
       console.log('🔄 [LOGIN] Redirection vers /cockpit/projets (hard reload)');
       
-      // Vérification que la session est bien persistée
+      // Vérification que la session est bien persistée ET que les cookies sont écrits
       const savedSession = await supabase.auth.getSession();
-      if (savedSession.data.session) {
-        console.log('✅ [LOGIN] Session confirmée persistée:', {
-          userId: savedSession.data.session.user.id,
-          hasAccessToken: !!savedSession.data.session.access_token
-        });
-      } else {
+      if (!savedSession.data.session) {
         console.error('❌ [LOGIN] Session non trouvée après login!');
+        setError('Erreur de session - veuillez réessayer');
+        setLoading(false);
+        return;
       }
       
-      // Délai augmenté (1.5s) pour garantir l'écriture des cookies côté serveur
-      console.log('⏳ [LOGIN] Attente 1.5s propagation cookies...');
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      console.log('✅ [LOGIN] Session confirmée persistée:', {
+        userId: savedSession.data.session.user.id,
+        hasAccessToken: !!savedSession.data.session.access_token,
+        expiresAt: savedSession.data.session.expires_at
+      });
+      
+      // Vérifier que les cookies sont effectivement présents dans le navigateur
+      const hasCookies = document.cookie.includes('sb-') && 
+                        document.cookie.includes('-auth-token');
+      
+      if (!hasCookies) {
+        console.warn('⚠️ [LOGIN] Cookies Supabase non détectés dans le navigateur');
+        // Attendre un peu plus longtemps
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+      
+      // Délai augmenté (2s) pour garantir l'écriture des cookies côté serveur
+      console.log('⏳ [LOGIN] Attente 2s propagation cookies...');
+      await new Promise(resolve => setTimeout(resolve, 2000));
       
       // Hard reload au lieu de router.push() pour synchroniser session client/serveur
       console.log('🚀 [LOGIN] Lancement hard reload...');
