@@ -22,11 +22,12 @@ interface CardHeaderProps {
   children: React.ReactNode;
   icon?: React.ReactNode;
   action?: React.ReactNode;
+  className?: string;
 }
 
-export function CardHeader({ children, icon, action }: CardHeaderProps) {
+export function CardHeader({ children, icon, action, className = "" }: CardHeaderProps) {
   return (
-    <div className="p-6 border-b border-slate-800/50">
+    <div className={`p-6 border-b border-slate-800/50 ${className}`}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           {icon && <div className="text-amber-400">{icon}</div>}

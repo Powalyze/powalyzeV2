@@ -8,10 +8,6 @@ import { useState } from 'react';
 const languages = [
   { code: 'fr', label: 'Français', flag: '🇫🇷' },
   { code: 'en', label: 'English', flag: '🇬🇧' },
-  { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
-  { code: 'it', label: 'Italiano', flag: '🇮🇹' },
-  { code: 'no', label: 'Norsk', flag: '🇳🇴' },
-  { code: 'es', label: 'Español', flag: '🇪🇸' },
 ] as const;
 
 export function LanguageSwitcher() {
