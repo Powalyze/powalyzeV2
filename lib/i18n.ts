@@ -12,15 +12,19 @@ import translationsFR from '@/locales/fr.json';
 import translationsEN from '@/locales/en.json';
 import translationsDE from '@/locales/de.json';
 import translationsNO from '@/locales/no.json';
+import translationsIT from '@/locales/it.json';
+import translationsES from '@/locales/es.json';
 
 const translations = {
   fr: translationsFR,
   en: translationsEN,
   de: translationsDE,
   no: translationsNO,
+  it: translationsIT,
+  es: translationsES,
 };
 
-type Language = 'fr' | 'en' | 'de' | 'no';
+type Language = 'fr' | 'en' | 'de' | 'no' | 'it' | 'es';
 
 interface TranslationStore {
   language: Language;

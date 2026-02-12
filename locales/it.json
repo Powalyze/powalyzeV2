@@ -1,0 +1,233 @@
+{
+  "common": {
+    "welcome": "Benvenuto su Powalyze",
+    "getStarted": "Inizia",
+    "learnMore": "Scopri di più",
+    "login": "Accedi",
+    "logout": "Esci",
+    "help": "Aiuto",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "close": "Chiudi",
+    "search": "Cerca",
+    "filter": "Filtra",
+    "export": "Esporta",
+    "loading": "Caricamento...",
+    "error": "Errore",
+    "success": "Successo",
+    "view": "Visualizza",
+    "details": "Dettagli",
+    "new": "Nuovo",
+    "actions": "Azioni"
+  },
+  "nav": {
+    "vitrine": "Vetrina",
+    "features": "Funzionalità",
+    "pricing": "Prezzi",
+    "contact": "Contatto",
+    "cockpit": "Cockpit",
+    "enterCockpit": "Entra nel cockpit",
+    "dashboard": "Cruscotto",
+    "intelligence": "Intelligenza",
+    "projects": "Progetti",
+    "documents": "Documenti",
+    "settings": "Impostazioni",
+    "register": "Prova gratuita",
+    "risks": "Rischi",
+    "decisions": "Decisioni",
+    "committees": "Comitati",
+    "journal": "Giornale"
+  },
+  "hero": {
+    "title": "Powalyze — Cockpit Esecutivo & Governance IA",
+    "subtitle": "Pilota le tue decisioni strategiche con una visione a 360° del tuo portafoglio",
+    "cta": "Accedi al cockpit",
+    "ctaDemo": "Guarda la demo",
+    "whatYouSee": "Quello che vedi = Quello che usi",
+    "cockpitInAction": "Il cockpit in azione",
+    "whyDifferent": "Perché Powalyze è diverso",
+    "readyToStart": "Pronto a pilotare le tue decisioni strategiche?"
+  },
+  "modules": {
+    "title": "Moduli principali",
+    "risks": {
+      "title": "Rischi",
+      "subtitle": "Questo modulo ti aiuta a identificare e mitigare le minacce",
+      "description": "Identifica, valuta e mitiga i rischi dei tuoi progetti in tempo reale",
+      "narration": "Segui i rischi che possono impattare i tuoi progetti strategici e anticipa le minacce prima che diventino critiche."
+    },
+    "decisions": {
+      "title": "Decisioni",
+      "subtitle": "Questo modulo ti aiuta a tracciare e seguire le decisioni strategiche",
+      "description": "Traccia e segui tutte le decisioni critiche del tuo comitato esecutivo",
+      "narration": "Mantieni una governance chiara documentando ogni decisione strategica con il suo contesto e i suoi impatti."
+    },
+    "projects": {
+      "title": "Progetti",
+      "subtitle": "Questo modulo ti aiuta a pilotare l'esecuzione del portafoglio",
+      "description": "Visualizza l'avanzamento e la salute del tuo portafoglio progetti",
+      "narration": "Pilota l'esecuzione dei tuoi progetti strategici con una visione chiara degli avanzamenti, rischi e risorse."
+    },
+    "committees": {
+      "title": "Comitati",
+      "subtitle": "Questo modulo ti aiuta a strutturare la governance esecutiva",
+      "description": "Organizza i tuoi comitati di governance e prepara le tue decisioni",
+      "narration": "Struttura la tua governance esecutiva con comitati chiaramente definiti e decisioni tracciabili."
+    },
+    "journal": {
+      "title": "Giornale Esecutivo",
+      "subtitle": "Questo modulo ti aiuta a seguire gli eventi strategici",
+      "description": "Centralizza tutti gli eventi e segnali deboli della tua organizzazione",
+      "narration": "Mantieni una traccia cronologica di tutti gli eventi strategici, segnali deboli e decisioni importanti."
+    }
+  },
+  "pillars": {
+    "narrative": {
+      "title": "Narrativo",
+      "description": "L'IA racconta e illumina le tue decisioni strategiche con sintesi esecutive concise"
+    },
+    "proactive": {
+      "title": "Proattivo",
+      "description": "Avvisi, scenari e segnali deboli prima della crisi per anticipare i problemi"
+    },
+    "executive": {
+      "title": "Esecutivo",
+      "description": "Orientato alla mediazione, ai comitati e alle decisioni di governance al più alto livello"
+    }
+  },
+  "cockpit": {
+    "title": "Cockpit Esecutivo",
+    "subtitle": "Panoramica in tempo reale",
+    "dashboard": "Cruscotto",
+    "projects": "Progetti",
+    "risks": "Rischi",
+    "decisions": "Decisioni",
+    "team": "Team",
+    "settings": "Impostazioni",
+    "profile": "Profilo",
+    "analytics": "Analisi",
+    "reports": "Rapporti",
+    "welcome": "Benvenuto nel tuo cockpit esecutivo",
+    "activeProjects": "Progetti attivi",
+    "budget": "Budget impegnato",
+    "globalRisk": "Rischio globale",
+    "velocity": "Velocità media",
+    "lateProjects": "Progetti in ritardo",
+    "remainingBudget": "Budget rimanente",
+    "portfolioSphere": "Sfera portafoglio",
+    "mode": {
+      "demo": "Modalità Demo",
+      "pro": "Modalità Pro"
+    },
+    "emptyState": {
+      "title": "Nessun dato disponibile",
+      "description": "Inizia creando il tuo primo elemento",
+      "cta": "Crea ora"
+    }
+  },
+  "projects": {
+    "title": "Progetti",
+    "createNew": "Nuovo progetto",
+    "name": "Nome del progetto",
+    "status": "Stato",
+    "progress": "Avanzamento",
+    "budget": "Budget",
+    "deadline": "Scadenza",
+    "team": "Team",
+    "risk": "Rischio",
+    "actions": "Azioni",
+    "details": "Dettagli",
+    "empty": "Nessun progetto al momento",
+    "active": "Attivi",
+    "late": "In ritardo",
+    "critical": "Critici",
+    "totalLoad": "Carico globale",
+    "toLaunch": "Da lanciare",
+    "inProgress": "In corso",
+    "inReview": "In revisione",
+    "completed": "Completato"
+  },
+  "risks": {
+    "title": "Rischi",
+    "createNew": "Nuovo rischio",
+    "name": "Nome del rischio",
+    "level": "Livello",
+    "probability": "Probabilità",
+    "impact": "Impatto",
+    "mitigation": "Mitigazione",
+    "status": "Stato",
+    "owner": "Responsabile",
+    "empty": "Nessun rischio identificato",
+    "total": "Totale",
+    "critical": "Critici",
+    "rising": "In aumento",
+    "resolved": "Risolti",
+    "lastUpdate": "Ultimo aggiornamento",
+    "high": "Alto",
+    "medium": "Medio",
+    "low": "Basso"
+  },
+  "decisions": {
+    "title": "Decisioni",
+    "createNew": "Nuova decisione",
+    "name": "Titolo della decisione",
+    "date": "Data",
+    "status": "Stato",
+    "committee": "Comitato",
+    "origin": "Origine",
+    "impact": "Impatto",
+    "deadline": "Scadenza",
+    "empty": "Nessuna decisione registrata",
+    "pending": "In attesa",
+    "validated": "Validate",
+    "late": "In ritardo"
+  },
+  "committees": {
+    "title": "Comitati",
+    "createNew": "Nuovo comitato",
+    "name": "Nome del comitato",
+    "frequency": "Frequenza",
+    "nextMeeting": "Prossima riunione",
+    "owner": "Responsabile",
+    "topics": "Punti da trattare",
+    "empty": "Nessun comitato definito",
+    "total": "Comitati totali",
+    "upcoming": "Prossime riunioni (7g)",
+    "resolutionRate": "Tasso di risoluzione"
+  },
+  "journal": {
+    "title": "Giornale Esecutivo",
+    "createNew": "Nuovo evento",
+    "empty": "Nessun evento registrato",
+    "todayEvents": "Eventi di oggi",
+    "recentSignals": "Segnali recenti"
+  },
+  "profile": {
+    "title": "Profilo",
+    "personalInfo": "Informazioni personali",
+    "firstName": "Nome",
+    "lastName": "Cognome",
+    "email": "Email",
+    "company": "Azienda",
+    "role": "Ruolo",
+    "language": "Lingua",
+    "theme": "Tema",
+    "notifications": "Notifiche",
+    "security": "Sicurezza",
+    "preferences": "Preferenze",
+    "saveChanges": "Salva modifiche"
+  },
+  "auth": {
+    "signIn": "Accedi",
+    "signUp": "Registrati",
+    "signOut": "Esci",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Password dimenticata?",
+    "noAccount": "Non hai un account?",
+    "hasAccount": "Hai già un account?",
+    "continueWith": "Continua con"
+  }
+}
