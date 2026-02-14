@@ -24,10 +24,12 @@ export default function CockpitIndexPage() {
   useEffect(() => {
     async function loadStats() {
       const { projects } = await getProjects();
-      // Filtrer les projets non archivés
-      const activeProjects = projects.filter((p: any) => p.status !== 'archived');
+      // Filtrer EXACTEMENT comme la liste : actifs + en cours + critiques
+      const activeProjects = projects.filter((p: any) => 
+        !p.archived && !p.deleted && ['active', 'en cours', 'critique'].includes(p.status?.toLowerCase())
+      );
       setProjectCount(activeProjects.length);
-      setActiveCount(activeProjects.filter((p: any) => p.status === 'active').length);
+      setActiveCount(activeProjects.filter((p: any) => p.status?.toLowerCase() === 'active').length);
       setLoading(false);
     }
     loadStats();

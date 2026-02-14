@@ -142,18 +142,22 @@ export async function getProjects() {
     // Utiliser le service client pour bypasser RLS
     const supabase = getSupabaseService();
     
-    // Si on a un organizationId, filtrer par org, sinon récupérer tous les projets de l'utilisateur
+    // FILTRE STRICT : projets de l'organisation uniquement
+    if (!organizationId) {
+      console.warn('[getProjects] Pas d\'organizationId - retour vide');
+      return { projects: [], error: null };
+    }
+
+    console.log('[getProjects] Filtrage par organizationId:', organizationId);
+    
+    // Requête avec filtres cohérents Dashboard/Liste
     let query = supabase
       .from('projects')
       .select('*')
+      .eq('organization_id', organizationId)
+      .or('archived.is.null,archived.eq.false')  // Exclure archivés
+      .or('deleted.is.null,deleted.eq.false')    // Exclure supprimés
       .order('created_at', { ascending: false });
-    
-    if (organizationId) {
-      console.log('[getProjects] Filtrage par organizationId:', organizationId);
-      query = query.eq('organization_id', organizationId);
-    } else {
-      console.log('[getProjects] Pas d\'organizationId, récupération de tous les projets');
-    }
     
     const { data, error } = await query;
 

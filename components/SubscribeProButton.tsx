@@ -54,14 +54,15 @@ export default function SubscribeProButton({
       }
 
       // 4. Appeler l'API pour créer une session Stripe Checkout
-      const res = await fetch('/api/stripe/create-checkout-session', {
+      const res = await fetch('/api/stripe/checkout/pro', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session.access_token}`
         },
         body: JSON.stringify({ 
-          priceId,
+          userId: user.id,
+          email: user.email,
           billingInterval 
         })
       });

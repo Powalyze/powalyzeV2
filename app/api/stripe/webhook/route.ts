@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
         const subscription = await stripe.subscriptions.retrieve(subscriptionId);
 
         // Create or update subscription in database
-        const { error } = await supabase
+        const { error: subError } = await supabase
           .from('subscriptions')
           .upsert({
             user_id: userId,
@@ -60,9 +60,20 @@ export async function POST(request: NextRequest) {
             is_enterprise: false
           });
 
-        if (error) {
-          console.error('Error creating subscription:', error);
-        } else {
+        // ✅ IMPORTANT: Mettre à jour profiles.plan pour le guard
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({ plan: 'pro' })
+          .eq('id', userId);
+
+        if (subError) {
+          console.error('Error creating subscription:', subError);
+        }
+        if (profileError) {
+          console.error('Error updating profile:', profileError);
+        }
+        
+        if (!subError && !profileError) {
           // Send activation email
           await fetch(`${request.nextUrl.origin}/api/emails/pro-activated`, {
             method: 'POST',
