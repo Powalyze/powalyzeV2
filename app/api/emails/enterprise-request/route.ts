@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Resend } from 'resend';
 
-const resend = process.env.RESEND_API_KEY 
+// Import dynamique de Resend pour éviter les erreurs si pas installé
+let Resend: any = null;
+try {
+  Resend = require('resend').Resend;
+} catch (e) {
+  console.warn('⚠️ Resend module not found, email sending disabled');
+}
+
+const resend = process.env.RESEND_API_KEY && Resend
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
