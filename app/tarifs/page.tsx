@@ -271,7 +271,7 @@ export default function TarifsPage() {
               <ArrowRight className="group-hover:translate-x-1 transition-transform" size={22} />
             </Link>
             <Link
-              href="/cockpit-real"
+              href="/cockpit/projets"
               className="px-10 py-5 rounded-xl border-2 border-amber-400/50 hover:border-amber-400 text-white font-bold text-lg transition-all"
             >
               Essayer le mode DEMO

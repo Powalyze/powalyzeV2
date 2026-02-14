@@ -63,7 +63,7 @@ export async function getUserRoleClient(): Promise<UserRole | null> {
 }
 
 /**
- * Guard DEMO: Protège les routes /cockpit-demo
+ * Guard DEMO: Protège les routes /cockpit/projets (mode démo)
  * Autorise uniquement les utilisateurs avec role = 'demo'
  */
 export async function guardDemo(): Promise<void> {
@@ -71,16 +71,16 @@ export async function guardDemo(): Promise<void> {
   
   if (!role) {
     console.warn('[GUARD DEMO] Non authentifié - redirection vers login');
-    redirect('/login?redirect=/cockpit-demo');
+    redirect('/login?redirect=/cockpit/projets');
   }
 
   if (role !== 'demo') {
     console.warn(`[GUARD DEMO] Accès refusé - rôle: ${role}, attendu: demo`);
-    logUnauthorizedAccess('/cockpit-demo', 'demo', role);
+    logUnauthorizedAccess('/cockpit/projets', 'demo', role);
     
     // Rediriger selon le rôle
     if (role === 'pro' || role === 'admin') {
-      redirect('/cockpit/pro');
+      redirect('/cockpit');
     } else {
       redirect('/');
     }
@@ -105,7 +105,7 @@ export async function guardPro(): Promise<void> {
     
     // Rediriger selon le rôle
     if (role === 'demo') {
-      redirect('/cockpit-demo');
+      redirect('/cockpit/projets');
     } else {
       redirect('/');
     }
@@ -130,9 +130,9 @@ export async function guardAdmin(): Promise<void> {
     
     // Rediriger selon le rôle
     if (role === 'demo') {
-      redirect('/cockpit-demo');
+      redirect('/cockpit/projets');
     } else if (role === 'pro') {
-      redirect('/cockpit/pro');
+      redirect('/cockpit');
     } else {
       redirect('/');
     }

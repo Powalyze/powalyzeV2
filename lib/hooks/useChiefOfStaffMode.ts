@@ -28,8 +28,7 @@ export function useChiefOfStaffMode(): ChiefOfStaffMode {
   // Mode CLIENT : cockpit client réel
   const isClientRoute =
     pathname?.startsWith("/cockpit") ||
-    pathname?.startsWith("/dashboard") ||
-    pathname?.startsWith("/cockpit-client");
+    pathname?.startsWith("/dashboard");
 
   // Par défaut, si on est dans une route de cockpit, on est en mode client
   if (isClientRoute) {

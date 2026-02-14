@@ -51,11 +51,27 @@ export interface ChiefAction {
   source?: 'demo' | 'real';
 }
 
+export interface Document {
+  id: string;
+  name: string;
+  type: string;
+  category: 'rapport' | 'presentation' | 'contrat' | 'analyse' | 'documentation' | 'autre';
+  size: number; // in bytes
+  uploadedAt: string;
+  uploadedBy: string;
+  version: number;
+  tags: string[];
+  shared: boolean;
+  url?: string;
+  source?: 'demo' | 'real';
+}
+
 export interface CockpitData {
   projects: Project[];
   risks: Risk[];
   decisions: Decision[];
   actions: ChiefAction[];
+  documents: Document[];
   metrics: {
     activeProjects: number;
     criticalRisks: number;
@@ -78,6 +94,7 @@ export function getEmptyData(): CockpitData {
     risks: [],
     decisions: [],
     actions: [],
+    documents: [],
     metrics: {
       activeProjects: 0,
       criticalRisks: 0,
@@ -123,6 +140,16 @@ export function getDemoData(): CockpitData {
       { id: '4', title: 'Renforcer Team Delta', impact: '+15% vélocité', priority: 'medium', confidence: 0.79, source: 'demo' },
       { id: '5', title: 'Anticiper conformité RGPD', impact: '-90K€ de risque', priority: 'low', confidence: 0.75, source: 'demo' },
       { id: '6', title: 'Capitaliser AI Engine', impact: '+2 nouveaux projets', priority: 'low', confidence: 0.71, source: 'demo' },
+    ],
+    documents: [
+      { id: '1', name: 'Rapport trimestriel Q1 2026.pdf', type: 'application/pdf', category: 'rapport', size: 2547896, uploadedAt: '2026-01-15', uploadedBy: 'Marie Dupont', version: 1, tags: ['Q1', 'finance', 'exec'], shared: true, source: 'demo' },
+      { id: '2', name: 'Présentation COMEX Janvier.pptx', type: 'application/vnd.ms-powerpoint', category: 'presentation', size: 5243789, uploadedAt: '2026-01-14', uploadedBy: 'Jean Martin', version: 3, tags: ['COMEX', 'stratégie'], shared: true, source: 'demo' },
+      { id: '3', name: 'Contrat Microsoft 365.docx', type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', category: 'contrat', size: 458762, uploadedAt: '2026-01-12', uploadedBy: 'Sophie Laurent', version: 2, tags: ['contrat', 'microsoft'], shared: false, source: 'demo' },
+      { id: '4', name: 'Analyse risques portfolio.xlsx', type: 'application/vnd.ms-excel', category: 'analyse', size: 1879456, uploadedAt: '2026-01-10', uploadedBy: 'Pierre Dubois', version: 1, tags: ['risques', 'analyse'], shared: true, source: 'demo' },
+      { id: '5', name: 'Guide utilisateur Powalyze v2.pdf', type: 'application/pdf', category: 'documentation', size: 3456789, uploadedAt: '2026-01-08', uploadedBy: 'Thomas Petit', version: 4, tags: ['guide', 'documentation'], shared: true, source: 'demo' },
+      { id: '6', name: 'Roadmap 2026-2027.pdf', type: 'application/pdf', category: 'presentation', size: 1234567, uploadedAt: '2026-01-05', uploadedBy: 'Marie Dupont', version: 1, tags: ['roadmap', 'stratégie'], shared: true, source: 'demo' },
+      { id: '7', name: 'Budget prévisionnel H1.xlsx', type: 'application/vnd.ms-excel', category: 'rapport', size: 987654, uploadedAt: '2026-01-03', uploadedBy: 'Jean Martin', version: 2, tags: ['budget', 'finance'], shared: false, source: 'demo' },
+      { id: '8', name: 'Étude de marché IA 2026.docx', type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', category: 'analyse', size: 2345678, uploadedAt: '2025-12-28', uploadedBy: 'Sophie Laurent', version: 1, tags: ['IA', 'marché'], shared: true, source: 'demo' },
     ],
     metrics: {
       activeProjects: 6,

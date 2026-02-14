@@ -41,7 +41,7 @@ export const Topbar: React.FC = () => {
             MODE PRO
           </button>
           <button 
-            onClick={() => router.push('/cockpit-demo')}
+            onClick={() => router.push('/cockpit/projets')}
             className="px-3 py-1.5 rounded-md text-xs font-semibold transition-all duration-200 text-slate-400 hover:text-slate-100 hover:bg-slate-800"
             title="MODE DÉMO - Données mock pré-remplies"
           >

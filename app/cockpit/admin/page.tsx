@@ -10,13 +10,13 @@ export default async function AdminPage({
   const userId = searchParams.userId
 
   if (!userId) {
-    redirect('/auth/login')
+    redirect('/login')
   }
 
   const role = await getUserRole(userId)
 
   if (role !== 'admin') {
-    redirect('/cockpit/demo')
+    redirect('/cockpit/projets')
   }
 
   return <AdminDashboard />

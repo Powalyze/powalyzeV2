@@ -13,13 +13,13 @@ export default async function ClientPage({
   const organizationId = searchParams.organizationId
 
   if (!userId) {
-    redirect('/auth/login')
+    redirect('/login')
   }
 
   const role = await getUserRole(userId)
 
   if (role !== 'client') {
-    redirect('/cockpit/demo')
+    redirect('/cockpit/projets')
   }
 
   // Si organizationId manque, le récupérer depuis la base
@@ -39,7 +39,7 @@ export default async function ClientPage({
     if (userData?.tenant_id) {
       finalOrgId = userData.tenant_id
     } else {
-      redirect('/auth/login')
+      redirect('/login')
     }
   }
 

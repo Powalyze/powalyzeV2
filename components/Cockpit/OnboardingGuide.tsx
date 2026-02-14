@@ -62,11 +62,20 @@ export default function OnboardingGuide() {
     return Math.round((done / STEPS.length) * 100);
   }, [completed]);
 
+  // Defer localStorage writes to avoid blocking main thread
   useEffect(() => {
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({ completed, dismissed: hidden })
-    );
+    const timeoutId = setTimeout(() => {
+      try {
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({ completed, dismissed: hidden })
+        );
+      } catch (err) {
+        console.warn('Failed to save onboarding state:', err);
+      }
+    }, 100);
+    
+    return () => clearTimeout(timeoutId);
   }, [completed, hidden]);
 
   if (hidden) return null;

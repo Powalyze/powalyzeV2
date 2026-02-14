@@ -24,13 +24,24 @@ function getSupabaseService() {
 
 async function getUserSession() {
   const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session }, error } = await supabase.auth.getSession();
+  
+  console.log('[getUserSession] Session check:', {
+    hasSession: !!session,
+    userId: session?.user?.id,
+    error: error?.message
+  });
+  
   return session;
 }
 
 async function getUserId() {
   const session = await getUserSession();
-  return session?.user?.id || null;
+  const userId = session?.user?.id || null;
+  
+  console.log('[getUserId] Result:', userId);
+  
+  return userId;
 }
 
 async function getOrganizationId() {
@@ -163,15 +174,24 @@ export async function getProjects() {
 
 export async function createProject(formData: FormData) {
   try {
+    console.log('[createProject] Début de la création...');
+    
     const userId = await getUserId();
     const organizationId = await getOrganizationId();
     
+    console.log('[createProject] Auth check:', {
+      userId,
+      organizationId
+    });
+    
     if (!userId) {
-      return { success: false, error: 'Non authentifié' };
+      console.error('[createProject] Pas de userId - utilisateur non authentifié');
+      return { success: false, error: 'Non authentifié. Veuillez vous reconnecter.' };
     }
 
     if (!organizationId) {
-      return { success: false, error: 'Organisation non trouvée' };
+      console.warn('[createProject] Pas d\'organizationId - création avec userId uniquement');
+      // Continuer sans organizationId - on l'utilisera comme fallback
     }
 
     const name = formData.get('name') as string;
@@ -192,27 +212,37 @@ export async function createProject(formData: FormData) {
     const finalStatus = status && validStatuses.includes(status) ? status : 'active';
 
     const supabase = getSupabaseService();
+    
+    // Préparer les données du projet
+    const projectData: any = {
+      user_id: userId,
+      name,
+      description: description || null,
+      owner,
+      deadline: deadline || null,
+      status: finalStatus, // TOUJOURS une valeur valide
+      health: 'green',
+      progress: 0,
+      starred: false,
+      bu: bu || 'IT',
+      country: country || 'France',
+      budget_planned: budget_planned ? parseFloat(budget_planned) : 100000,
+      budget_spent: 0,
+      capacity_needed: 10,
+      capacity_allocated: 0,
+      strategic_alignment_score: 50
+    };
+    
+    // Ajouter organization_id seulement s'il existe
+    if (organizationId) {
+      projectData.organization_id = organizationId;
+    }
+    
+    console.log('[createProject] Insertion projet:', projectData);
+    
     const { data, error } = await supabase
       .from('projects')
-      .insert([{
-        organization_id: organizationId,
-        user_id: userId,
-        name,
-        description: description || null,
-        owner,
-        deadline: deadline || null,
-        status: finalStatus, // TOUJOURS une valeur valide
-        health: 'green',
-        progress: 0,
-        starred: false,
-        bu: bu || 'IT',
-        country: country || 'France',
-        budget_planned: budget_planned ? parseFloat(budget_planned) : 100000,
-        budget_spent: 0,
-        capacity_needed: 10,
-        capacity_allocated: 0,
-        strategic_alignment_score: 50
-      }])
+      .insert([projectData])
       .select()
       .maybeSingle();
 

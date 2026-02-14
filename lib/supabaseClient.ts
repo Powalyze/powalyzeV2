@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { createServerClient } from "@supabase/ssr";
+import { createBrowserClient, createServerClient } from "@supabase/ssr";
 
 // Nettoie les variables d'environnement des caractères invisibles (BOM, retours à la ligne)
 function cleanEnv(value?: string): string {
@@ -18,22 +18,8 @@ if (!supabaseUrl || !supabaseKey) {
   throw new Error('Configuration Supabase invalide - variables d\'environnement manquantes');
 }
 
-// Client basique pour browser (avec persistSession activé par défaut)
-export const supabase = createClient(supabaseUrl, supabaseKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
-    flowType: 'pkce', // Use PKCE flow for better security
-    storage: typeof window !== 'undefined' ? window.localStorage : undefined,
-    storageKey: 'sb-auth-token'
-  },
-  global: {
-    headers: {
-      'X-Client-Info': 'powalyze-web'
-    }
-  }
-});
+// Client SSR pour browser - UTILISE LES COOKIES automatiquement
+export const supabase = createBrowserClient(supabaseUrl, supabaseKey);
 
 // Fonction helper pour compatibilité avec l'ancien code (client browser)
 export function createSupabaseBrowserClient() {

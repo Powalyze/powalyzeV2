@@ -25,7 +25,10 @@ export function useLanguage() {
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
-    localStorage.setItem('powalyze_language', lang);
+    // Defer localStorage write to avoid blocking main thread
+    requestAnimationFrame(() => {
+      localStorage.setItem('powalyze_language', lang);
+    });
   };
 
   return { language, setLanguage, languages };

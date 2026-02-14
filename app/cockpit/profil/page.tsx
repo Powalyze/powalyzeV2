@@ -3,18 +3,20 @@
 import { CockpitShell } from "@/components/cockpit/CockpitShell";
 import { useEffect, useMemo, useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabaseClient";
-import { User, Mail, Building, Globe, Bell, Shield, Palette, Save, LogOut } from "lucide-react";
+import { User, Mail, Building, Globe, Bell, Shield, Palette, Save, LogOut, Users } from "lucide-react";
+import { AdminUserManagement } from "@/components/cockpit/AdminUserManagement";
 
 type Language = "fr" | "en" | "de" | "it";
 type Theme = "dark" | "light" | "auto";
 
 export default function ProfilPage() {
-  const [activeTab, setActiveTab] = useState<"profile" | "preferences" | "security" | "notifications">("profile");
+  const [activeTab, setActiveTab] = useState<"profile" | "preferences" | "security" | "notifications" | "admin">("profile");
   const [language, setLanguage] = useState<Language>("fr");
   const [theme, setTheme] = useState<Theme>("dark");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [profile, setProfile] = useState({
     firstName: "",
     lastName: "",
@@ -54,6 +56,9 @@ export default function ProfilPage() {
           email: dbProfile?.email || user.email || "",
           role: dbProfile?.role || "member"
         });
+        
+        // Vérifier si l'utilisateur est admin
+        setIsAdmin(dbProfile?.role === 'admin');
       } catch {
         setError("Impossible de charger le profil");
       } finally {
@@ -159,6 +164,14 @@ export default function ProfilPage() {
             active={activeTab === "notifications"}
             onClick={() => setActiveTab("notifications")}
           />
+          {isAdmin && (
+            <TabButton
+              label="Admin"
+              icon={<Users size={18} />}
+              active={activeTab === "admin"}
+              onClick={() => setActiveTab("admin")}
+            />
+          )}
         </div>
 
         {/* Content */}
@@ -176,6 +189,7 @@ export default function ProfilPage() {
         {activeTab === "preferences" && <PreferencesTab language={language} setLanguage={setLanguage} theme={theme} setTheme={setTheme} />}
         {activeTab === "security" && <SecurityTab />}
         {activeTab === "notifications" && <NotificationsTab />}
+        {activeTab === "admin" && isAdmin && <AdminUserManagement />}
       </div>
     </CockpitShell>
   );

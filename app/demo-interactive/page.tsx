@@ -69,42 +69,42 @@ export default function DemoInteractivePage() {
               icon={<BarChart3 size={32} />}
               title="Vue Portefeuille 360°"
               description="42 projets • Santé RAG en temps réel • KPIs automatisés"
-              demoLink="/cockpit-demo"
+              demoLink="/cockpit/projets"
               color="blue"
             />
             <DemoFeature
               icon={<Brain size={32} />}
               title="IA Chief of Staff"
               description="6 actions prioritaires • Prédictions • Insights"
-              demoLink="/cockpit-demo"
+              demoLink="/cockpit/projets"
               color="purple"
             />
             <DemoFeature
               icon={<Shield size={32} />}
               title="Gestion des Risques"
               description="Matrice RAG • 89 risques tracés • Plans de mitigation"
-              demoLink="/cockpit-demo"
+              demoLink="/cockpit/projets"
               color="red"
             />
             <DemoFeature
               icon={<FileText size={32} />}
               title="Décisions Tracées"
               description="156 décisions • Workflow d'approbation • Historique complet"
-              demoLink="/cockpit-demo"
+              demoLink="/cockpit/projets"
               color="amber"
             />
             <DemoFeature
               icon={<Users size={32} />}
               title="Gestion Ressources"
               description="Pool 127 ressources • Matrice compétences • Allocations"
-              demoLink="/cockpit-demo"
+              demoLink="/cockpit/projets"
               color="green"
             />
             <DemoFeature
               icon={<Zap size={32} />}
               title="Power BI Intégré"
               description="Import .pbix • Viewer embed • Tokens sécurisés"
-              demoLink="/cockpit-demo"
+              demoLink="/cockpit/projets"
               color="sky"
             />
           </div>
@@ -148,7 +148,7 @@ export default function DemoInteractivePage() {
 
           <div className="mt-12 text-center">
             <Link
-              href="/cockpit-demo"
+              href="/cockpit/projets"
               className="inline-flex items-center gap-2 px-10 py-5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold text-xl shadow-lg transition-all"
             >
               Démarrer la démo maintenant

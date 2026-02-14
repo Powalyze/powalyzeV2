@@ -70,7 +70,14 @@ export default function ProjetsPage() {
       setShowProjectModal(false);
       loadProjects(); // Recharger la liste
     } else {
-      showToast('error', 'Erreur', result.error || 'Impossible de créer le projet');
+      const errorMessage = result.error || 'Impossible de créer le projet';
+      const detailedError = errorMessage.includes('authentif') 
+        ? 'Votre session a expiré. Veuillez vous reconnecter.'
+        : errorMessage.includes('permission')
+        ? 'Vous n\'avez pas les droits nécessaires pour créer un projet.'
+        : `Erreur lors de la création : ${errorMessage}`;
+      
+      showToast('error', 'Création impossible', detailedError);
     }
   }
 
@@ -182,7 +189,7 @@ export default function ProjetsPage() {
     });
 
   return (
-    <AuthGuard requireAuth={true} requirePro={true} redirectTo="/login">
+    <AuthGuard requireAuth={true} requirePro={false} redirectTo="/login">
       <CockpitShell>
         <div className="p-6 space-y-6">
         {/* Header minimal & premium */}
@@ -302,26 +309,34 @@ export default function ProjetsPage() {
         {/* Tableau premium / État vide */}
         {loading ? (
           <div className="flex items-center justify-center py-20 text-slate-400">
-            <div className="text-center space-y-3">
-              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-amber-500 mx-auto" />
-              <p>Chargement des projets...</p>
+            <div className="text-center space-y-4">
+              <div className="relative w-16 h-16 mx-auto">
+                <div className="absolute inset-0 border-4 border-slate-800 rounded-full" />
+                <div className="absolute inset-0 border-4 border-amber-500 rounded-full border-t-transparent animate-spin" />
+              </div>
+              <div>
+                <p className="text-white font-semibold mb-1">Chargement des projets...</p>
+                <p className="text-sm text-slate-500">Récupération des données depuis le cockpit</p>
+              </div>
             </div>
           </div>
         ) : filteredProjects.length === 0 ? (
           <div className="text-center py-16 border-2 border-dashed border-slate-800 rounded-xl bg-slate-900/30">
             {projects.length === 0 ? (
               <>
-                <div className="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center mx-auto mb-4">
-                  <Plus size={32} className="text-slate-600" />
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center mx-auto mb-4">
+                  <Plus size={32} className="text-white" />
                 </div>
-                <p className="text-slate-300 font-medium mb-2">Aucun projet pour le moment</p>
-                <p className="text-slate-500 text-sm mb-6">Créez votre premier projet pour commencer</p>
+                <p className="text-white font-bold text-lg mb-2">Aucun projet pour le moment</p>
+                <p className="text-slate-400 text-sm mb-6 max-w-md mx-auto">
+                  Créez votre premier projet pour activer votre cockpit et commencer à piloter vos initiatives stratégiques.
+                </p>
                 <button 
                   onClick={() => setShowProjectModal(true)}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-lg transition-all"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold rounded-lg transition-all shadow-lg shadow-amber-500/20"
                 >
-                  <Plus size={18} />
-                  Créer le premier projet
+                  <Plus size={20} />
+                  Créer mon premier projet
                 </button>
               </>
             ) : (
@@ -329,8 +344,18 @@ export default function ProjetsPage() {
                 <div className="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center mx-auto mb-4">
                   <Search size={32} className="text-slate-600" />
                 </div>
-                <p className="text-slate-300 font-medium mb-2">Aucun résultat</p>
-                <p className="text-slate-500 text-sm">Essayez d'ajuster vos filtres ou votre recherche</p>
+                <p className="text-slate-300 font-medium mb-2">Aucun résultat trouvé</p>
+                <p className="text-slate-500 text-sm mb-4">Essayez d'ajuster vos filtres ou votre recherche</p>
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    setStatusFilter('all');
+                    setPriorityFilter('all');
+                  }}
+                  className="text-amber-400 hover:text-amber-300 text-sm font-medium transition-colors"
+                >
+                  Réinitialiser les filtres
+                </button>
               </>
             )}
           </div>
@@ -584,6 +609,15 @@ export default function ProjetsPage() {
             </div>
           </div>
         )}
+        {/* Bouton flottant création rapide */}
+        <button
+          onClick={() => setShowProjectModal(true)}
+          className="fixed bottom-8 right-8 z-40 w-14 h-14 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-full shadow-2xl shadow-amber-500/30 flex items-center justify-center transition-all hover:scale-110 group"
+          title="Créer un projet"
+        >
+          <Plus size={24} className="group-hover:rotate-90 transition-transform duration-300" />
+        </button>
+
         {/* Modal création projet */}
         {showProjectModal && (
           <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowProjectModal(false)}>

@@ -1,20 +1,40 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/utils/supabase/server';
+import { createClient as createServiceClient } from '@supabase/supabase-js';
 import { parse } from 'csv-parse/sync';
 
-const supabase = createClient(
+// Client service role pour les opérations qui nécessitent bypass RLS
+const supabaseAdmin = createServiceClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
 export async function POST(req: Request) {
-  const tenantId = req.headers.get('x-tenant-id');
-
-  if (!tenantId) {
-    return NextResponse.json({ error: 'Missing tenant ID' }, { status: 400 });
-  }
-
   try {
+    console.log('🔍 [File Connector] Début de la requête');
+    
+    // Utiliser le client SSR qui gère automatiquement les cookies de session
+    const supabase = await createClient();
+    
+    // Récupérer l'utilisateur depuis la session (cookies)
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    console.log('🔍 [File Connector] Vérification auth:', {
+      hasUser: !!user,
+      userId: user?.id,
+      email: user?.email,
+      errorMessage: authError?.message,
+      errorName: authError?.name
+    });
+
+    if (authError || !user) {
+      console.error('❌ [File Connector] Utilisateur non authentifié:', authError?.message);
+      return NextResponse.json({ error: 'Authentification requise' }, { status: 401 });
+    }
+
+    console.log('✅ [File Connector] User authentifié:', user.id, user.email);
+
+    // Récupérer et parser le fichier
     const formData = await req.formData();
     const file = formData.get('file') as File;
 
@@ -22,50 +42,96 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
-    const text = await file.text();
-    const records = parse(text, { 
-      columns: true, 
-      skip_empty_lines: true,
-      delimiter: ','
+    let text = await file.text();
+    
+    // Supprimer le BOM UTF-8 (caractère invisible 0xFEFF / 65279)
+    if (text.charCodeAt(0) === 0xFEFF) {
+      text = text.substring(1);
+      console.log('🔧 [File Connector] BOM UTF-8 supprimé');
+    }
+    
+    // Détecter automatiquement le délimiteur
+    const firstLine = text.split('\n')[0];
+    let delimiter = ',';
+    
+    if (firstLine.includes(';')) {
+      delimiter = ';';
+    } else if (firstLine.includes('\t')) {
+      delimiter = '\t';
+    }
+    
+    console.log('📋 [File Connector] Détection délimiteur:', {
+      delimiter: delimiter === '\t' ? 'TAB' : delimiter,
+      firstLine: firstLine.substring(0, 100)
+    });
+    
+    let records;
+    try {
+      records = parse(text, { 
+        columns: true, 
+        skip_empty_lines: true,
+        delimiter: delimiter,
+        relax_quotes: true,
+        trim: true,
+        skip_records_with_error: true
+      });
+    } catch (parseError: any) {
+      console.error('❌ [File Connector] Parse error:', parseError);
+      return NextResponse.json({ 
+        error: `Erreur de parsing CSV: ${parseError.message}. Assurez-vous que votre fichier utilise des virgules ou points-virgules comme séparateur.` 
+      }, { status: 400 });
+    }
+
+    console.log('📋 [File Connector] Fichier parsé:', {
+      filename: file.name,
+      rowCount: records.length,
+      columns: records[0] ? Object.keys(records[0]) : []
     });
 
     // Mapping des colonnes CSV vers le schéma Powalyze
+    // Utiliser user_id ou owner_id selon le schéma de la table projects dans Supabase
     const mapped = records.map((r: any) => ({
-      name: r['Nom projet'] || r['Project Name'] || r['name'],
-      owner: r['Responsable'] || r['Owner'] || r['owner'],
+      name: r['Nom projet'] || r['Project Name'] || r['name'] || 'Projet sans nom',
+      description: r['Description'] || r['description'] || null,
+      owner_id: user.id, // Propriétaire = utilisateur qui importe
       status: mapStatus(r['Statut'] || r['Status'] || r['status']),
-      start_date: r['Début'] || r['Start Date'] || r['start_date'],
-      end_date: r['Fin'] || r['End Date'] || r['end_date'],
-      strategic_alignment_score: parseFloat(r['Alignement'] || r['Alignment'] || r['alignment'] || '0'),
-      budget_planned: parseFloat(r['Budget prévu'] || r['Planned Budget'] || r['budget_planned'] || '0'),
-      budget_spent: parseFloat(r['Budget consommé'] || r['Spent Budget'] || r['budget_spent'] || '0'),
-      bu: r['BU'] || r['Business Unit'] || r['bu'],
-      country: r['Pays'] || r['Country'] || r['country'],
-      tenant_id: tenantId
+      start_date: r['Début'] || r['Start Date'] || r['start_date'] || null,
+      end_date: r['Fin'] || r['End Date'] || r['end_date'] || null,
+      progress: parseFloat(r['Progression'] || r['Progress'] || r['progress'] || '0'),
+      // Champs optionnels
+      budget_planned: parseFloat(r['Budget prévu'] || r['Planned Budget'] || r['budget_planned'] || '0') || null,
+      budget_spent: parseFloat(r['Budget consommé'] || r['Spent Budget'] || r['budget_spent'] || '0') || null,
     }));
 
-    // Insertion dans Supabase
-    const { data, error } = await supabase
+    console.log('🔄 [File Connector] Données mappées:', {
+      count: mapped.length,
+      sample: mapped[0]
+    });
+
+    // Insertion dans Supabase avec le client ADMIN pour bypass RLS
+    const { data, error } = await supabaseAdmin
       .from('projects')
       .insert(mapped)
       .select();
 
     if (error) {
-      console.error('[File Connector] Insert error:', error);
+      console.error('❌ [File Connector] Insert error:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    console.log('✅ [File Connector] Projets insérés:', data?.length);
+
     // Enregistrer le connecteur
-    await supabase.from('connectors').insert({
+    await supabaseAdmin.from('connectors').insert({
+      user_id: user.id,
       name: file.name,
-      type: 'file',
+      connector_type: 'file',
       status: 'active',
       last_sync: new Date().toISOString(),
-      config: {
+      metadata: {
         filename: file.name,
         rows_imported: mapped.length
-      },
-      tenant_id: tenantId
+      }
     });
 
     return NextResponse.json({ 

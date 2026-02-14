@@ -33,6 +33,11 @@ const COLUMNS: { id: KanbanColumn; title: string; color: string }[] = [
 export default function KanbanPage() {
   const [cards, setCards] = useState<KanbanCard[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showNewCardModal, setShowNewCardModal] = useState(false);
+  const [newCard, setNewCard] = useState<Partial<KanbanCard>>({
+    column: "todo",
+    priority: "medium"
+  });
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -132,6 +137,30 @@ export default function KanbanPage() {
     }
   }
 
+  function handleCreateCard() {
+    if (!newCard.title) {
+      showToast("error", "Erreur", "Le titre est requis");
+      return;
+    }
+
+    const card: KanbanCard = {
+      id: Date.now().toString(),
+      title: newCard.title,
+      description: newCard.description,
+      projectName: newCard.projectName,
+      assignee: newCard.assignee,
+      dueDate: newCard.dueDate,
+      tags: newCard.tags || [],
+      priority: (newCard.priority as any) || "medium",
+      column: (newCard.column as KanbanColumn) || "todo",
+    };
+
+    setCards(prev => [...prev, card]);
+    setShowNewCardModal(false);
+    setNewCard({ column: "todo", priority: "medium" });
+    showToast("success", "Carte créée", `"${card.title}" a été ajoutée`);
+  }
+
   if (loading) {
     return (
       <CockpitShell>
@@ -152,12 +181,131 @@ export default function KanbanPage() {
               <h1 className="text-2xl font-bold text-white">Vue Kanban</h1>
               <p className="text-slate-400 mt-1">Gérez vos tâches par glisser-déposer</p>
             </div>
-            <button className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-lg font-medium flex items-center gap-2 transition-colors">
+            <button
+              onClick={() => setShowNewCardModal(true)}
+              className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-lg font-medium flex items-center gap-2 transition-colors"
+            >
               <Plus size={20} />
               Nouvelle carte
             </button>
           </div>
         </div>
+
+        {/* New Card Modal */}
+        {showNewCardModal && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-slate-900 border border-slate-800 rounded-xl max-w-lg w-full p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold text-white">Nouvelle Carte</h3>
+                <button
+                  onClick={() => setShowNewCardModal(false)}
+                  className="p-2 hover:bg-slate-800 rounded-lg transition-colors text-slate-400"
+                >
+                  <Plus className="rotate-45" size={20} />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">Titre *</label>
+                  <input
+                    type="text"
+                    value={newCard.title || ""}
+                    onChange={(e) => setNewCard({ ...newCard, title: e.target.value })}
+                    className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-amber-500"
+                    placeholder="Ex: Migration base de données"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">Description</label>
+                  <textarea
+                    value={newCard.description || ""}
+                    onChange={(e) => setNewCard({ ...newCard, description: e.target.value })}
+                    className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-amber-500 resize-none"
+                    rows={3}
+                    placeholder="Détails de la tâche..."
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">Colonne</label>
+                    <select
+                      value={newCard.column || "todo"}
+                      onChange={(e) => setNewCard({ ...newCard, column: e.target.value as KanbanColumn })}
+                      className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-amber-500"
+                    >
+                      {COLUMNS.map(col => (
+                        <option key={col.id} value={col.id}>{col.title}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">Priorité</label>
+                    <select
+                      value={newCard.priority || "medium"}
+                      onChange={(e) => setNewCard({ ...newCard, priority: e.target.value as any })}
+                      className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-amber-500"
+                    >
+                      <option value="low">Basse</option>
+                      <option value="medium">Moyenne</option>
+                      <option value="high">Haute</option>
+                      <option value="critical">Critique</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">Assigné à</label>
+                  <input
+                    type="text"
+                    value={newCard.assignee || ""}
+                    onChange={(e) => setNewCard({ ...newCard, assignee: e.target.value })}
+                    className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-amber-500"
+                    placeholder="Nom du responsable"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">Date limite</label>
+                  <input
+                    type="date"
+                    value={newCard.dueDate || ""}
+                    onChange={(e) => setNewCard({ ...newCard, dueDate: e.target.value })}
+                    className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-amber-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">Tags (séparés par des virgules)</label>
+                  <input
+                    type="text"
+                    onChange={(e) => setNewCard({ ...newCard, tags: e.target.value.split(',').map(t => t.trim()).filter(Boolean) })}
+                    className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-amber-500"
+                    placeholder="Ex: Backend, Urgent, API"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => setShowNewCardModal(false)}
+                  className="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={handleCreateCard}
+                  className="flex-1 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-lg font-medium transition-colors"
+                >
+                  Créer
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Kanban Board */}
         <div className="flex-1 overflow-x-auto overflow-y-hidden p-6">

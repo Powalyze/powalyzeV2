@@ -177,16 +177,85 @@ export function GanttChart() {
     },
   ]);
 
+  type ViewMode = "day" | "month" | "year";
+  const [viewMode, setViewMode] = useState<ViewMode>("month");
   const [viewStart, setViewStart] = useState(new Date(2026, 0, 1));
   const [viewEnd, setViewEnd] = useState(new Date(2026, 6, 1));
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [showNewTaskModal, setShowNewTaskModal] = useState(false);
   const chartRef = useRef<HTMLDivElement>(null);
 
-  const months: Date[] = [];
-  const current = new Date(viewStart);
-  while (current <= viewEnd) {
-    months.push(new Date(current));
-    current.setMonth(current.getMonth() + 1);
+  // Generate time periods based on view mode
+  function getTimePeriods(): Date[] {
+    const periods: Date[] = [];
+    const current = new Date(viewStart);
+    
+    while (current <= viewEnd) {
+      periods.push(new Date(current));
+      
+      if (viewMode === "day") {
+        current.setDate(current.getDate() + 1);
+      } else if (viewMode === "month") {
+        current.setMonth(current.getMonth() + 1);
+      } else {
+        current.setFullYear(current.getFullYear() + 1);
+      }
+    }
+    
+    return periods;
+  }
+
+  const timePeriods = getTimePeriods();
+
+  function navigateTime(direction: "prev" | "next") {
+    const newStart = new Date(viewStart);
+    const newEnd = new Date(viewEnd);
+    
+    if (viewMode === "day") {
+      const days = 30;
+      newStart.setDate(newStart.getDate() + (direction === "next" ? days : -days));
+      newEnd.setDate(newEnd.getDate() + (direction === "next" ? days : -days));
+    } else if (viewMode === "month") {
+      const months = 3;
+      newStart.setMonth(newStart.getMonth() + (direction === "next" ? months : -months));
+      newEnd.setMonth(newEnd.getMonth() + (direction === "next" ? months : -months));
+    } else {
+      newStart.setFullYear(newStart.getFullYear() + (direction === "next" ? 1 : -1));
+      newEnd.setFullYear(newEnd.getFullYear() + (direction === "next" ? 1 : -1));
+    }
+    
+    setViewStart(newStart);
+    setViewEnd(newEnd);
+  }
+
+  function goToToday() {
+    const today = new Date();
+    const start = new Date(today);
+    const end = new Date(today);
+    
+    if (viewMode === "day") {
+      start.setDate(start.getDate() - 15);
+      end.setDate(end.getDate() + 15);
+    } else if (viewMode === "month") {
+      start.setMonth(start.getMonth() - 3);
+      end.setMonth(end.getMonth() + 3);
+    } else {
+      start.setFullYear(start.getFullYear() - 1);
+      end.setFullYear(end.getFullYear() + 1);
+    }
+    
+    setViewStart(start);
+    setViewEnd(end);
+  }
+
+  function formatPeriodLabel(date: Date): string {
+    if (viewMode === "day") {
+      return date.toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+    } else if (viewMode === "month") {
+      return date.toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+    } else {
+      return date.getFullYear().toString();
+    }
   }
 
   function getDaysInMonth(date: Date): number {
@@ -212,6 +281,22 @@ export function GanttChart() {
     setTasks(tasks.map(t => t.id === updatedTask.id ? updatedTask : t));
   }
 
+  function handleCreateNewTask() {
+    const newTask: Task = {
+      id: Date.now().toString(),
+      name: "Nouvelle Phase",
+      start: new Date(),
+      end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // +30 jours
+      progress: 0,
+      dependencies: [],
+      color: "#3b82f6",
+    };
+    
+    setTasks([...tasks, newTask]);
+    setEditingTask(newTask);
+    setShowNewTaskModal(false);
+  }
+
   return (
     <>
       {editingTask && (
@@ -222,25 +307,91 @@ export function GanttChart() {
         />
       )}
 
+      {showNewTaskModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-xl max-w-md w-full p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-white">Créer une nouvelle phase</h3>
+              <button
+                onClick={() => setShowNewTaskModal(false)}
+                className="p-2 hover:bg-slate-800 rounded-lg transition-colors text-slate-400"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <p className="text-slate-400 mb-6">
+              Une nouvelle phase sera créée avec des valeurs par défaut. Vous pourrez la modifier ensuite.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowNewTaskModal(false)}
+                className="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handleCreateNewTask}
+                className="flex-1 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-lg font-medium transition-colors"
+              >
+                Créer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
       {/* Header */}
       <div className="p-4 border-b border-slate-800 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <h3 className="text-xl font-bold text-white">Diagramme de Gantt</h3>
+          
+          {/* View Mode Selector */}
+          <div className="flex gap-1 bg-slate-800 rounded-lg p-1">
+            <button
+              onClick={() => setViewMode("day")}
+              className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
+                viewMode === "day" ? "bg-amber-500 text-slate-950" : "text-slate-400 hover:text-white"
+              }`}
+            >
+              Jour
+            </button>
+            <button
+              onClick={() => setViewMode("month")}
+              className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
+                viewMode === "month" ? "bg-amber-500 text-slate-950" : "text-slate-400 hover:text-white"
+              }`}
+            >
+              Mois
+            </button>
+            <button
+              onClick={() => setViewMode("year")}
+              className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
+                viewMode === "year" ? "bg-amber-500 text-slate-950" : "text-slate-400 hover:text-white"
+              }`}
+            >
+              Année
+            </button>
+          </div>
+          
+          {/* Navigation */}
           <div className="flex gap-2">
             <button
-              title="Mois précédent"
+              onClick={() => navigateTime("prev")}
+              title="Période précédente"
               className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
             >
               <ChevronLeft size={18} />
             </button>
             <button
-              title="Mois suivant"
+              onClick={() => navigateTime("next")}
+              title="Période suivante"
               className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
             >
               <ChevronRight size={18} />
             </button>
             <button
+              onClick={goToToday}
               title="Aujourd'hui"
               className="px-3 py-2 text-sm text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors flex items-center gap-2"
             >
@@ -250,6 +401,13 @@ export function GanttChart() {
           </div>
         </div>
         <div className="flex gap-2">
+          <button
+            onClick={() => setShowNewTaskModal(true)}
+            className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-lg font-medium transition-colors flex items-center gap-2"
+          >
+            <span className="text-lg">+</span>
+            Nouvelle Phase
+          </button>
           <button
             title="Plein écran"
             className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
@@ -274,20 +432,21 @@ export function GanttChart() {
               Tâche
             </div>
             <div className="flex-1 flex">
-              {months.map((month, i) => {
-                const daysInMonth = getDaysInMonth(month);
-                return (
-                  <div
-                    key={i}
-                    className="flex-1 p-2 text-center border-r border-slate-800 text-sm"
-                  >
-                    <div className="font-semibold text-white">
-                      {month.toLocaleDateString("fr-FR", { month: "long", year: "numeric" })}
-                    </div>
-                    <div className="text-xs text-slate-500 mt-1">{daysInMonth} jours</div>
+              {timePeriods.map((period, i) => (
+                <div
+                  key={i}
+                  className="flex-1 p-2 text-center border-r border-slate-800 text-sm min-w-[80px]"
+                >
+                  <div className="font-semibold text-white">
+                    {formatPeriodLabel(period)}
                   </div>
-                );
-              })}
+                  {viewMode === "month" && (
+                    <div className="text-xs text-slate-500 mt-1">
+                      {getDaysInMonth(period)} jours
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
 
@@ -308,7 +467,7 @@ export function GanttChart() {
                 <div className="flex-1 relative h-16 p-2">
                   {/* Grid Lines */}
                   <div className="absolute inset-0 flex">
-                    {months.map((_, i) => (
+                    {timePeriods.map((_, i) => (
                       <div key={i} className="flex-1 border-r border-slate-800/50" />
                     ))}
                   </div>

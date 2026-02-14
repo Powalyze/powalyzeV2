@@ -162,7 +162,7 @@ export default function ResultatsPage() {
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Link
-              href="/cockpit-demo"
+              href="/cockpit/projets"
               className="inline-flex items-center gap-2 px-8 py-4 bg-amber-400 hover:bg-amber-500 text-slate-900 font-semibold rounded-xl transition-all duration-300"
             >
               Essayer gratuitement

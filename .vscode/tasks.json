@@ -86,6 +86,13 @@
 			"label": "Deploy to Vercel (final clean)",
 			"type": "shell",
 			"command": "npx vercel --prod --yes"
+		},
+		{
+			"label": "Deploy Documents Page to Vercel",
+			"type": "shell",
+			"command": "npx vercel --prod --yes",
+			"isBackground": false,
+			"group": "build"
 		}
 	]
 }

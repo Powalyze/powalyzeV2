@@ -105,7 +105,7 @@ export const Sidebar: React.FC = () => {
             )}
           </Link>
           <Link
-            href="/cockpit-demo"
+            href="/cockpit/projets"
             className={cn(
               "flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
               isDemoMode

@@ -9,11 +9,30 @@ import {
   Calendar,
   Clock,
   Target,
-  TrendingUp
+  TrendingUp,
+  Plus
 } from "lucide-react";
 import Link from "next/link";
+import { useState, useEffect } from "react";
+import { getProjects } from "./projets/actions";
 
 export default function CockpitIndexPage() {
+  const [projectCount, setProjectCount] = useState<number>(0);
+  const [activeCount, setActiveCount] = useState<number>(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadStats() {
+      const { projects } = await getProjects();
+      // Filtrer les projets non archivés
+      const activeProjects = projects.filter((p: any) => p.status !== 'archived');
+      setProjectCount(activeProjects.length);
+      setActiveCount(activeProjects.filter((p: any) => p.status === 'active').length);
+      setLoading(false);
+    }
+    loadStats();
+  }, []);
+
   return (
     <CockpitShell>
       <div className="p-6 space-y-6">
@@ -46,10 +65,10 @@ export default function CockpitIndexPage() {
           />
 
           <StatCard
-            value="12"
-            sub="3 en cours"
+            value={loading ? "..." : projectCount.toString()}
+            sub={loading ? "" : `${activeCount} en cours`}
             label="Projets actifs"
-            href="/cockpit/projects/active"
+            href="/cockpit/projets"
           />
 
           <StatCard
@@ -73,6 +92,19 @@ export default function CockpitIndexPage() {
             Actions rapides
           </h2>
           <div className="grid md:grid-cols-3 gap-3">
+            <Link
+              href="/cockpit/projets"
+              className="flex items-center justify-between p-4 bg-gradient-to-r from-emerald-500/20 to-green-500/20 border border-emerald-500/30 hover:border-emerald-500/50 rounded-lg transition-all group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-emerald-500/30 rounded-lg flex items-center justify-center">
+                  <Plus className="text-emerald-400" size={20} />
+                </div>
+                <span className="font-medium text-white">Créer un projet</span>
+              </div>
+              <ArrowRight className="text-emerald-500 group-hover:text-emerald-400 transition-colors" size={20} />
+            </Link>
+
             <Link
               href="/cockpit/kanban"
               className="flex items-center justify-between p-4 bg-slate-800 hover:bg-slate-700 rounded-lg transition-all group"

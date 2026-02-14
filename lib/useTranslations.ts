@@ -28,7 +28,10 @@ export function useTranslations() {
   const switchLanguage = (newLocale: Locale) => {
     setLocale(newLocale);
     setT(translations[newLocale]);
-    localStorage.setItem('locale', newLocale);
+    // Defer localStorage write to avoid blocking main thread
+    requestAnimationFrame(() => {
+      localStorage.setItem('locale', newLocale);
+    });
   };
 
   return { t, locale, switchLanguage };

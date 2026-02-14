@@ -94,15 +94,25 @@ export function FileUpload({
   };
 
   const handleDownloadFile = (file: File) => {
-    const url = URL.createObjectURL(file);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = file.name;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    // Show toast immediately for fast perceived response
     showToast('success', '⬇️ Téléchargement', `${file.name} téléchargé`);
+    
+    // Defer DOM operations to avoid blocking the main thread
+    requestAnimationFrame(() => {
+      const url = URL.createObjectURL(file);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = file.name;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      
+      // Clean up asynchronously
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 100);
+    });
   };
 
   return (

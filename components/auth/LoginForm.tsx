@@ -1,5 +1,5 @@
 // ============================================================================
-// LoginForm - Formulaire de connexion avec redirection auto Demo/Pro
+// LoginForm - Connexion OU Accès Demo Simplifié
 // ============================================================================
 
 'use client';
@@ -7,20 +7,27 @@
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { createSupabaseBrowserClient } from '@/lib/supabaseClient';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, User, Building2, Zap } from 'lucide-react';
 import Link from 'next/link';
+
+type TabMode = 'login' | 'demo';
 
 export default function LoginForm() {
   const supabase = createSupabaseBrowserClient();
   const router = useRouter();
   
+  const [mode, setMode] = useState<TabMode>('demo');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  
+  // Demo mode fields
+  const [fullName, setFullName] = useState('');
+  const [company, setCompany] = useState('');
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError('');
@@ -137,9 +144,109 @@ export default function LoginForm() {
       
       // Hard reload au lieu de router.push() pour synchroniser session client/serveur
       console.log('🚀 [LOGIN] Lancement hard reload...');
-      window.location.href = '/cockpit/projets';
+      window.location.href = '/cockpit';
       
     } catch (err: any) {
+      setError(err.message || 'Erreur inconnue');
+      setLoading(false);
+    }
+  };
+
+  const handleDemoSignup = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      // Générer un mot de passe aléatoire pour le mode demo
+      const randomPassword = Math.random().toString(36).slice(-12) + 'Aa1!';
+
+      // 1. Créer le compte Supabase
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password: randomPassword,
+        options: {
+          data: {
+            full_name: fullName,
+            company: company || 'Demo',
+          },
+          emailRedirectTo: `${window.location.origin}/cockpit`,
+        }
+      });
+
+      console.log('🎯 [DEMO] Création compte:', { 
+        hasData: !!data, 
+        hasUser: !!data?.user, 
+        error: signUpError?.message 
+      });
+
+      if (signUpError) {
+        console.error('❌ [DEMO] Erreur création:', signUpError);
+        
+        // Si l'utilisateur existe déjà, essayer de se connecter
+        if (signUpError.message.includes('already registered')) {
+          setError('Cet email existe déjà. Utilisez l\'onglet "Connexion" avec votre mot de passe.');
+          setLoading(false);
+          return;
+        }
+        
+        setError(signUpError.message);
+        setLoading(false);
+        return;
+      }
+
+      if (!data.user) {
+        setError('Erreur de création de compte');
+        setLoading(false);
+        return;
+      }
+
+      console.log('✅ [DEMO] Compte créé:', {
+        userId: data.user.id,
+        email: data.user.email,
+      });
+
+      // 2. Activer automatiquement le mode Pro
+      console.log('🔧 [DEMO] Activation Pro...');
+      try {
+        const { error: updateError } = await supabase
+          .from('users')
+          .upsert({
+            id: data.user.id,
+            email: data.user.email,
+            full_name: fullName,
+            company: company || 'Demo',
+            pro_active: true,
+            role: 'client',
+            created_at: new Date().toISOString()
+          }, {
+            onConflict: 'id'
+          });
+
+        if (updateError) {
+          console.warn('⚠️ [DEMO] Erreur activation Pro:', updateError);
+        } else {
+          console.log('✅ [DEMO] Pro activé');
+        }
+      } catch (err) {
+        console.warn('⚠️ [DEMO] Erreur Pro:', err);
+      }
+
+      // 3. Si le compte nécessite une confirmation email
+      if (data.session) {
+        // Session créée directement - rediriger
+        console.log('✅ [DEMO] Session directe - redirection');
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        window.location.href = '/cockpit';
+      } else {
+        // Besoin de confirmation email
+        console.log('📧 [DEMO] Confirmation email requise');
+        setError('Un email de confirmation a été envoyé. Cliquez sur le lien pour accéder.');
+        setLoading(false);
+      }
+      
+    } catch (err: any) {
+      console.error('❌ [DEMO] Erreur:', err);
       setError(err.message || 'Erreur inconnue');
       setLoading(false);
     }
@@ -157,12 +264,38 @@ export default function LoginForm() {
 
       {/* Card */}
       <div className="bg-slate-900/50 backdrop-blur-xl rounded-2xl p-8 border border-slate-800/50">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Connexion au Cockpit</h1>
-          <p className="text-slate-400">Accédez à votre espace Powalyze</p>
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-bold text-white mb-2">Accès au Cockpit</h1>
+          <p className="text-slate-400">Connectez-vous ou essayez gratuitement</p>
         </div>
 
-        {/* Info box - removed default credentials */}
+        {/* Tabs */}
+        <div className="flex gap-2 mb-6 bg-slate-800/50 p-1 rounded-lg">
+          <button
+            type="button"
+            onClick={() => setMode('demo')}
+            className={`flex-1 py-2 px-4 rounded-md font-medium transition-all ${
+              mode === 'demo'
+                ? 'bg-amber-500 text-slate-950'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Zap className="inline-block mr-2" size={16} />
+            Accès Demo
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode('login')}
+            className={`flex-1 py-2 px-4 rounded-md font-medium transition-all ${
+              mode === 'login'
+                ? 'bg-amber-500 text-slate-950'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Lock className="inline-block mr-2" size={16} />
+            Connexion
+          </button>
+        </div>
 
         {/* Error */}
         {error && (
@@ -171,72 +304,133 @@ export default function LoginForm() {
           </div>
         )}
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Email */}
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
-              Email
-            </label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="vous@entreprise.com"
-                className="w-full bg-slate-800/50 border border-slate-700 rounded-lg pl-11 pr-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
-                required
-              />
+        {/* Form Demo */}
+        {mode === 'demo' && (
+          <form onSubmit={handleDemoSignup} className="space-y-4">
+            <div className="mb-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+              <p className="text-sm text-amber-300">
+                ✨ Accès instantané sans mot de passe. Entrez simplement vos informations.
+              </p>
             </div>
-          </div>
 
-          {/* Password */}
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-slate-300 mb-2">
-              Mot de passe
-            </label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
-              <input
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full bg-slate-800/50 border border-slate-700 rounded-lg pl-11 pr-12 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
+            <div>
+              <label htmlFor="fullName" className="block text-sm font-medium text-slate-300 mb-2">
+                Nom complet *
+              </label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
+                <input
+                  id="fullName"
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="Jean Dupont"
+                  className="w-full bg-slate-800/50 border border-slate-700 rounded-lg pl-11 pr-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                  required
+                />
+              </div>
             </div>
-          </div>
 
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 rounded-lg transition-all font-semibold shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? 'Connexion...' : 'Se connecter'}
-          </button>
-        </form>
+            <div>
+              <label htmlFor="email-demo" className="block text-sm font-medium text-slate-300 mb-2">
+                Email professionnel *
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
+                <input
+                  id="email-demo"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="vous@entreprise.com"
+                  className="w-full bg-slate-800/50 border border-slate-700 rounded-lg pl-11 pr-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                  required
+                />
+              </div>
+            </div>
 
-        {/* Footer */}
-        <div className="mt-8 text-center">
-          <p className="text-slate-400 text-sm">
-            Pas encore de compte ?{' '}
-            <Link href="/signup?demo=true" className="text-amber-400 hover:text-amber-300 font-semibold transition-colors">
-              Accès Demo gratuit
-            </Link>
-          </p>
-        </div>
+            <div>
+              <label htmlFor="company" className="block text-sm font-medium text-slate-300 mb-2">
+                Entreprise (optionnel)
+              </label>
+              <div className="relative">
+                <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
+                <input
+                  id="company"
+                  type="text"
+                  value={company}
+                  onChange={(e) => setCompany(e.target.value)}
+                  placeholder="Mon Entreprise"
+                  className="w-full bg-slate-800/50 border border-slate-700 rounded-lg pl-11 pr-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 rounded-lg transition-all font-semibold shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Création en cours...' : '🚀 Accéder au Cockpit'}
+            </button>
+          </form>
+        )}
+
+        {/* Form Login */}
+        {mode === 'login' && (
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div>
+              <label htmlFor="email-login" className="block text-sm font-medium text-slate-300 mb-2">
+                Email
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
+                <input
+                  id="email-login"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="vous@entreprise.com"
+                  className="w-full bg-slate-800/50 border border-slate-700 rounded-lg pl-11 pr-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-slate-300 mb-2">
+                Mot de passe
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
+                <input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full bg-slate-800/50 border border-slate-700 rounded-lg pl-11 pr-12 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 rounded-lg transition-all font-semibold shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Connexion...' : 'Se connecter'}
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );

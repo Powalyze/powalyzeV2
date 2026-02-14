@@ -4,6 +4,7 @@ import { CockpitShell } from "@/components/cockpit/CockpitShell";
 import { BackButton } from "@/components/BackButton";
 import { useState, useRef, useEffect } from "react";
 import { Brain, Send, Upload, FileText, X, CheckCircle, Shield, TrendingUp, MessageSquare, Zap, Globe } from "lucide-react";
+import { createSupabaseBrowserClient } from "@/lib/supabaseClient";
 
 type Message = {
   id: string;
@@ -41,14 +42,28 @@ export default function IACopilotePage() {
   }, [messages]);
 
   function parseCSV(text: string): PreviewRow[] {
+    // ✅ Remove BOM UTF-8 (caractère 65279) si présent
+    if (text.charCodeAt(0) === 0xFEFF) {
+      text = text.substring(1);
+    }
+    
     const lines = text.split('\n').filter(l => l.trim().length > 0);
     if (lines.length === 0) return [];
     
     const [headerLine, ...dataLines] = lines;
-    const headers = headerLine.split(/[;,\t]/).map(h => h.trim());
+    
+    // Auto-detect delimiter (comma, semicolon, or tab)
+    const delimiters = [',', ';', '\t'];
+    const delimiter = delimiters.reduce((best, current) => {
+      const count = (headerLine.match(new RegExp(`\\${current}`, 'g')) || []).length;
+      const bestCount = (headerLine.match(new RegExp(`\\${best}`, 'g')) || []).length;
+      return count > bestCount ? current : best;
+    });
+    
+    const headers = headerLine.split(delimiter).map(h => h.trim());
     
     return dataLines.slice(0, 20).map(line => {
-      const values = line.split(/[;,\t]/);
+      const values = line.split(delimiter);
       const row: PreviewRow = {};
       headers.forEach((h, i) => (row[h] = values[i]?.trim() || ''));
       return row;
@@ -74,12 +89,39 @@ export default function IACopilotePage() {
     formData.append('file', file);
     
     try {
-      const token = localStorage.getItem('token');
+      // Vérifier que l'utilisateur est connecté
+      const supabase = createSupabaseBrowserClient();
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      console.log('🔍 [IA Import] Vérification session:', {
+        hasSession: !!session,
+        hasUser: !!session?.user,
+        userId: session?.user?.id,
+        hasAccessToken: !!session?.access_token,
+        error: sessionError?.message
+      });
+      
+      if (!session || !session.user) {
+        alert('Session expirée. Veuillez vous reconnecter.');
+        setUploading(false);
+        return;
+      }
+
+      console.log('📤 [IA Import] Envoi fichier avec credentials');
+      
+      // IMPORTANT: credentials: 'include' pour envoyer les cookies Supabase
       const res = await fetch('/api/connectors/file', {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: 'include', // ✅ Envoyer les cookies de session
         body: formData,
       });
+      
+      console.log('📥 [IA Import] Réponse:', {
+        status: res.status,
+        ok: res.ok,
+        statusText: res.statusText
+      });
+      
       const data = await res.json();
       
       if (res.ok) {
@@ -94,10 +136,14 @@ export default function IACopilotePage() {
         setFile(null);
         setPreview([]);
       } else {
-        alert(`Erreur: ${data.error}`);
+        console.error('❌ [IA Import] Erreur serveur:', data);
+        alert(`Erreur: ${data.error || 'Erreur inconnue'}`);
       }
     } catch (error) {
+      console.error('❌ [IA Import] Erreur:', error);
       alert('Erreur lors de l\'import du fichier');
+    } finally {
+      setUploading(false);
     }
   }
 

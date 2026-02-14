@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import { CommandPalette } from "./CommandPalette";
 import { NotificationCenter } from "./NotificationCenter";
+import { LanguageSwitcher } from "../LanguageSwitcher";
 
 interface CockpitShellProps {
   children: ReactNode;
@@ -81,9 +82,7 @@ export function CockpitShell({ children }: CockpitShellProps) {
         </div>
         <div className="flex items-center gap-2">
           <NotificationCenter />
-          <button title="Changer de langue" className="p-2 hover:bg-slate-800 rounded-lg transition-colors">
-            <Globe size={20} />
-          </button>
+          <LanguageSwitcher />
         </div>
       </div>
 
